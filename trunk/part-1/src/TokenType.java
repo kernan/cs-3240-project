@@ -15,7 +15,7 @@ public enum TokenType {
 	LCURLY,
 	RCURLY,
 	UNION,
-	KLEENE,
+	MULT,
 	PKLEENE,
 	EOF
 }
