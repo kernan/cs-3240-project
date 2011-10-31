@@ -7,7 +7,6 @@
  *
  */
 
-//TODO determine how types should be determined
 public class Token {
 
 	private TokenType type;
@@ -53,5 +52,13 @@ public class Token {
 	 */
 	public void setValue(String value) {
 		this.value = value;
+	}
+	
+	/**
+	 * get string for token
+	 * @return string representation of a token
+	 */
+	public String toString() {
+		return "value: " + this.value + ", type: " + this.type;
 	}
 }

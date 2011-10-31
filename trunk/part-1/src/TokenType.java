@@ -7,16 +7,21 @@
 
 //TODO discuss appropriate tokens
 public enum TokenType {
-	IDENTIFIER,
+	AND,
+	OR,
+	NOT,
+	PLUS,
+	MINUS,
+	MULTIPLY,
+	DIVIDE,
+	MOD,
+	CHAR_CLASS,
 	LPAREN,
 	RPAREN,
 	LBRACKET,
 	RBRACKET,
 	LCURLY,
 	RCURLY,
-	UNION,
-	MULT,
-	PKLEENE,
-	EOF
+	IDENTIFIER
 }
 
