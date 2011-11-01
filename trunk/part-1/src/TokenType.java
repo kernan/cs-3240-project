@@ -22,6 +22,7 @@ public enum TokenType {
 	RBRACKET,
 	LCURLY,
 	RCURLY,
-	IDENTIFIER
+	IDENTIFIER,
+	EOF
 }
 
