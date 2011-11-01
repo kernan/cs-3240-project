@@ -122,5 +122,13 @@ public class NFA {
 		finalStates.set(stateNum, ifFinal);
 	}
 	
+	/**
+	 * accessor for nfa size
+	 * @return size of the nfa
+	 */
+	public int size() {
+		return this.size;
+	}
+	
 }
 
