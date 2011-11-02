@@ -23,6 +23,13 @@ public enum TokenType {
 	LCURLY,
 	RCURLY,
 	IDENTIFIER,
-	EOF
+	EOF,
+	UNION,
+	RE_CHAR,
+	DOT,
+	CARET,
+	CLS_CHAR,
+	DASH,
+	IN
 }
 
