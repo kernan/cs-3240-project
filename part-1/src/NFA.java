@@ -8,127 +8,165 @@ import java.util.ArrayList;
  *
  */
 
+
+/**
+ *
+ */
 public class NFA {
 	
-	/**
-	 * The alphabet for this NFA, used for reference
-	 */
-	private ArrayList <CharClass>alphabet;
+	
+	private State start, end, current;
+	private ArrayList<Character> alphabet;
+	int size;
+	
+	public static final char EPSILON = '\u0000';
 	
 	/**
-	 * The alphabet for this NFA
+	 * setup nfa with start, end, and current state
+	 * add unconditional transition from start to current
+	 * @param alphabet
 	 */
-	private ArrayList states;
-	
-	/**
-	 * Reference to final states
-	 */
-	private ArrayList <Boolean>finalStates;
-	
-	/**
-	 * The number of states in the NFA
-	 */
-	private int size;
-	
-	/**
-	 * Constructor, create initial NFA:
-	 * assign the alphabet, set size to zero,
-	 * set states to ,
-	 * 
-	 * @param alphabet The alphabet this NFA supports
-	 */
-	public NFA(ArrayList <CharClass>alphabet) {
+	public NFA(ArrayList<Character> alphabet) {
 		this.alphabet = alphabet;
 		this.size = 0;
-		
-		this.states = new ArrayList();
+		this.start = this.addState();
+		this.end = this.addState();
+		this.current = this.addTransition(this.start, new State(), EPSILON);
+		this.current.setPrev(this.start);
+		this.size = 3;
 	}
 	
 	/**
-	 * Adds a state to the NFA
-	 * 
-	 * @param TODO: list of state transitions
+	 * add transition from given state to given state for given value
+	 * @param t1 state to transition from
+	 * @param t2 state to transition to
+	 * @param letter value to transition on
+	 * @return state that was transitioned to
 	 */
-	public void addState(){
-		ArrayList newState = new ArrayList(states.size());
-		
-		for(int i = 0; i < newState.size(); i++){
-			//TODO: initialize all lists to empty, -1?
-		}
-		//Add state to states
-		//adds to finalStates
+	public State addTransition(State t1, State t2, char letter) {
+		t1.addTransition(letter, t2);
+		return t2;
+	}
+	
+	/**
+	 * add new state to the nfa
+	 * @return state that was added
+	 */
+	public State addState() {
 		size++;
+		return new State();
 	}
 	
 	/**
-	 * Changes the state transitions on a particular event for given state
-	 * 
-	 * @param stateNum The number of the state to be edited
-	 * @param event The alphabet character to edit
-	 * @param transitions The updated transitions for the given event
+	 * accessor for NFA start state
+	 * @return start state
 	 */
-	public void editState(int stateNum, CharClass event, ArrayList <CharClass> transitions){
-		ArrayList state = (ArrayList)states.get(stateNum);
-		ArrayList <CharClass>stateEvent = (ArrayList<CharClass>)state.get(findEventIndex(event));
-		stateEvent = transitions;
+	public State getStart() {
+		return this.start;
 	}
 	
 	/**
-	 * Gets the index of an event in the alphabet
-	 * 
-	 * @param event The event to find
-	 * @return Index of event
+	 * attach a given nfa to the end of this nfa
+	 * @param other nfa to merge with
 	 */
-	public int findEventIndex(CharClass event){
-		int index = -1;
-		for(int i = 0; i < alphabet.size(); i++){
-			if(alphabet.get(i).equals(event)){
-				index = i;
-				break;
-			}
-		}
-		return index; 
-		
+	public void mergeNFA(NFA other) {
+		this.addTransition(this.current, this.end, EPSILON);
+		this.addTransition(this.end, other.getStart(), EPSILON);
+		this.size += other.size();
+		this.current = other.getCurr();
+		this.end = other.getEnd();
 	}
 	
 	/**
-	 * Removes a state from the NFA
-	 * 
-	 * @param stateNum The number of the state to remove
+	 * accessor for NFA end state
+	 * @return end state
 	 */
-	public void removeState(int stateNum){
-		states.remove(stateNum);
-		finalStates.remove(stateNum);
-		size--;
+	public State getEnd() {
+		return this.end;
 	}
 	
 	/**
-	 * Determines if a state is final or not
-	 * 
-	 * @param stateNum The number of the state
-	 * @return True if final, false if non-final
+	 * accessor for current state
+	 * @return current state
 	 */
-	public Boolean isFinal(int stateNum){
-		return finalStates.get(stateNum);
+	public State getCurr() {
+		return this.current;
 	}
 	
 	/**
-	 * Sets a state to final or non-final
-	 * 
-	 * @param stateNum The number of the state to set
-	 * @param ifFinal True if final, false if non-final
-	 */
-	public void setFinal(int stateNum, Boolean ifFinal){
-		finalStates.set(stateNum, ifFinal);
-	}
-	
-	/**
-	 * accessor for nfa size
-	 * @return size of the nfa
+	 * accessor for size of the nfa
+	 * @return size of nfa
 	 */
 	public int size() {
 		return this.size;
 	}
 	
+	/**
+	 * mutator for current state
+	 * @param curr new current state
+	 */
+	public void setCurr(State current) {
+		this.current = current;
+	}
+	
+	/**
+	 * state containing list of transitions 
+	 */
+	public class State {
+		
+		private ArrayList<Transition> transitions;
+		private State previous;
+		
+		/**
+		 * setup state with empty transition list and previous state
+		 */
+		public State() {
+			this.transitions = new ArrayList<Transition>();
+			this.previous = null;
+		}
+		
+		/**
+		 * mutator for previous state
+		 * @param prev state to set as previous
+		 */
+		public void setPrev(State previous) {
+			this.previous = previous;
+		}
+		
+		/**
+		 * accessor for previous state
+		 * @return previous state
+		 */
+		public State getPrev() {
+			return this.previous;
+		}
+		
+		/**
+		 * add transition from this state to given state 
+		 * @param letter transition value
+		 * @param next state to transition to
+		 */
+		public void addTransition(char letter, State next) {
+			transitions.add(new Transition(letter, next));
+		}
+		
+		/**
+		 * map containing transition character and state
+		 */
+		private class Transition {
+			private char letter;
+			private State next;
+			
+			/**
+			 * setup transition for particular symbol to specified state
+			 * @param letter symbol to transition on
+			 * @param next state to transition to
+			 */
+			public Transition(char letter, State next) {
+				this.letter = letter;
+				this.next = next;
+			}
+		}
+	}
 }
 
