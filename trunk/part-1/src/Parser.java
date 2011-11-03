@@ -42,7 +42,9 @@ public class Parser {
 	}
 //	<rexp1$> -> <rexp2> <rexp1$>  |  E   
 	rexp1$(){
-		if(peekToken() == TokenType.LPAREN ){//TODO fix all cases
+		if(peekToken() == TokenType.LPAREN || peekToken() == TokenType.RE_CHAR
+				|| peekToken() == TokenType.DOT || peekToken() == TokenType.LBRACKET
+				|| peekToken() == TokenType.DOLLAR){
 			rexp2();
 			rexp1$();
 		}
@@ -78,7 +80,8 @@ public class Parser {
 	}
 //	<rexp3> -> <charClass>  |  E   
 	rexp3(){
-		if(peekToken() == TokenType.DOT || peekToken() == TokenType.LBRACKET ){//TODO add definedClass check
+		if(peekToken() == TokenType.DOT || peekToken() == TokenType.LBRACKET
+				|| peekToken() == TokenType.DOLLAR){
 			charClass();
 		}
 		else
