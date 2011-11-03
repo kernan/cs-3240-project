@@ -159,17 +159,94 @@ public class Parser {
 		//TODO handle character classes
 		//TODO build the NFA
 		
-		Token token = null;
+		Token token = Lexer.getNextToken();
 		
 		switch(token.getType()) {
-			case IDENTIFIER:
-			case LPAREN:
-			case RPAREN:
-			case MULTIPLY:
-			case PLUS:
+			case AND:
 			case OR:
-				stream.add(token);
-				break;
+			case NOT:
+			case PLUS:
+				if(token.getValue().equals("+")){
+					stream.add(token);
+					break;
+				}
+			case MINUS:
+				if(token.getValue().equals("-")){
+					stream.add(token);
+					break;
+				}
+			case MULTIPLY:
+				if(token.getValue().equals("*")){
+					stream.add(token);
+					break;
+				}
+			case DIVIDE:
+				if(token.getValue().equals("/")){
+					stream.add(token);
+					break;
+				}
+			case MOD:
+				if(token.getValue().equals("%")){
+					stream.add(token);
+					break;
+				}
+			case CHAR_CLASS:
+			case LPAREN:
+				if(token.getValue().equals("(")){
+					stream.add(token);
+					break;
+				}
+			case RPAREN:
+				if(token.getValue().equals(")")){
+					stream.add(token);
+					break;
+				}
+			case LBRACKET:
+				if(token.getValue().equals("[")){
+					stream.add(token);
+					break;
+				}
+			case RBRACKET:
+				if(token.getValue().equals("]")){
+					stream.add(token);
+					break;
+				}
+			case LCURLY:
+				if(token.getValue().equals("{")){
+					stream.add(token);
+					break;
+				}
+			case RCURLY:
+				if(token.getValue().equals("}")){
+					stream.add(token);
+					break;
+				}
+			case IDENTIFIER:
+			case EOF:
+			case UNION:
+				if(token.getValue().equals("|")){
+					stream.add(token);
+					break;
+				}
+			case RE_CHAR:
+			case DOT:
+				if(token.getValue().equals(".")){
+					stream.add(token);
+					break;
+				}
+			case CARET:
+				if(token.getValue().equals("^")){
+					stream.add(token);
+					break;
+				}
+			case CLS_CHAR:
+			case DASH:
+				if(token.getValue().equals("-")){
+					stream.add(token);
+					break;
+				}
+			case IN:
+
 			default:
 				throw new IOException("Token not recognized: " + token.toString());
 		}
