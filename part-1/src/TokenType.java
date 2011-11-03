@@ -30,6 +30,7 @@ public enum TokenType {
 	CARET,
 	CLS_CHAR,
 	DASH,
-	IN
+	IN,
+	DOLLAR
 }
 
