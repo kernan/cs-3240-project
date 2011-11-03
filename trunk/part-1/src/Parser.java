@@ -17,16 +17,16 @@ public class Parser {
 	}
 	
 //	<regEx> ->  <rexp> 
-	regEx(){
+	private void regEx(){
 		rexp();
 	}
 //	<rexp> -> <rexp1> <rexp$>
-	rexp(){
+	private void rexp(){
 		rexp1();
 		rexp$();
 	}
 //	<rexp$> -> UNION <rexp1> <rexp$>  |  E    
-	rexp$(){
+	private void rexp$(){
 		if (peekToken() == TokenType.UNION){
 			matchToken(TokenType.UNION);
 			rexp1();
@@ -36,12 +36,12 @@ public class Parser {
 			return;
 	}
 //	<rexp1> -> <rexp2> <rexp1$>
-	rexp1(){
+	private void rexp1(){
 		rexp2();
 		rexp1$();
 	}
 //	<rexp1$> -> <rexp2> <rexp1$>  |  E   
-	rexp1$(){
+	private void rexp1$(){
 		if(peekToken() == TokenType.LPAREN || peekToken() == TokenType.RE_CHAR
 				|| peekToken() == TokenType.DOT || peekToken() == TokenType.LBRACKET
 				|| peekToken() == TokenType.DOLLAR){
@@ -52,7 +52,7 @@ public class Parser {
 			return;
 	}
 //	<rexp2> -> (<rexp>) <rexp2Tail>  | RE_CHAR <rexp2Tail> | <rexp3>
-	rexp2(){
+	private void rexp2(){
 		if(peekToken() == TokenType.LPAREN){
 			matchToken(TokenType.LPAREN);
 			rexp();
@@ -68,7 +68,7 @@ public class Parser {
 		}
 	}
 //	<rexp2Tail> -> * | + |  E
-	rexp2Tail(){
+	private void rexp2Tail(){
 		if(peekToken() == TokenType.MULTIPLY){
 			matchToken(TokenType.MULTIPLY);
 		}
@@ -79,7 +79,7 @@ public class Parser {
 			return;
 	}
 //	<rexp3> -> <charClass>  |  E   
-	rexp3(){
+	private void rexp3(){
 		if(peekToken() == TokenType.DOT || peekToken() == TokenType.LBRACKET
 				|| peekToken() == TokenType.DOLLAR){
 			charClass();
@@ -88,7 +88,7 @@ public class Parser {
 			return;
 	}
 //	<charClass> ->  .  |  [ <charClass1>  | <definedClass>
-	charClass(){
+	private void charClass(){
 		if(peekToken() == TokenType.DOT){
 			matchToken(TokenType.DOT);
 		}
@@ -100,7 +100,7 @@ public class Parser {
 			definedClass();
 	}
 //	<charClass1> ->  <charSetList> | <excludeSet>
-	charClass1(){
+	private void charClass1(){
 		if(peekToken() == TokenType.CARET){
 			excludeSet();
 		}
@@ -109,7 +109,7 @@ public class Parser {
 		}
 	}
 //	<charSetList> ->  <charSet> <charSetList> |  E 
-	charSetList(){
+	private void charSetList(){
 		if(peekToken() == TokenType.CLS_CHAR){
 			charSet();
 			charSetList();
@@ -118,12 +118,12 @@ public class Parser {
 			return;
 	}
 //	<charSet> -> CLS_CHAR <charSetTail> 
-	charSet(){
+	private void charSet(){
 		matchToken(TokenType.CLS_CHAR);
 		charSetTail();
 	}
 //	<charSetTail> -> – CLS_CHAR | E
-	charSetTail(){
+	private void charSetTail(){
 		if(peekToken() == TokenType.DASH){
 			matchToken(TokenType.DASH);
 			matchToken(TokenType.CLS_CHAR);
@@ -132,7 +132,7 @@ public class Parser {
 			return;
 	}
 //	<excludeSet> -> ^ <charSet>] IN <excludeSetTail>  
-	excludeSet(){
+	private void excludeSet(){
 		matchToken(TokenType.CARET);
 		charSet();
 		matchToken(TokenType.RBRACKET);
@@ -140,7 +140,7 @@ public class Parser {
 		excludeSetTail();
 	}
 //	<excludeSetTail> -> [<charSet>]  | <definedClass>
-	excludeSetTail(){
+	private void excludeSetTail(){
 		if(peekToken() == TokenType.LBRACKET){
 			matchToken(TokenType.LBRACKET);
 			charSet();
