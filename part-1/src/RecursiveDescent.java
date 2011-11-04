@@ -171,25 +171,5 @@ public class RecursiveDescent {
 		
 	}
 
-	/**
-	 * consumes next token and adds it to nfa
-	 * 
-	 * @param type expected token type
-	 */
-	public char matchToken(TokenType type){
-		
-		//TODO handle character classes
-		//TODO build the NFA
-		
-		Token token = lex.getNextToken();
-		
-		if(token.getType().equals(type)){
-					
-		}
-		
-		return ' ';
-		
-		
-	}
 }
 
