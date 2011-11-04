@@ -129,14 +129,17 @@ public class Parser {
 	}
 //	<charSet> -> CLS_CHAR <charSetTail> 
 	private void charSet(){
-		matchToken(TokenType.CLS_CHAR);
-		charSetTail();
+		
+		String start = matchToken(TokenType.CLS_CHAR);
+		
+		charSetTail(new ArrayList<String>().add(a));
 	}
 //	<charSetTail> -> � CLS_CHAR | E
-	private void charSetTail(){
+	private void charSetTail(ArrayList<String> list){
 		if(peekToken() == TokenType.DASH){
 			matchToken(TokenType.DASH);
-			matchToken(TokenType.CLS_CHAR);
+			String end = matchToken(TokenType.CLS_CHAR);
+			for(int i = ((int)list.get(0)); )
 		}
 		else
 			return;
@@ -159,6 +162,10 @@ public class Parser {
 		else{
 			definedClass();
 		}
+	}
+	
+	private void definedClass(){
+		
 	}
 
 	/**
