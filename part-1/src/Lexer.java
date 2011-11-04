@@ -11,69 +11,140 @@ import java.io.IOException;
 
 public class Lexer {
 	
-	protected InputBuffer stream;
+	private InputBuffer input_stream;
+	private boolean peek;
+	private Token current;
 	
 	/**
-	 * setup new Lexer for given file
-	 * @param filename name of file to scan
-	 * @throws IOException thrown by java.util.Scanner if file does not exist
+	 * setup lexer for given scanner input
+	 * @param input scanner to tokenize from
 	 */
-	public Lexer(String filename) throws IOException {
-		Scanner input = new Scanner(new File(filename));
-		this.stream = new InputBuffer(input);
+	public Lexer(Scanner input) {
+		this.input_stream = new InputBuffer(input);
+		this.peek = false;
+		this.current = null;
 	}
 	
 	/**
-	 * get the next token in the input stream
-	 * @return next token in input stream
+	 * get the next token in the stream
+	 * @return next token in stream
 	 */
 	public Token getNextToken() {
-		
-	}
-	
-	/**
-	 * 
-	 * @return
-	 */
-	public TokenType peekToken() {
-		char a = stream.peekNext();
-		return makeToken(a).getType();
-	}
-	
-	/**
-	 * 
-	 * @param c
-	 * @return
-	 */
-	private Token makeToken(char c) {
-		switch(c) {
-			TokenType type;
-			case '|':
-				type = TokenType.OR;
-				break;
-			case '*':
-				type = TokenType.MULTIPLY;
-				break;
-			case '+':
-				type = TokenType.PLUS;
-				break;
-			case '$':
-				type = TokenType.DOLLAR;
-				break;
-			case '(':
-				type = TokenType.LPAREN;
-				break;
-			case ')':
-				type = TokenType.RPAREN;
-				break;
-			case '[':
-				type = TokenType.LBRACKET;
-				break;
-			case ']':
-				type = TokenType.RBRACKET;
-				break;
-			default:
-				type = TokenType.IDENTIFIER;
+		if(peek) {
+			peek = false;
+			return current;
 		}
+		else {
+			current = makeNewToken();
+			return current;
+		}
+	}
+	
+	/**
+	 * peek at the next token in the stream
+	 * @return next token in the stream
+	 */
+	public Token peekNextToken() {
+		if(peek) {
+			current = makeNewToken();
+			return current;
+		}
+		else {
+			peek = true;
+			return getNextToken();
+		}
+	}
+	
+	/**
+	 * make a new token from the stream
+	 * @return new token
+	 */
+	public Token makeNewToken() {
+		char t = input_stream.getNext();
+		
+		Token result = null;
+		
+		switch(t) {
+			//ignore comment lines
+			case '%':
+				if(input_stream.peekNext() == '%') {
+					input_stream.gotoNextLine();
+					result = new Token(TokenType.EOL, "\n");
+				}
+				else {
+					result = new Token(TokenType.LITERAL, "%");
+				}
+				break;
+			//defined name
+			case '$':
+				String name = new String();
+				while(input_stream.peekNext() != ' ') {
+					name += input_stream.getNext();
+				}
+				result = new Token(TokenType.DEFINED, name);
+				break;
+			//alternation
+			case '|':
+				result = new Token(TokenType.UNION, "|");
+				break;
+			//repetition >= 0
+			case '*':
+				result = new Token(TokenType.KLEENE, "*");
+				break;
+			//repetition > 0
+			case '+':
+				result = new Token(TokenType.PLUS, "+");
+				break;
+			//dash (used when defining a range)
+			case '-':
+				result = new Token(TokenType.DASH, "-");
+				break;
+			//caret (exclude set)
+			case '^':
+				result = new Token(TokenType.CARET, "^");
+				break;
+			//dot (wild card)
+			case '.':
+				result = new Token(TokenType.DOT, ".");
+				break;
+			//left bracket
+			case '[':
+				result = new Token(TokenType.LBRACKET, "[");
+				break;
+			//right bracket
+			case ']':
+				result = new Token(TokenType.RBRACKET, "]");
+				break;
+			//left parentheses (scope out)
+			case '(':
+				result = new Token(TokenType.LPAREN, "(");
+				break;
+			//right parentheses (scope in)
+			case ')':
+				result = new Token(TokenType.RPAREN, ")");
+				break;
+			//IN (for defining ranges)
+			case 'I':
+				if(input_stream.peekNext() == 'N') {
+					result = new Token(TokenType.IN, "IN");
+				}
+				else {
+					result = new Token(TokenType.LITERAL, "L");
+				}
+				break;
+			//everything else (character literals)
+			default:
+				result = new Token(TokenType.LITERAL, new String() + t);
+		}
+		
+		return result;
+	}
+	
+	/**
+	 * moves the stream to the next line of the file
+	 * @return true: there is another line, false: end of file
+	 */
+	public boolean gotoNextLine() {
+		return input_stream.gotoNextLine();
 	}
 }
