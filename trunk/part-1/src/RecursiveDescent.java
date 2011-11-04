@@ -183,95 +183,13 @@ public class RecursiveDescent {
 		
 		Token token = lex.getNextToken();
 		
-		switch(token.getType()) {
-			case AND:
-			case OR:
-			case NOT:
-			case PLUS:
-				if(token.getValue().equals("+")){
-					return '+';
-					break;
-				}
-			case MINUS:
-				if(token.getValue().equals("-")){
-					return '-';
-					break;
-				}
-			case MULTIPLY:
-				if(token.getValue().equals("*")){
-					return '*';
-					break;
-				}
-			case DIVIDE:
-				if(token.getValue().equals("/")){
-					return '/';
-					break;
-				}
-			case MOD:
-				if(token.getValue().equals("%")){
-					return '%';
-					break;
-				}
-			case CHAR_CLASS:
-			case LPAREN:
-				if(token.getValue().equals("(")){
-					return '(';
-					break;
-				}
-			case RPAREN:
-				if(token.getValue().equals(")")){
-					return ')';
-					break;
-				}
-			case LBRACKET:
-				if(token.getValue().equals("[")){
-					return '[';
-					break;
-				}
-			case RBRACKET:
-				if(token.getValue().equals("]")){
-					return ']';
-					break;
-				}
-			case LCURLY:
-				if(token.getValue().equals("{")){
-					return '{';
-					break;
-				}
-			case RCURLY:
-				if(token.getValue().equals("}")){
-					return '}';
-					break;
-				}
-			case IDENTIFIER:
-			case EOF:
-			case UNION:
-				if(token.getValue().equals("|")){
-					return '|';
-					break;
-				}
-			case RE_CHAR:
-			case DOT:
-				if(token.getValue().equals(".")){
-					return '.';
-					break;
-				}
-			case CARET:
-				if(token.getValue().equals("^")){
-					return '^';
-					break;
-				}
-			case CLS_CHAR:
-			case DASH:
-				if(token.getValue().equals("-")){
-					return '-';
-					break;
-				}
-			case IN:
-
-			default:
-				
+		if(token.getType().equals(type)){
+					
 		}
+		
+		return ' ';
+		
+		
 	}
 }
 
