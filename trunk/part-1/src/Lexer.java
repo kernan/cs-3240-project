@@ -19,12 +19,12 @@ public class Lexer {
 	 * setup lexer for given scanner input
 	 * @param input scanner to tokenize from
 	 */
-	public Lexer(Scanner input) {
-		this.input_stream = new InputBuffer(input);
+	public Lexer(Scanner scanner) {
+		this.input_stream = new InputBuffer(scanner);
 		this.peek = false;
 		this.current = null;
 	}
-	
+
 	/**
 	 * get the next token in the stream
 	 * @return next token in stream
