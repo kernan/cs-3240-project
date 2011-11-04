@@ -167,7 +167,7 @@ public class Parser {
 	 * @param type expected token type
 	 * @throws IOException when token is not valid
 	 */
-	public void matchToken(TokenType type) throws IOException {
+	public char matchToken(TokenType type) throws IOException {
 		
 		//TODO handle character classes
 		//TODO build the NFA
@@ -180,82 +180,82 @@ public class Parser {
 			case NOT:
 			case PLUS:
 				if(token.getValue().equals("+")){
-					stream.add(token);
+					return '+';
 					break;
 				}
 			case MINUS:
 				if(token.getValue().equals("-")){
-					stream.add(token);
+					return '-';
 					break;
 				}
 			case MULTIPLY:
 				if(token.getValue().equals("*")){
-					stream.add(token);
+					return '*';
 					break;
 				}
 			case DIVIDE:
 				if(token.getValue().equals("/")){
-					stream.add(token);
+					return '/';
 					break;
 				}
 			case MOD:
 				if(token.getValue().equals("%")){
-					stream.add(token);
+					return '%';
 					break;
 				}
 			case CHAR_CLASS:
 			case LPAREN:
 				if(token.getValue().equals("(")){
-					stream.add(token);
+					return '(';
 					break;
 				}
 			case RPAREN:
 				if(token.getValue().equals(")")){
-					stream.add(token);
+					return ')';
 					break;
 				}
 			case LBRACKET:
 				if(token.getValue().equals("[")){
-					stream.add(token);
+					return '[';
 					break;
 				}
 			case RBRACKET:
 				if(token.getValue().equals("]")){
-					stream.add(token);
+					return ']';
 					break;
 				}
 			case LCURLY:
 				if(token.getValue().equals("{")){
-					stream.add(token);
+					return '{';
 					break;
 				}
 			case RCURLY:
 				if(token.getValue().equals("}")){
-					stream.add(token);
+					return '}';
 					break;
 				}
 			case IDENTIFIER:
 			case EOF:
 			case UNION:
 				if(token.getValue().equals("|")){
-					stream.add(token);
+					return '|';
 					break;
 				}
 			case RE_CHAR:
 			case DOT:
 				if(token.getValue().equals(".")){
-					stream.add(token);
+					return '.';
 					break;
 				}
 			case CARET:
 				if(token.getValue().equals("^")){
-					stream.add(token);
+					return '^';
 					break;
 				}
 			case CLS_CHAR:
 			case DASH:
 				if(token.getValue().equals("-")){
-					stream.add(token);
+					return '-';
 					break;
 				}
 			case IN:
