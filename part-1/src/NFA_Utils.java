@@ -53,7 +53,7 @@ public class NFA_Utils {
 						t2.setCurr(s1);
 						
 						t1 = stack.pop();
-						t1.mergeNFA(t2);
+						t1.concatNFA(t2);
 						stack.push(t1);
 					}
 					else {
@@ -82,7 +82,7 @@ public class NFA_Utils {
 						t2.addTransition(t2.getCurr(), t2.getStart(), NFA.EPSILON);
 						
 						t1 = stack.pop();
-						t1.mergeNFA(t2);
+						t1.concatNFA(t2);
 						stack.push(t1);
 					}
 					else {
@@ -97,26 +97,28 @@ public class NFA_Utils {
 					break;
 				//concatenation
 				case CHAR_CLASS:
+					//TODO
+					break;
 				case IDENTIFIER:
 					t2 = stack.pop();
 					
 					//TODO handle character classes
 					
 					//make sure token is valid (in the alphabet)
-					if(alphabet.find(tok.getValue()) == -1) {
+					if(alphabet.contains(tok.getValue().charAt(0))) {
 						throw new IOException("Invalid input stream: character not in alphabet: " + tok.getValue());
 					}
 					
 					//current ---(Token.value)---> new
 					//current = new
-					s1 = t2.addTransition(t2.getCurr(), t2.addState(), tok.getValue());
+					s1 = t2.addTransition(t2.getCurr(), t2.addState(), tok.getValue().charAt(0));
 					s1.setPrev(t2.getCurr());
 					t2.setCurr(s1);
 					
 					if(scope_back) {
 						scope_back = false;
 						t1 = stack.pop();
-						t1.mergeNFA(t2);
+						t1.concatNFA(t2);
 						stack.push(t1);
 					}
 					else {
@@ -140,7 +142,7 @@ public class NFA_Utils {
 					if(scope_back) {
 						scope_back = false;
 						t1 = stack.pop();
-						t1.mergeNFA(t2);
+						t1.concatNFA(t2);
 						stack.push(t1);
 					}
 					else {
