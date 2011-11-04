@@ -13,7 +13,7 @@ import java.util.Scanner;
 public class InputBuffer {
 	
 	private Scanner input;
-	private String buffer;
+	public String buffer;
 	private int currentpos;
 	private boolean peek;
 	
@@ -39,8 +39,6 @@ public class InputBuffer {
 		}
 		else {
 			if(currentpos > buffer.length() - 1) {
-				this.buffer = input.nextLine();
-				this.currentpos = 0;
 				return '\n';
 			}
 			else {
@@ -55,11 +53,31 @@ public class InputBuffer {
 	 */
 	public char peekNext() {
 		if(peek) {
-			return buffer.charAt(currentpos);
+			if(this.currentpos > buffer.length() - 1) {
+				return '\n';
+			}
+			else {
+				return buffer.charAt(currentpos);
+			}
 		}
 		else {
 			peek = true;
 			return getNext();
+		}
+	}
+	
+	/**
+	 * move input buffer to the next line
+	 */
+	public boolean gotoNextLine() {
+		if(this.input.hasNextLine()) {
+			this.buffer = input.nextLine();
+			this.currentpos = 0;
+			this.peek = false;
+			return true;
+		}
+		else {
+			return false;
 		}
 	}
 }
