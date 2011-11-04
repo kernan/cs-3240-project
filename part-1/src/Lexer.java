@@ -9,7 +9,7 @@ import java.util.Scanner;
 import java.io.File;
 import java.io.IOException;
 
-public abstract class Lexer {
+public class Lexer {
 	
 	protected InputBuffer stream;
 	
@@ -35,7 +35,7 @@ public abstract class Lexer {
 	 * 
 	 * @return
 	 */
-	public TokenType peekNextToken() {
+	public TokenType peekToken() {
 		char a = stream.peekNext();
 		return makeToken(a).getType();
 	}
