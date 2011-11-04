@@ -69,7 +69,7 @@ public class NFA {
 	 * attach a given nfa to the end of this nfa
 	 * @param other nfa to merge with
 	 */
-	public void mergeNFA(NFA other) {
+	public void concatNFA(NFA other) {
 		this.addTransition(this.current, this.end, EPSILON);
 		this.addTransition(this.end, other.getStart(), EPSILON);
 		this.size += other.size();

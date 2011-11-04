@@ -40,7 +40,7 @@ public class Token {
 	
 	/**
 	 * Mutator for token type
-	 * @param type
+	 * @param type token enum type
 	 */
 	public void setType(TokenType type) {
 		this.type = type;
@@ -48,7 +48,7 @@ public class Token {
 	
 	/**
 	 * Mutator for string token represents
-	 * @param value
+	 * @param value character literal stored by this token
 	 */
 	public void setValue(String value) {
 		this.value = value;

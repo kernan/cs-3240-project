@@ -27,23 +27,53 @@ public abstract class Lexer {
 	 * get the next token in the input stream
 	 * @return next token in input stream
 	 */
-	public abstract Token getNextToken();
-	
-	/**
-	 * determines if given character is a digit [0-9]
-	 * @param t character to check
-	 * @return true: is a digit, false: is not
-	 */
-	protected boolean isDigit(char t) {
-		return (t >= '0' && t <= '0');
+	public Token getNextToken() {
+		
 	}
 	
 	/**
-	 * determines if given character is a letter [a-z] or [A-Z]
-	 * @param t character to checks
-	 * @return true: is a letter, false: is not
+	 * 
+	 * @return
 	 */
-	protected boolean isLetter(char t) {
-		return ((t >= 'A' && t <= 'Z') || (t >= 'a' && t <= 'z'));
+	public TokenType peekNextToken() {
+		char a = stream.peekNext();
+		return makeToken(a).getType();
+	}
+	
+	/**
+	 * 
+	 * @param c
+	 * @return
+	 */
+	private Token makeToken(char c) {
+		switch(c) {
+			TokenType type;
+			case '|':
+				type = TokenType.OR;
+				break;
+			case '*':
+				type = TokenType.MULTIPLY;
+				break;
+			case '+':
+				type = TokenType.PLUS;
+				break;
+			case '$':
+				type = TokenType.DOLLAR;
+				break;
+			case '(':
+				type = TokenType.LPAREN;
+				break;
+			case ')':
+				type = TokenType.RPAREN;
+				break;
+			case '[':
+				type = TokenType.LBRACKET;
+				break;
+			case ']':
+				type = TokenType.RBRACKET;
+				break;
+			default:
+				type = TokenType.IDENTIFIER;
+		}
 	}
 }
