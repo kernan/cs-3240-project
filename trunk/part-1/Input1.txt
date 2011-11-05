@@ -1,0 +1,9 @@
+%%
+$DIGIT    	[0-9]
+$NON-ZERO       [^0]  IN  $DIGIT
+$LOWERCASE   	[a-z]
+$LETTER      	[A-Za-z]
+$UPPERCASE      [^a-z] IN $LETTER         
+%%
+$IDENTIFIER 	s$LOWERCASE ($LETTER | $DIGIT )*
+$CONSTANT       $UPPERCASE ($LETTER | $DIGIT )*f
