@@ -16,7 +16,7 @@ public class NFA {
 	
 	
 	private State start, end, current;
-	int size;
+	private ArrayList<State> states;
 	
 	public static final char EPSILON = '\u0000';
 	
@@ -26,11 +26,10 @@ public class NFA {
 	 * @param alphabet
 	 */
 	public NFA() {
-		System.out.print("[NFA] initializing... ");
-		this.size = 0;
+		states = new ArrayList<State>();
 		this.start = this.addState();
 		this.end = this.addState();
-		this.current = this.addTransition(this.start, new State(), EPSILON);
+		this.current = this.addTransition(this.start, addState(), EPSILON);
 		this.current.setPrev(this.start);
 	}
 	
@@ -52,8 +51,9 @@ public class NFA {
 	 * @return state that was added
 	 */
 	public State addState() {
-		size++;
-		return new State();
+		State s = new State();
+		states.add(s);
+		return s;
 	}
 	
 	/**
@@ -65,13 +65,26 @@ public class NFA {
 	}
 	
 	/**
+	 *
+	 * @return
+	 */
+	public ArrayList<State> getStates() {
+		return states;
+	}
+	
+	/**
 	 * attach a given nfa to the end of this nfa
 	 * @param other nfa to concat with
 	 */
 	public void concat(NFA other) {
+		//add new states to current states
+		ArrayList<State> new_states = ((NFA)other).getStates();
+		for(int i = 0; i < new_states.size(); i++) {
+			this.states.add(new_states.get(i));
+		}
+		
 		this.addTransition(this.current, this.end, EPSILON);
 		this.addTransition(this.end, other.getStart(), EPSILON);
-		this.size += other.size();
 		this.current = other.getCurr();
 		//this.end = other.getEnd();
 	}
@@ -81,9 +94,14 @@ public class NFA {
 	 * @param other nfa to merge with
 	 */
 	public void merge(NFA other) {
+		//add new states to current states
+		ArrayList<State> new_states = ((NFA)other).getStates();
+		for(int i = 0; i < new_states.size(); i++) {
+			this.states.add(new_states.get(i));
+		}
+		
 		this.addTransition(this.start, other.getStart(), EPSILON);
 		this.addTransition(this.end, other.getEnd(), EPSILON);
-		this.size += other.size();
 		this.current = other.getCurr();
 		this.end = other.getEnd();
 	}
@@ -109,13 +127,13 @@ public class NFA {
 	 * @return size of nfa
 	 */
 	public int size() {
-		return this.size;
+		return states.size();
 	}
 	
 	/**
 	 * finalize the nfa (add transition from current state to end)
 	 */
-	public void finalize() {
+	public void finalizeNFA() {
 		this.addTransition(this.current, this.end, EPSILON);
 	}
 	
