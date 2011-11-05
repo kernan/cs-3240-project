@@ -2,4 +2,4 @@
 $STUFF		[a-c]
 $NOTSTUFF 	[^a-b] IN $STUFF      
 %%
-$THESTUFF	$NOTSTUFF* 	
+$THESTUFF	($NOTSTUFF )* 	
