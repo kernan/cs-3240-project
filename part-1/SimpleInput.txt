@@ -1,4 +1,4 @@
 %%
 $STUFF		[a-c]        
 %%
-$THESTUFF	$STUFF 	
+$THESTUFF	$STUFF* 	
