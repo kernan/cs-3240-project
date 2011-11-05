@@ -368,14 +368,14 @@ public class RecursiveDescent {
 		
 		NFA t2 = stack.pop();
 		int index = 0;
-		for(index = index; index < in.size(); index++) {
+		for(; index < in.size(); index++) {
 			if(!exclude.contains(in.get(index))) {
 				NFA.State s = t2.addTransition(t2.getCurr(), t2.getCurr().getPrev(), in.get(index));
 				t2.setCurr(s);
 				break;
 			}
 		}
-		for(index = index; index < in.size(); index++) {
+		for(; index < in.size(); index++) {
 			if(!exclude.contains(in.get(index))) {
 				t2.addTransition(t2.getCurr().getPrev(), t2.getCurr(), exclude.get(index));
 			}
