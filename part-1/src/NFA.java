@@ -114,7 +114,7 @@ public class NFA {
 	 * finalize the nfa (add transition from current state to end)
 	 */
 	public void finalize() {
-		this.addTransition(this.current, this.end, this.EPSILON);
+		this.addTransition(this.current, this.end, EPSILON);
 	}
 	
 	/**
@@ -197,6 +197,14 @@ public class NFA {
 			 */
 			public char getLetter() {
 				return this.letter;
+			}
+			
+			/**
+			 * 
+			 * @return
+			 */
+			public State getNext() {
+				return this.next;
 			}
 		}
 	}
