@@ -36,6 +36,10 @@ public class NFA_Utils {
 			
 	};
 	
+	public char[] DOT_CHAR = {
+			'\\', '*', '+', '?', '|', '[', ']', '(', ')', '.', '\'', '\"'
+	};
+	
 	
 	
 	
