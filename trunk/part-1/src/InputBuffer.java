@@ -13,8 +13,8 @@ import java.util.Scanner;
 public class InputBuffer {
 	
 	private Scanner input;
-	public String buffer;
-	public int currentpos;//TODO
+	private String buffer;
+	private int currentpos;
 	private boolean peek;
 	
 	/** 
@@ -95,6 +95,9 @@ public class InputBuffer {
 			this.buffer = input.nextLine();
 			this.currentpos = 0;
 			this.peek = false;
+			//if(buffer.length() == 0) {
+			//	return gotoNextLine();
+			//}
 			return true;
 		}
 		else {

@@ -9,7 +9,7 @@ import java.util.Scanner;
 
 public class Lexer {
 	
-	public InputBuffer input_stream;//TODO
+	private InputBuffer input_stream;
 	private boolean peek;
 	private Token current;
 	
@@ -65,8 +65,9 @@ public class Lexer {
 		switch(t) {
 			//ignore comment lines
 			case '%':
+				System.out.println("IS IT A COMMENT??? " + input_stream.peekNext());
 				if(input_stream.peekNext() == '%') {
-					boolean more = input_stream.gotoNextLine();
+					input_stream.gotoNextLine();
 					return makeNewToken();
 				}
 				else {
@@ -84,7 +85,8 @@ public class Lexer {
 			//defined name
 			case '$':
 				String name = new String();
-				while(input_stream.peekNext() != ' ' && input_stream.peekNext() != '\t') {
+				//while(input_stream.peekNext() != ' ' && input_stream.peekNext() != '\t') {
+				while(validDefinedCharacters()) {
 					name += input_stream.getNext();
 				}
 				input_stream.getNext();//consume whitespace
@@ -150,7 +152,7 @@ public class Lexer {
 				result = new Token(TokenType.LITERAL, new String() + t);
 		}
 		
-		System.out.println("[Lexer] new Token: " + result.getType() + ", \"" + result.getValue() + "\"");
+		System.out.println("      [Lexer] new Token: " + result.getType() + ", " + result.getValue());
 		
 		return result;
 	}
@@ -162,5 +164,19 @@ public class Lexer {
 	public boolean gotoNextLine() {
 		peek = false;
 		return input_stream.gotoNextLine();
+	}
+	
+	/**
+	 *
+	 * @return 
+	 */
+	public boolean validDefinedCharacters() {
+		int t = ((int)input_stream.peekNext());
+		if((t >= 48 && t <= 57) || (t >= 65 && t <= 90) || (t >= 97 && t <= 122) || (t == 45) || (t == 95)) {
+			return true;
+		}
+		else {
+			return false;
+		}
 	}
 }
