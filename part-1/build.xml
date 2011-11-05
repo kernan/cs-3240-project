@@ -14,7 +14,7 @@ Robert Kernan
     	<property name="build.dir" location="./bin"/>
     	<!--    manifest variables    -->
     	<property name="jar.include" value="${build.dir}/**/*.class"/>
-    	<property name="jar.mainclass" value="Driver"/>
+    	<property name="jar.mainclass" value="Parser"/>
     </target>
 	
 	<!-- prepare -->

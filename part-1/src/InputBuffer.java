@@ -14,7 +14,7 @@ public class InputBuffer {
 	
 	private Scanner input;
 	public String buffer;
-	private int currentpos;
+	public int currentpos;//TODO
 	private boolean peek;
 	
 	/** 
@@ -38,10 +38,25 @@ public class InputBuffer {
 			return buffer.charAt(currentpos);
 		}
 		else {
+			System.out.print("[InputBuffer] getting next char: ");
+			
 			if(currentpos > buffer.length() - 1) {
-				return '\n';
+				System.out.print("overflow... need to go to a new line\n");
+				if(buffer.length() == 0) {
+					boolean more = gotoNextLine();
+					if(more) {
+						return getNext();
+					}
+					else {
+						return '\n';
+					}
+				}
+				else {
+					return '\n';
+				}
 			}
 			else {
+				System.out.print(buffer.charAt(currentpos) + "\n");
 				return this.buffer.charAt(currentpos++);
 			}
 		}
@@ -52,16 +67,19 @@ public class InputBuffer {
 	 * @return next token in buffer
 	 */
 	public char peekNext() {
+		System.out.print("[InputBuffer] peeking next char: ");
 		if(peek) {
 			if(this.currentpos > buffer.length() - 1) {
 				return '\n';
 			}
 			else {
+				System.out.print(buffer.charAt(currentpos) + "\n");
 				return buffer.charAt(currentpos);
 			}
 		}
 		else {
 			peek = true;
+			System.out.print(" getting the char... ");
 			return getNext();
 		}
 	}
@@ -70,6 +88,9 @@ public class InputBuffer {
 	 * move input buffer to the next line
 	 */
 	public boolean gotoNextLine() {
+		peek = false;
+		System.out.println("[InputBuffer] getting next line...");
+		
 		if(this.input.hasNextLine()) {
 			this.buffer = input.nextLine();
 			this.currentpos = 0;

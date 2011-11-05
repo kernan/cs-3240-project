@@ -26,6 +26,7 @@ public class NFA {
 	 * @param alphabet
 	 */
 	public NFA() {
+		System.out.print("[NFA] initializing... ");
 		this.size = 0;
 		this.start = this.addState();
 		this.end = this.addState();
@@ -41,6 +42,7 @@ public class NFA {
 	 * @return state that was transitioned to
 	 */
 	public State addTransition(State t1, State t2, char letter) {
+		System.out.println("[NFA] adding transition from " + t1 + " to " + t2 + " on \'" + letter + "\'");
 		t1.addTransition(letter, t2);
 		return t2;
 	}
@@ -71,7 +73,7 @@ public class NFA {
 		this.addTransition(this.end, other.getStart(), EPSILON);
 		this.size += other.size();
 		this.current = other.getCurr();
-		this.end = other.getEnd();
+		//this.end = other.getEnd();
 	}
 	
 	/**

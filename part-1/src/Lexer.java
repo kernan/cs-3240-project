@@ -9,7 +9,7 @@ import java.util.Scanner;
 
 public class Lexer {
 	
-	private InputBuffer input_stream;
+	public InputBuffer input_stream;//TODO
 	private boolean peek;
 	private Token current;
 	
@@ -44,12 +44,12 @@ public class Lexer {
 	 */
 	public Token peekNextToken() {
 		if(peek) {
-			current = makeNewToken();
 			return current;
 		}
 		else {
+			current = getNextToken();
 			peek = true;
-			return getNextToken();
+			return current;
 		}
 	}
 	
@@ -66,8 +66,8 @@ public class Lexer {
 			//ignore comment lines
 			case '%':
 				if(input_stream.peekNext() == '%') {
-					input_stream.gotoNextLine();
-					result = new Token(TokenType.EOL, "\n");
+					boolean more = input_stream.gotoNextLine();
+					return makeNewToken();
 				}
 				else {
 					result = new Token(TokenType.LITERAL, "%");
@@ -76,15 +76,15 @@ public class Lexer {
 			//ignore whitespace
 			case '\t':
 			case ' ':
-				result = makeNewToken();
-				break;
+				return makeNewToken();
 			//handle possible line returns
 			case '\n':
 				result = new Token(TokenType.EOL, "\n");
+				break;
 			//defined name
 			case '$':
 				String name = new String();
-				while(input_stream.peekNext() != ' ') {
+				while(input_stream.peekNext() != ' ' && input_stream.peekNext() != '\t') {
 					name += input_stream.getNext();
 				}
 				input_stream.getNext();//consume whitespace
@@ -150,6 +150,8 @@ public class Lexer {
 				result = new Token(TokenType.LITERAL, new String() + t);
 		}
 		
+		System.out.println("[Lexer] new Token: " + result.getType() + ", \"" + result.getValue() + "\"");
+		
 		return result;
 	}
 	
@@ -158,6 +160,7 @@ public class Lexer {
 	 * @return true: there is another line, false: end of file
 	 */
 	public boolean gotoNextLine() {
+		peek = false;
 		return input_stream.gotoNextLine();
 	}
 }

@@ -7,6 +7,7 @@
 
 //TODO discuss appropriate tokens
 public enum TokenType {
+	EOF,
 	EOL,
 	LITERAL,
 	DEFINED,
