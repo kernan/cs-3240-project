@@ -97,6 +97,8 @@ public class RecursiveDescent {
 			t2.addTransition(t2.getStart(), s1, NFA.EPSILON);
 			t2.setCurr(s1);
 			
+			stack.push(t2);
+			
 			rexp1();
 			rexp$();
 		}
@@ -142,11 +144,13 @@ public class RecursiveDescent {
 			rexp2Tail();
 		}
 		else if(type == TokenType.LITERAL){
+			char_class = false;
+			
 			//make sure it's valid
 			boolean valid = check_valid(lexer.peekNextToken(), RE_CHAR);
 			if(!valid) {
 				//TODO error handling
-				//return;
+				return;
 			}
 			
 			/* current --(Token.value)--> new
@@ -154,7 +158,13 @@ public class RecursiveDescent {
 			 */
 			Token token = lexer.getNextToken();//consume LITERAL
 			NFA t2 = stack.pop();
-			NFA.State s1 = t2.addTransition(t2.getCurr(), t2.addState(), token.getValue().charAt(0));
+			
+			char trans_val = token.getValue().charAt(0);
+			if(trans_val == '\\') {
+				trans_val = token.getValue().charAt(1);
+			}
+			
+			NFA.State s1 = t2.addTransition(t2.getCurr(), t2.addState(), trans_val);
 			s1.setPrev(t2.getCurr());
 			t2.setCurr(s1);
 			//push onto stack
@@ -171,11 +181,8 @@ public class RecursiveDescent {
 	 * <rexp2Tail> -> * | + |  E
 	 */
 	private void rexp2Tail() {
-		System.out.println("[RDescent][rexp2Tail] checking for operators");
-	
 		TokenType type = lexer.peekNextToken().getType();
 		if(type == TokenType.KLEENE){
-			System.out.println("[RDescent][rexp2Tail] KLEENE found, not char class");
 			char_class = false;
 			lexer.getNextToken();
 			if(scope_back) {
@@ -242,10 +249,10 @@ public class RecursiveDescent {
 			scope_back = false;
 			
 			//scope back in
-			NFA t2 = stack.pop();
-			NFA t1 = stack.pop();
-			t1.concat(t2);
-			stack.push(t1);
+			//NFA t2 = stack.pop();
+			//NFA t1 = stack.pop();
+			//t1.concat(t2);
+			//stack.push(t1);
 			
 			return;
 		}
@@ -280,6 +287,8 @@ public class RecursiveDescent {
 			for(int i = 1; i < DOT_CHAR.length; i++) { 
 				t2.addTransition(t2.getCurr().getPrev(), t2.getCurr(), DOT_CHAR[i]);
 			}
+			
+			stack.push(t2);
 		}
 		else if(type == TokenType.LBRACKET){
 			lexer.getNextToken();//consume LBRACKET
@@ -287,15 +296,6 @@ public class RecursiveDescent {
 		}
 		else  {
 			Token defined = lexer.getNextToken();
-			/*ArrayList<Character> set = definedClass(defined, false);
-			
-			NFA t2 = stack.pop();
-			NFA.State s = t2.addTransition(t2.getCurr(), t2.addState(), set.get(0));
-			t2.setCurr(s);
-			for(int i = 1; i < set.size(); i++) {
-				t2.addTransition(t2.getCurr().getPrev(), t2.getCurr(), set.get(i));
-			}
-			stack.push(t2);*/
 		}
 	}
 	
@@ -377,8 +377,10 @@ public class RecursiveDescent {
 			}
 			return range;
 		}
-		else
+		else {
+			range.add(start.getValue().charAt(0));
 			return range;
+		}
 	}
 	
 	/**
@@ -472,10 +474,10 @@ public class RecursiveDescent {
 	 * RE_CHAR set
 	 */
 	private static final String[] RE_CHAR = {
-			"\\ ", "!", "\"", "#", "$", "%", "&", "\'", "\\(", "\\)", "\\*", "\\+", ",", "-", "\\.", "/",
+			"\\ ", "!", "\\\"", "#", "$", "%", "&", "\\\'", "\\(", "\\)", "\\*", "\\+", ",", "-", "\\.", "/",
 			"0", "1", "2", "3", "4", "5", "6", "7", "8", "9", ":", ";", "<", "=", ">", "\\?", 
 			"@", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", 
-			"P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "\\[", "\\", "\\]", "^", "_", 
+			"P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "\\[", "\\\\", "\\]", "^", "_", 
 			"`", "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", 
 			"p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", "{", "\\|", "}", "~"		
 	};
@@ -487,7 +489,7 @@ public class RecursiveDescent {
 			" ", "!", "\"", "#", "$", "%", "&", "\'", "(", ")", "*", "+", ",", "\\-", ".", "/",
 			"0", "1", "2", "3", "4", "5", "6", "7", "8", "9", ":", ";", "<", "=", ">", "?", 
 			"@", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", 
-			"P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "\\[", "\\", "\\]", "\\^", "_", 
+			"P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "\\[", "\\\\", "\\]", "\\^", "_", 
 			"`", "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", 
 			"p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", "{", "|", "}", "~"		
 	};
