@@ -1,4 +1,4 @@
-%%
-$STUFF		[a-c]        
-%%
-$THESTUFF	$STUFF* 	
+%% 
+$STUFF		[a-c]
+%% 
+$THESTUFF	($STUFF )*

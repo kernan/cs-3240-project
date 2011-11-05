@@ -15,6 +15,7 @@ public class Parser {
 		
 		do {
 			Token id = input.getNextToken();
+			System.out.println("[Parser] got ID: " + id.getValue());
 			if(id.getType() != TokenType.DEFINED) {
 				throw new ParseException("Invalid syntax, new lines must begin with a id definition", -1);
 			}
@@ -24,9 +25,13 @@ public class Parser {
 			nfa_list.add(new_nfa);
 		} while(input.gotoNextLine());
 		
+		System.out.println("[Parser] merging...");
+		
 		NFA big_nfa = new NFA();
 		for(int i = 0; i < nfa_list.size(); i++) {
-			if(nfa_list.get(i).getCharClass()) {
+			System.out.println("\t" + i + ": " + nfa_list.get(i).getCharClass());
+			if(!nfa_list.get(i).getCharClass()) {
+				System.out.println("[Parser] merging with #" + i);
 				big_nfa.merge(nfa_list.get(i).getNFA());
 			}
 		}
