@@ -64,11 +64,23 @@ public class NFA {
 	
 	/**
 	 * attach a given nfa to the end of this nfa
-	 * @param other nfa to merge with
+	 * @param other nfa to concat with
 	 */
 	public void concat(NFA other) {
 		this.addTransition(this.current, this.end, EPSILON);
 		this.addTransition(this.end, other.getStart(), EPSILON);
+		this.size += other.size();
+		this.current = other.getCurr();
+		this.end = other.getEnd();
+	}
+	
+	/**
+	 * attach given nfa to the front (like a union)
+	 * @param other nfa to merge with
+	 */
+	public void merge(NFA other) {
+		this.addTransition(this.start, other.getStart(), EPSILON);
+		this.addTransition(this.end, other.getEnd(), EPSILON);
 		this.size += other.size();
 		this.current = other.getCurr();
 		this.end = other.getEnd();
@@ -130,6 +142,14 @@ public class NFA {
 		}
 		
 		/**
+		 * accessor for all transitions for this state
+		 * @return transitions out of this state
+		 */
+		public ArrayList<Transition> getTransitions() {
+			return this.transitions;
+		}
+		
+		/**
 		 * mutator for previous state
 		 * @param prev state to set as previous
 		 */
@@ -157,7 +177,7 @@ public class NFA {
 		/**
 		 * map containing transition character and state
 		 */
-		private class Transition {
+		public class Transition {
 			private char letter;
 			private State next;
 			
@@ -169,6 +189,14 @@ public class NFA {
 			public Transition(char letter, State next) {
 				this.letter = letter;
 				this.next = next;
+			}
+			
+			/**
+			 * 
+			 * @return
+			 */
+			public char getLetter() {
+				return this.letter;
 			}
 		}
 	}

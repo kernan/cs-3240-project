@@ -141,10 +141,18 @@ public class RecursiveDescent {
 			if(!valid) {
 				return;
 			}
-			//TODO add nfa transitions
 			
+			/* current --(Token.value)--> new
+			 * current = new
+			 */
+			Token token = lexer.getNextToken();//consume LITERAL
+			NFA t2 = stack.pop();
+			NFA.State s1 = t2.addTransition(t2.getCurr(), t2.addState(), token.getValue().charAt(0));
+			s1.setPrev(t2.getCurr());
+			t2.setCurr(s1);
+			//push onto stack
+			stack.push(t2);
 			
-			lexer.getNextToken();//consume LITERAL
 			rexp2Tail();
 		}
 		else{
@@ -252,10 +260,13 @@ public class RecursiveDescent {
 		TokenType type = lexer.peekNextToken().getType();
 		if(type == TokenType.DOT){
 			lexer.getNextToken();//consume DOT
-			for(int i = 0; i < DOT_CHAR.length; i++) { 
-				
+			
+			NFA t2 = stack.pop();
+			NFA.State s = t2.addTransition(t2.getCurr(), t2.addState(), DOT_CHAR[0]);
+			t2.setCurr(s);
+			for(int i = 1; i < DOT_CHAR.length; i++) { 
 				//TODO add nfa transitions
-				
+				t2.addTransition(t2.getCurr().getPrev(), t2.getCurr(), DOT_CHAR[i]);
 			}
 		}
 		else if(type == TokenType.LBRACKET){
@@ -264,7 +275,15 @@ public class RecursiveDescent {
 		}
 		else  {
 			Token defined = lexer.getNextToken();
-			definedClass(defined);
+			ArrayList<Character> set = definedClass(defined, false);
+			
+			NFA t2 = stack.pop();
+			NFA.State s = t2.addTransition(t2.getCurr(), t2.addState(), set.get(0));
+			t2.setCurr(s);
+			for(int i = 1; i < set.size(); i++) {
+				t2.addTransition(t2.getCurr().getPrev(), t2.getCurr(), set.get(i));
+			}
+			stack.push(t2);
 		}
 	}
 	
@@ -302,20 +321,16 @@ public class RecursiveDescent {
 	/**
 	 * <charSet> -> CLS_CHAR <charSetTail> 
 	 */
-	private void charSet(){
+	private ArrayList<Character> charSet(){
 		Token start = lexer.getNextToken();//consume LITERAL
-		
-		//TODO pass literal to nfa
-		
-		
-		charSetTail(start);
+		return charSetTail(start);
 	}
 	
 	/**
 	 * <charSetTail> -> - CLS_CHAR | E
 	 * @param start starting character for the range
 	 */
-	private void charSetTail(Token start){
+	private ArrayList<Character> charSetTail(Token start){
 		TokenType type = lexer.peekNextToken().getType();
 		if(type == TokenType.DASH){
 			lexer.getNextToken();//consume DASH
@@ -323,22 +338,22 @@ public class RecursiveDescent {
 			//make sure end is a CLS_CHAR
 			boolean valid = check_valid(end, CLS_CHAR);
 			if(!valid) {
-				return;
+				//TODO error handling
+				return null;
 			}
 			//make set from range
 			int start_index = ((int)start.getValue().charAt(0)) - 32;
 			int end_index = ((int)end.getValue().charAt(0)) - 32;
 			int current_index = start_index;
+			ArrayList<Character> range = new ArrayList<Character>();
 			while(current_index <= end_index) {
-				
-				//TODO add nfa transitions
-				
-				
+				range.add(((char)(current_index + 32)));
 				current_index++;
 			}
+			return range;
 		}
 		else
-			return;
+			return null;
 	}
 	
 	/**
@@ -346,32 +361,54 @@ public class RecursiveDescent {
 	 */
 	private void excludeSet(){
 		lexer.getNextToken();//consume CARET
-		charSet();
+		ArrayList<Character> exclude = charSet();
 		lexer.getNextToken();//consume RBRACKET
 		lexer.getNextToken();//consume IN
-		excludeSetTail();
-	}
+		ArrayList<Character> in = excludeSetTail();
+		
+		NFA t2 = stack.pop();
+		int index = 0;
+		for(index = index; index < in.size(); index++) {
+			if(!exclude.contains(in.get(index))) {
+				NFA.State s = t2.addTransition(t2.getCurr(), t2.getCurr().getPrev(), in.get(index));
+				t2.setCurr(s);
+				break;
+			}
+		}
+		for(index = index; index < in.size(); index++) {
+			if(!exclude.contains(in.get(index))) {
+				t2.addTransition(t2.getCurr().getPrev(), t2.getCurr(), exclude.get(index));
+			}
+		}
+		stack.push(t2);
+	} 
 	
 	/**
 	 * <excludeSetTail> -> [<charSet>]  | <definedClass>
 	 */
-	private void excludeSetTail(){
+	private ArrayList<Character> excludeSetTail(){
 		TokenType type = lexer.peekNextToken().getType();
 		if(type == TokenType.LBRACKET){
 			lexer.getNextToken();//consume LBRACKET
-			charSet();
+			ArrayList<Character> range = charSet();
 			lexer.getNextToken();//consume RBRACKET
+			return range;
 		}
 		else{
 			Token token = lexer.getNextToken();
-			definedClass(token);
+			ArrayList<Character> range = definedClass(token, true);
+			return range;
 		}
 	}
 	
 	/**
 	 * 
+	 * @param token
+	 * @param exclude
+	 * @return
 	 */
-	private void definedClass(Token token){
+	private ArrayList<Character> definedClass(Token token, boolean exclude){
+		
 		NFA_Identifier phony = new NFA_Identifier(token.getValue(), null, false);
 		int index = this.defined.indexOf(phony);
 		//make sure it exists
@@ -379,9 +416,23 @@ public class RecursiveDescent {
 			//TODO error handling
 		}
 		NFA_Identifier defined_nfa = this.defined.get(index);
-		NFA top = stack.pop();
-		top.concat(defined_nfa.getNFA());
-		stack.push(top);
+		
+		if(exclude) {
+			ArrayList<Character> set = new ArrayList<Character>();
+			ArrayList<NFA.State.Transition> t = new ArrayList<NFA.State.Transition>();
+			NFA.State s1 = defined_nfa.getNFA().getCurr().getPrev();
+			t = s1.getTransitions();
+			for(int i = 0; i < t.size(); i++) {
+				set.add(t.get(i).getLetter());
+			}
+			return set;
+		}
+		else {
+			NFA top = stack.pop();
+			top.concat(defined_nfa.getNFA());
+			stack.push(top);
+			return null;
+		}
 	}
 	
 	/**
