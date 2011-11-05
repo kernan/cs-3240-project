@@ -75,12 +75,21 @@ public class Lexer {
 					result = new Token(TokenType.LITERAL, "%");
 				}
 				break;
+			//ignore whitespace
+			case '\t':
+			case ' ':
+				result = makeNewToken();
+				break;
+			//handle possible line returns
+			case '\n':
+				result = new Token(TokenType.EOL, "\n");
 			//defined name
 			case '$':
 				String name = new String();
 				while(input_stream.peekNext() != ' ') {
 					name += input_stream.getNext();
 				}
+				input_stream.getNext();//consume whitespace
 				result = new Token(TokenType.DEFINED, name);
 				break;
 			//alternation
@@ -127,10 +136,16 @@ public class Lexer {
 			case 'I':
 				if(input_stream.peekNext() == 'N') {
 					result = new Token(TokenType.IN, "IN");
+					input_stream.getNext();
 				}
 				else {
 					result = new Token(TokenType.LITERAL, "L");
 				}
+				break;
+			//escaped characters
+			case '\\':
+				String escaped = "\\" + input_stream.getNext();
+				result = new Token(TokenType.LITERAL, escaped);
 				break;
 			//everything else (character literals)
 			default:

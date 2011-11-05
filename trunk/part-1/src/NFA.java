@@ -16,7 +16,6 @@ public class NFA {
 	
 	
 	private State start, end, current;
-	private ArrayList<Character> alphabet;
 	int size;
 	
 	public static final char EPSILON = '\u0000';
@@ -26,14 +25,12 @@ public class NFA {
 	 * add unconditional transition from start to current
 	 * @param alphabet
 	 */
-	public NFA(ArrayList<Character> alphabet) {
-		this.alphabet = alphabet;
+	public NFA() {
 		this.size = 0;
 		this.start = this.addState();
 		this.end = this.addState();
 		this.current = this.addTransition(this.start, new State(), EPSILON);
 		this.current.setPrev(this.start);
-		this.size = 3;
 	}
 	
 	/**
@@ -69,7 +66,7 @@ public class NFA {
 	 * attach a given nfa to the end of this nfa
 	 * @param other nfa to merge with
 	 */
-	public void concatNFA(NFA other) {
+	public void concat(NFA other) {
 		this.addTransition(this.current, this.end, EPSILON);
 		this.addTransition(this.end, other.getStart(), EPSILON);
 		this.size += other.size();
@@ -99,6 +96,13 @@ public class NFA {
 	 */
 	public int size() {
 		return this.size;
+	}
+	
+	/**
+	 * finalize the nfa (add transition from current state to end)
+	 */
+	public void finalize() {
+		this.addTransition(this.current, this.end, this.EPSILON);
 	}
 	
 	/**
