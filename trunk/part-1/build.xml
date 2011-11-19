@@ -17,7 +17,7 @@ author: Robert Kernan
     	<property name="jar.mainclass" value="Parser"/>
 		<!--    command line args    -->
 		<property name="args.use" value="true"/><!--true/false-->
-		<property name="args.message" value=""/>
+		<property name="args.message" value="args format: &quot;&lt;specification file&gt; &lt;code files&gt;&quot;"/>
     </target>
 	
 	<!-- prepare -->
