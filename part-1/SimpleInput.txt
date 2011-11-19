@@ -1,4 +1,0 @@
-%% 
-$STUFF		[a-c]
-%% 
-$THESTUFF	($STUFF )*

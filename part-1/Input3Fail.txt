@@ -1,1 +1,0 @@
-student1  Num  bytes  PI  modula3
