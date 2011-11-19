@@ -65,8 +65,12 @@ public class Lexer {
 		switch(t) {
 			//ignore comment lines
 			case '%':
-				System.out.println("IS IT A COMMENT??? " + input_stream.peekNext());
 				if(input_stream.peekNext() == '%') {
+					
+					if(Options.DEBUG) {
+						System.out.println("      [Lexer] ignoring comment line...");
+					}
+					
 					input_stream.gotoNextLine();
 					return makeNewToken();
 				}
@@ -85,11 +89,11 @@ public class Lexer {
 			//defined name
 			case '$':
 				String name = new String();
-				//while(input_stream.peekNext() != ' ' && input_stream.peekNext() != '\t') {
 				while(validDefinedCharacters()) {
+
 					name += input_stream.getNext();
 				}
-				input_stream.getNext();//consume whitespace
+				//input_stream.getNext();//consume whitespace
 				result = new Token(TokenType.DEFINED, name);
 				break;
 			//alternation
@@ -152,7 +156,9 @@ public class Lexer {
 				result = new Token(TokenType.LITERAL, new String() + t);
 		}
 		
-		System.out.println("      [Lexer] new Token: " + result.getType() + ", " + result.getValue());
+		if(Options.DEBUG) {
+			System.out.println("      [Lexer] new Token: " + result.getType() + ", " + result.getValue());
+		}
 		
 		return result;
 	}

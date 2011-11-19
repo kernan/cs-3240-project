@@ -3,7 +3,7 @@
  * 
  * cs3240 HW-1
  */
-
+ 
 import java.util.Scanner;
 
 /** InputBuffer.java
@@ -33,32 +33,35 @@ public class InputBuffer {
 	 * @return the next character in the buffer
 	 */
 	public char getNext() {
+		if((this.currentpos >= buffer.length()) || (buffer.length() == 0)) {
+			
+			if(Options.DEBUG) {
+				System.out.print("[InputBuffer] overflow... need to go to next line\n");
+			}
+			
+			return '\n';
+		}
+		
+		if(Options.DEBUG) {
+			System.out.print("[InputBuffer] getting next char: ");
+		}
+		
 		if(peek) {
 			this.peek = false;
+			
+			if(Options.DEBUG) {
+				System.out.print(buffer.charAt(currentpos) + "\n");
+			}
+			
 			return buffer.charAt(currentpos);
 		}
 		else {
-			System.out.print("[InputBuffer] getting next char: ");
 			
-			if(currentpos > buffer.length() - 1) {
-				System.out.print("overflow... need to go to a new line\n");
-				if(buffer.length() == 0) {
-					boolean more = gotoNextLine();
-					if(more) {
-						return getNext();
-					}
-					else {
-						return '\n';
-					}
-				}
-				else {
-					return '\n';
-				}
-			}
-			else {
+			if(Options.DEBUG) {
 				System.out.print(buffer.charAt(currentpos) + "\n");
-				return this.buffer.charAt(currentpos++);
 			}
+			
+			return this.buffer.charAt(currentpos++);
 		}
 	}
 	
@@ -67,19 +70,24 @@ public class InputBuffer {
 	 * @return next token in buffer
 	 */
 	public char peekNext() {
-		System.out.print("[InputBuffer] peeking next char: ");
+		
+		if(Options.DEBUG) {
+			System.out.print("[InputBuffer] peeking next char: ");
+		}
+		
+		if(this.currentpos >= buffer.length()) {
+			return '\n';
+		}
 		if(peek) {
-			if(this.currentpos > buffer.length() - 1) {
-				return '\n';
-			}
-			else {
+			
+			if(Options.DEBUG) {
 				System.out.print(buffer.charAt(currentpos) + "\n");
-				return buffer.charAt(currentpos);
 			}
+			
+			return buffer.charAt(currentpos);
 		}
 		else {
 			peek = true;
-			System.out.print(" getting the char... ");
 			return getNext();
 		}
 	}
@@ -89,15 +97,14 @@ public class InputBuffer {
 	 */
 	public boolean gotoNextLine() {
 		peek = false;
-		System.out.println("[InputBuffer] getting next line...");
+		if(Options.DEBUG) {
+			System.out.println("[InputBuffer] getting next line...");
+		}
 		
 		if(this.input.hasNextLine()) {
 			this.buffer = input.nextLine();
 			this.currentpos = 0;
 			this.peek = false;
-			//if(buffer.length() == 0) {
-			//	return gotoNextLine();
-			//}
 			return true;
 		}
 		else {
