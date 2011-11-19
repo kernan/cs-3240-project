@@ -36,30 +36,32 @@ public class DFA {
 	 *
 	 */
 	public boolean gotoNext(char letter) {
-		
-		//if already at invalid state
-		if(this.current == -1) {
-			return false;
-		}
-		
 		State s = this.states.get(this.current);
-		int dfa_index = -1;
-		//find transitions for given letter
+		int nfa_index = -1;
 		for(int i = 0; i < s.getTransitions().size(); i++) {
 			if(s.getTransitions().get(i).getLetter() == letter) {
-				dfa_index = s.getTransitions().get(i).getNext();
+				nfa_index = s.getTransitions().get(i).getNext();
 				break;
 			}
 		}
-		this.current = dfa_index;
-		if(current == -1) {
+		if(nfa_index == -1) {
 			return false;
 		}
+		int dfa_index = -1;
+		for(int i = 0; i < this.states.size(); i++) {
+			for(int j = 0; j < this.states.get(i).getStatesSet().size(); j++) {
+				if(this.states.get(i).getStatesSet().get(j) == nfa_index) {
+					dfa_index = i;
+				}
+			}
+		}
+		
+		this.current = dfa_index;
 		return true;
 	}
 	
 	/**
-	 * check if current state is a final state
+	 *
 	 */
 	public boolean atFinal() {
 		ArrayList<Integer> s = this.states.get(this.current).getStatesSet();
@@ -139,42 +141,23 @@ public class DFA {
 						//find all equivalent nfa states in next dfa state
 						next_dfa_state = epsilonClosure(next_dfa_state, nfa.getStates());
 						
+						
+						
+						/*=====
 						//dfa state is a dud
-						boolean dud_state = false;
-						int transition_index = -1;
+						boolean dud_state = true;
 						//check if any nfa state in next dfa state already exists in the dfa
-						for(int k = 0; k < DTrans.size() && !dud_state; k++) {
-							//get current DTrans state set
-							ArrayList<Integer> nfa_state_set = DTrans.get(k).getStatesSet();
-							//assume equivalancy
-							boolean equivalent = true;
-							//for states in the new dfa state
-							for(int l = 0; l < next_dfa_state.size() && equivalent; l++) {
-								//if doesn't exist in current dfa state
-								if(!nfa_state_set.contains(next_dfa_state.get(l))) {
-									//not equivalent
-									equivalent = false;
-								}
-							}
-							//if equivalency found
-							if(equivalent) {
-								//IS dud state
-								dud_state = true;
-								//found transition index
-								transition_index = k;
-							}
-						}
-							
-						/*	//get next state
+						for(int k = 0; k < next_dfa_state.size() && dud_state; k++) {
+							//get next state
 							Integer next_state = next_dfa_state.get(k);
 							//for dfa state in the dfa
-							for(int l = 0; l < DTrans.size() && !dud_state; l++) {
+							for(int l = 0; l < DTrans.size() && dud_state; l++) {
 								//get current dfa state
 								ArrayList<Integer> nfa_state_set = DTrans.get(l).getStatesSet();
 								//if state already exists in the dfa
-								if(nfa_state_set.contains(next_state)) {
+								if(!nfa_state_set.contains(next_state)) {
 									//this new dfa state is a dud
-									dud_state = true;
+									dud_state = false;
 									//add all states to the current dfa state (that don't already exist there)
 									for(int m = 0; m < next_dfa_state.size(); m++) {
 										if(!nfa_state_set.contains(next_dfa_state.get(m))) {
@@ -184,7 +167,8 @@ public class DFA {
 									
 								}
 							}
-						}*/
+						}
+						=====*/
 						
 						//if next state is NOT a dud
 						if(!dud_state) {
@@ -194,12 +178,9 @@ public class DFA {
 							U.setStatesSet(next_dfa_state);
 							//add new state to the dfa
 							DTrans.add(U);
-							//add transition index
-							T.addTransition(curr_transition.getLetter(), DTrans.size()-1);
 						}
-						else {
-							T.addTransition(curr_transition.getLetter(), transition_index);
-						}
+						//add transition to current dfa state
+						T.getTransitions().add(curr_transition);
 					}
 				}
 			}
@@ -260,7 +241,7 @@ public class DFA {
 			for(int j = 0; j < s_set.size(); j++) {
 				result += s_set.get(j) + ", ";
 			}
-			ArrayList<State.Transition> s_trans = s.getTransitions();
+			ArrayList<NFA.State.Transition> s_trans = s.getTransitions();
 			result += "\nTrans: ";
 			for(int j = 0; j < s_trans.size(); j++) {
 				result += s_trans.get(j).getLetter() + "->" + s_trans.get(j).getNext() + "; ";
@@ -276,14 +257,14 @@ public class DFA {
 	public class State {
 		
 		private ArrayList<Integer> states_set;
-		private ArrayList<Transition> transitions;
+		private ArrayList<NFA.State.Transition> transitions;
 		
 		/**
 		 *
 		 */
 		public State() {
 			this.states_set = new ArrayList<Integer>();
-			this.transitions = new ArrayList<State.Transition>();
+			this.transitions = new ArrayList<NFA.State.Transition>();
 		}
 		
 		/**
@@ -296,7 +277,7 @@ public class DFA {
 		/**
 		 *
 		 */
-		public ArrayList<State.Transition> getTransitions() {
+		public ArrayList<NFA.State.Transition> getTransitions() {
 			return this.transitions;
 		}
 		
@@ -310,14 +291,7 @@ public class DFA {
 		/**
 		 *
 		 */
-		public void addTransition(char letter, int next) {
-			this.transitions.add(new Transition(letter, next));
-		}
-		
-		/**
-		 *
-		 */
-		public void setTransitions(ArrayList<State.Transition> transitions) {
+		public void setTransitions(ArrayList<NFA.State.Transition> transitions) {
 			this.transitions = transitions;
 		}
 		
@@ -331,57 +305,6 @@ public class DFA {
 				}
 			}
 			return false;
-		}
-		
-		/**
-		 * DFA transition
-		 */
-		public class Transition {
-			
-			private char letter;
-			private int next_index;
-			
-			/**
-			 * setup transition with given letter and index to next state
-			 * @param letter value to transition on
-			 * @param next_index index of state to transition to
-			 */
-			public Transition(char letter, int next_index) {
-				this.letter = letter;
-				this.next_index = next_index;
-			}
-			
-			/**
-			 * accessor for value this transition applies to
-			 * @return value to transition on
-			 */
-			public char getLetter() {
-				return this.letter;
-			}
-			
-			/**
-			 * accessor for state this transition goes to
-			 * @return index to transition to
-			 */
-			public int getNext() {
-				return this.next_index;
-			}
-			
-			/**
-			 * mutator for letter this transition applies to
-			 * @param letter value to transition on
-			 */
-			public void setLetter(char letter) {
-				this.letter = letter;
-			}
-			
-			/**
-			 * mutator for state this transition goes to
-			 * @param next_index index of state to transition to
-			 */
-			public void setNext(int next_index) {
-				this.next_index = next_index;
-			}
 		}
 	}
 }
