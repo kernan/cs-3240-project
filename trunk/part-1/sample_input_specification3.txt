@@ -1,0 +1,9 @@
+%%  Definitions for character classes will be contained in this section – examples below
+$DIGIT [0-9]
+$LETTER [A-Z a-z]
+$DASH-OR-UNDERSCORE [\- _]          
+%%  Token definitions will be contained in this section using regexes – examples below
+$DYNAMIC-LIBS ( $LETTER | $DIGIT | \. | $DASH-OR-UNDERSCORE ) * \. s o \. ( $DIGIT | \. ) * 
+
+ 
+

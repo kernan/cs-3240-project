@@ -1,0 +1,5 @@
+int xval;
+int SLOPE = 3.5;
+int intercept;
+int y;
+y = SLOPE * xval + intercept; 
