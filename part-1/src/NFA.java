@@ -145,12 +145,17 @@ public class NFA {
 	 */
 	public void merge(NFA other) {
 		
+		other.finalize();
+		int c = this.size();
+		
+		//move current index
+		this.current_old = this.current;
+		this.current = other.getCurrent()+c;
+		
 		if(Options.DEBUG) {
 			System.out.println("        [NFA] merging nfa");
 		}
-	
-		other.finalize();
-		int c = this.size();
+		
 		//copy all states from other
 		for(int i = 0; i < other.size(); i++) {
 			this.addState();
@@ -161,7 +166,7 @@ public class NFA {
 				this.addTransition(this.size()-1, temp.getNext()+c, temp.getLetter());
 			}
 			if(other.get(i).getEnd()) {
-				this.addTransition(this.size()-1, this.current, EPSILON);
+				this.get(this.size()-1).setEnd(true);
 			}
 		}
 		//remove all end states
@@ -173,9 +178,6 @@ public class NFA {
 		}*/
 		//add transition from start of this to start of other
 		this.addTransition(this.getStart(), other.getStart()+c, EPSILON);
-		//move current index
-		this.current_old = this.current;
-		this.current = other.getCurrent()+c;
 	}
 	
 	/**
