@@ -1,6 +1,5 @@
 
 import java.util.ArrayList;
-import java.util.Stack;
 import java.util.Scanner;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -14,7 +13,7 @@ public class Parser {
 	public static void main(String[] args) throws FileNotFoundException, ParseException {
 		
 		//set debug mode...
-		Options.DEBUG = false;
+		Options.DEBUG = true;
 		
 		System.out.println("============================================\n");
 		System.out.println("     [Parser] GRAMMAR PARSE: START");

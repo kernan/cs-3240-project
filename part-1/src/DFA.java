@@ -230,7 +230,6 @@ public class DFA {
 			for(int i = 0; i < t_transitions.size(); i++) {
 				if(t_transitions.get(i).getLetter() == NFA.EPSILON) {
 					int u = t_transitions.get(i).getNext();
-					boolean contains = false;
 					if(!T.contains(u)) {
 						T.add(u);
 						stack.push(u);
@@ -279,7 +278,7 @@ public class DFA {
 		private ArrayList<Transition> transitions;
 		
 		/**
-		 *
+		 * initialize state with empty transition list and states set
 		 */
 		public State() {
 			this.states_set = new ArrayList<Integer>();
@@ -287,42 +286,50 @@ public class DFA {
 		}
 		
 		/**
-		 *
+		 * accessor for this dfa state's nfa state set
+		 * @return the nfa state set corresponding to this dfa state
 		 */
 		public ArrayList<Integer> getStatesSet() {
 			return this.states_set;
 		}
 		
 		/**
-		 *
+		 * accessor for this dfa's transition list
+		 * @return this dfa's transition list
 		 */
 		public ArrayList<State.Transition> getTransitions() {
 			return this.transitions;
 		}
 		
 		/**
-		 *
+		 * mutator for this dfa's states set
+		 * @param states_set new states set for this dfa state
 		 */
 		public void setStatesSet(ArrayList<Integer> states_set) {
 			this.states_set = states_set;
 		}
 		
 		/**
-		 *
+		 * add transition to this state
+		 * @param letter the letter to transition on
+		 * @param next node to transition to
 		 */
 		public void addTransition(char letter, int next) {
 			this.transitions.add(new Transition(letter, next));
 		}
 		
 		/**
-		 *
+		 * set transition list from an outside source
+		 * @param transitions list of transitions to set as the transition list
 		 */
 		public void setTransitions(ArrayList<State.Transition> transitions) {
 			this.transitions = transitions;
 		}
 		
 		/**
-		 *
+		 * check if a transition exists for the given letter
+		 * @param letter value to check for a transition on
+		 * @return true: a transition exists, false: does not
 		 */
 		public boolean hasTransition(char letter) {
 			for(int i = 0; i < this.transitions.size(); i++) {

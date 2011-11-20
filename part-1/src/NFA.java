@@ -188,6 +188,8 @@ public class NFA {
 			}
 		}
 		this.addTransition(this.getCurrent(), this.size()-1, EPSILON);
+		this.current_old = this.current;
+		this.current = this.size()-1;
 	}
 	
 	/**
