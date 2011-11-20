@@ -6,7 +6,4 @@ $LETTER [A-Za-z]
 $UPPERCASE [^a-z] IN $LETTER         
 %%  Token definitions will be contained in this section using regexes examples below
 $IDENTIFIER $SMALLCASE($SMALLCASE|$DIGIT)*
-$CONSTANT $UPPERCASE($UPPERCASE|$DIGIT)*
-$INTEGER (($NON-ZERO($DIGIT)*)|$DIGIT)
-$FLOAT $INTEGER\.($DIGIT)*$NON-ZERO
 

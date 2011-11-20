@@ -13,7 +13,7 @@ public class Parser {
 	public static void main(String[] args) throws FileNotFoundException, ParseException {
 		
 		//set debug mode...
-		Options.DEBUG = true;
+		Options.DEBUG = false;
 		
 		System.out.println("============================================\n");
 		System.out.println("     [Parser] GRAMMAR PARSE: START");
@@ -56,7 +56,6 @@ public class Parser {
 		}
 		big_nfa.finalize();
 		
-		System.out.println();
 		System.out.print(big_nfa.toString());
 		
 		System.out.println();
@@ -65,6 +64,7 @@ public class Parser {
 		System.out.println();
 		
 		DFA dfa = new DFA(big_nfa);
+		
 		System.out.println(dfa.toString());
 		
 		System.out.println();
@@ -80,6 +80,7 @@ public class Parser {
 			Scanner scan = new Scanner(new File(args[i]));
 			while(scan.hasNext() && pass) {
 				String t = scan.next();
+				System.out.println("\nnext token: " + t);
 				for(int j = 0; j < t.length(); j++) {
 					pass = dfa.gotoNext(t.charAt(j));
 					if(!pass) {
