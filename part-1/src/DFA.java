@@ -253,6 +253,7 @@ public class DFA {
 	public String toString() {
 		String result = "\n";
 		for(int i = 0; i < this.states.size(); i++) {
+			result += i + ": ";
 			State s = this.states.get(i);
 			ArrayList<Integer> s_set = s.getStatesSet();
 			result += "States: ";

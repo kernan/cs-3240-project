@@ -185,6 +185,7 @@ public class RecursiveDescent {
 			if(scope_back) {
 				scope_back = false;
 				NFA t2 = stack.pop();
+				t2.finalize();
 				t2.addRepetitionKleeneGlobal();
 				//scope in
 				NFA t1 = stack.pop();
@@ -209,6 +210,7 @@ public class RecursiveDescent {
 			if(scope_back) {
 				scope_back = false;
 				NFA t2 = stack.pop();
+				t2.finalize();
 				t2.addRepetitionPlusGlobal();
 				//scope in
 				NFA t1 = stack.pop();

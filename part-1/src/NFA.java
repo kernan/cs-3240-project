@@ -123,17 +123,20 @@ public class NFA {
 				this.addTransition(this.size()-1, temp.getNext()+c, temp.getLetter());
 			}
 		}
-		//remove all end states
-		for(int i = 0; i < this.size(); i++) {
-			State temp = this.get(i);
-			if(temp.getEnd()) {
-				temp.setEnd(false);
-			}
-		}
 		//add transition from end of this to beginning of current
 		this.addTransition(this.getCurrent(), c, EPSILON);
 		//move current index
+		this.current_old = other.getCurrentOld();
 		this.current = other.getCurrent()+c;
+		
+		//remove all end states
+		/*for(int i = 0; i < other.size(); i++) {
+			State temp = other.get(i);
+			if(temp.getEnd()) {
+				temp.setEnd(false);
+				temp.addTransition(EPSILON, this.current);
+			}
+		}*/
 	}
 	
 	/**
@@ -157,17 +160,21 @@ public class NFA {
 				State.Transition temp = trans.get(j);
 				this.addTransition(this.size()-1, temp.getNext()+c, temp.getLetter());
 			}
+			if(other.get(i).getEnd()) {
+				this.addTransition(this.size()-1, this.current, EPSILON);
+			}
 		}
 		//remove all end states
-		for(int i = 0; i < this.size(); i++) {
+		/*for(int i = 0; i < this.size(); i++) {
 			State temp = this.get(i);
 			if(temp.getEnd()) {
 				temp.setEnd(false);
 			}
-		}
+		}*/
 		//add transition from start of this to start of other
 		this.addTransition(this.getStart(), other.getStart()+c, EPSILON);
 		//move current index
+		this.current_old = this.current;
 		this.current = other.getCurrent()+c;
 	}
 	
