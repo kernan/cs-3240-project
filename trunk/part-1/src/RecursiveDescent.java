@@ -291,6 +291,12 @@ public class RecursiveDescent {
 			range = charSetList(new ArrayList<Character>());
 		}
 		
+		if(Options.DEBUG) {
+			for(int i = 0; i < range.size(); i++) {
+				System.out.println("   [RDescent] adding to range: " + range.get(i));
+			}
+		}
+		
 		//add range to nfa
 		NFA t2 = stack.pop();
 		
@@ -324,9 +330,12 @@ public class RecursiveDescent {
 	private ArrayList<Character> charSet(ArrayList<Character> range) throws ParseException {
 		Token start = lexer.getNextToken();//consume LITERAL
 		
+		System.out.println("START: " + start.getValue());
+		
 		if(!check_valid(start, CLS_CHAR)) {
 			throw new ParseException("ERROR: Token not a valid CLS_CHAR: " + start.getValue(), -1);
 		}
+		
 		return charSetTail(start, range);
 	}
 	
@@ -349,11 +358,6 @@ public class RecursiveDescent {
 			int end_index = ((int)end.getValue().charAt(0)) - 32;
 			int current_index = start_index;
 			while(current_index <= end_index) {
-				
-				if(Options.DEBUG) {
-					System.out.println("   [RDescent] adding to range: " + (char)(current_index + 32));
-				}
-				
 				range.add(((char)(current_index + 32)));
 				current_index++;
 			}
@@ -377,11 +381,6 @@ public class RecursiveDescent {
 		
 		for(int i = 0; i < in.size(); i++) {
 			if(!exclude.contains(in.get(i))) {
-				
-				if(Options.DEBUG) {
-					System.out.println("    [RDescent] adding to range: " + in.get(i));
-				}
-				
 				range.add(in.get(i));
 			}
 		}
@@ -431,7 +430,8 @@ public class RecursiveDescent {
 			}
 			
 			NFA temp = defined_nfa.getNFA();
-			ArrayList<NFA.State.Transition> trans = temp.get(temp.getCurrentOld()).getTransitions();
+			//ArrayList<NFA.State.Transition> trans = temp.get(temp.getCurrentOld()).getTransitions();
+			ArrayList<NFA.State.Transition> trans = temp.get(1).getTransitions();
 			
 			ArrayList<Character> set = new ArrayList<Character>();
 			for(int i = 0; i < trans.size(); i++) {

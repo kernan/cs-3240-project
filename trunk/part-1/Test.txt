@@ -1,7 +1,2 @@
-$BALLS [8]
-$SHAFT [=]
-$HEAD [D]
-$PENIS $BALLS ($SHAFT)+ $HEAD
-%%$PENISES ($PENIS \.)*
-$TINY ($BALLS $HEAD)
+$ABC [\-_]
 
