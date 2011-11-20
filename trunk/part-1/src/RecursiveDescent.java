@@ -354,8 +354,20 @@ public class RecursiveDescent {
 				throw new ParseException("ERROR: Token not a valid CLS_CHAR: " + end.getValue(), -1);
 			}
 			//make set from range
-			int start_index = ((int)start.getValue().charAt(0)) - 32;
-			int end_index = ((int)end.getValue().charAt(0)) - 32;
+			int start_index;
+			int end_index;
+			if(start.getValue().charAt(0) == '\\') {
+				start_index = ((int)start.getValue().charAt(1)) - 32;
+			}
+			else {
+				start_index = ((int)start.getValue().charAt(0)) - 32;
+			}
+			if(end.getValue().charAt(0) == '\\') {
+				end_index = ((int)end.getValue().charAt(1)) -32;
+			}
+			else {
+				end_index = ((int)end.getValue().charAt(0)) - 32;
+			}
 			int current_index = start_index;
 			while(current_index <= end_index) {
 				range.add(((char)(current_index + 32)));
@@ -364,7 +376,12 @@ public class RecursiveDescent {
 			return range;
 		}
 		else {
-			range.add(start.getValue().charAt(0));
+			if(start.getValue().charAt(0) == '\\') {
+				range.add(start.getValue().charAt(1));
+			}
+			else {
+				range.add(start.getValue().charAt(0));
+			}
 			return range;
 		}
 	}
