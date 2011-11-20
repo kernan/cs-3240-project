@@ -1,1 +1,1 @@
-$WORD (b|ab)
+$WORD (b|ab)*
