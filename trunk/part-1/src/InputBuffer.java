@@ -1,8 +1,3 @@
-/**
- * @author Robert Kernan
- * 
- * cs3240 HW-1
- */
  
 import java.util.Scanner;
 
@@ -34,33 +29,14 @@ public class InputBuffer {
 	 */
 	public char getNext() {
 		if((this.currentpos >= buffer.length()) || (buffer.length() == 0)) {
-			
-			if(Options.DEBUG) {
-				System.out.print("[InputBuffer] overflow... need to go to next line\n");
-			}
-			
 			return '\n';
-		}
-		
-		if(Options.DEBUG) {
-			System.out.print("[InputBuffer] getting next char: ");
 		}
 		
 		if(peek) {
 			this.peek = false;
-			
-			if(Options.DEBUG) {
-				System.out.print(buffer.charAt(currentpos) + "\n");
-			}
-			
 			return buffer.charAt(currentpos);
 		}
 		else {
-			
-			if(Options.DEBUG) {
-				System.out.print(buffer.charAt(currentpos) + "\n");
-			}
-			
 			return this.buffer.charAt(currentpos++);
 		}
 	}
@@ -70,20 +46,10 @@ public class InputBuffer {
 	 * @return next token in buffer
 	 */
 	public char peekNext() {
-		
-		if(Options.DEBUG) {
-			System.out.print("[InputBuffer] peeking next char: ");
-		}
-		
 		if(this.currentpos >= buffer.length()) {
 			return '\n';
 		}
 		if(peek) {
-			
-			if(Options.DEBUG) {
-				System.out.print(buffer.charAt(currentpos) + "\n");
-			}
-			
 			return buffer.charAt(currentpos);
 		}
 		else {
@@ -97,10 +63,6 @@ public class InputBuffer {
 	 */
 	public boolean gotoNextLine() {
 		peek = false;
-		if(Options.DEBUG) {
-			System.out.println("[InputBuffer] getting next line...");
-		}
-		
 		if(this.input.hasNextLine()) {
 			this.buffer = input.nextLine();
 			this.currentpos = 0;

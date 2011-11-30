@@ -5,7 +5,9 @@
  *
  */
 
-//TODO discuss appropriate tokens
+/** TokenType.java
+ *	Token types for use when scanning a grammar specification.
+ */
 public enum TokenType {
 	EOF,
 	EOL,
