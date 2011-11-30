@@ -4,6 +4,7 @@ import java.util.ArrayList;
 /** NFA.java
  *	Represents a non-useable nfa state table.
  */
+
 public class NFA {
 	
 	public static final char EPSILON = '\u0000';

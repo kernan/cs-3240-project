@@ -224,6 +224,7 @@ public class DFA {
 	
 	/**
 	 * generate string representation of the dfa
+	 * @return string representation of the dfa
 	 */
 	public String toString() {
 		String result = "\n";

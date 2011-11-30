@@ -25,4 +25,3 @@ public enum TokenType {
 	RPAREN,
 	IN
 }
-
