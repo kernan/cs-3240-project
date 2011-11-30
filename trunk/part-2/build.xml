@@ -1,0 +1,86 @@
+<!--
+author: Robert Kernan
+-->
+
+<project name="build-file" default="all" basedir=".">
+	
+	<!-- init -->
+    <target name="-init" description="set up all build variables">
+    	<echo message="Setting up required build variables..."/>
+    	<!--    project name    -->
+    	<property name="jar.name" value="GrammarScanner"/>
+    	<!--    locations   -->
+        <property name="src.dir" location="./src/"/>
+    	<property name="build.dir" location="./bin"/>
+    	<!--    manifest variables    -->
+    	<property name="jar.include" value="${build.dir}/**/*.class"/>
+    	<property name="jar.mainclass" value="Parser"/>
+		<!--    command line args    -->
+		<property name="args.use" value="true"/><!--true/false-->
+		<property name="args.message" value="args format: &quot;&lt;specification file&gt; &lt;code files&gt;&quot;"/>
+    </target>
+	
+	<!-- prepare -->
+	<target name="-prepare" depends="-init" description="create all the required directories">
+		<echo message="Creating required build directories..."/>
+		<mkdir dir="${build.dir}"/>
+	</target>
+	
+	<!-- build -->
+	<target name="build" depends="-init,-prepare" description="compile all java classes in src folder">
+		<echo message="Compiling all java classes in '${src.dir}'..."/>
+		<javac
+			srcdir="${src.dir}"
+			destdir="${build.dir}"
+			debug="true" debuglevel="lines,vars,source"
+			includeantruntime="false">
+		</javac>
+	</target>
+	
+	<!-- jar -->
+	<target name="jar" depends="-init,-prepare,build" description="package all compiled classes into a jar">
+		<echo message="Packaging all compiled classes into '${jar.name}.jar'..."/>
+		<jar
+			destfile="${jar.name}.jar"
+			basedir="${build.dir}">
+			<manifest>
+				<attribute name="Built-By" value="${user.name}"/>
+				<attribute name="Main-Class" value="${jar.mainclass}"/>
+			</manifest>
+		</jar>
+	</target>
+	
+	<!-- get-args (conditional) -->
+	<target name="-get-args" if="${args.use}" description="get program arguments">
+		<echo message="Getting program arguments..."/>
+		<input
+			message="${args.message}"
+			addproperty="args"/>
+	</target>
+	
+	<!-- run -->
+	<target name="run" depends="-init,-prepare,build,jar,-get-args" description="run the compiled jar">
+		<echo message="Running the executable '${jar.name}.jar'..."/>
+		<java
+			jar="${jar.name}.jar"
+			fork="true">
+			<arg line="${args}"/>
+		</java>
+	</target>
+	
+	<!-- rebuild -->
+	<target name="rebuild" depends="-init,clean,build" description="clean and rebuild the jar">
+		<echo message="Rebuilding the executable '${jar.name}.jar'..."/>
+	</target>
+	
+	<!-- all (default) -->
+	<target name="all" depends="jar" description="run all tasks excluding 'clean'">
+	</target>
+	
+	<!-- clean -->
+	<target name="clean" depends="-init" description="remove compiled classes">
+		<echo message="Removing all build files..."/>
+		<delete dir="${build.dir}"/>
+		<delete file="${jar.name}.jar"/>
+	</target>
+</project>
