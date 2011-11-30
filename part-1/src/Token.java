@@ -1,10 +1,6 @@
-/**
- * Represents a token of specified type with specified value.
- * 
- * ex: Token(IDENTIFIER, "foo") <- IDENTIFIER with name "foo"
- * 
- * @author Robert Kernan
- *
+
+/** Token.java
+ *	Represents a token of specified type with specified value.
  */
 
 public class Token {

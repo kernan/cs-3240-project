@@ -1,8 +1,8 @@
 
 import java.util.ArrayList;
 
-/**
- * NFA state table
+/** NFA.java
+ *	Represents a non-useable nfa state table.
  */
 public class NFA {
 	
@@ -106,11 +106,6 @@ public class NFA {
 	 * @param other nfa to concatenate with
 	 */
 	public void concatenate(NFA other) {
-		
-		if(Options.DEBUG) {
-			System.out.println("        [NFA] concatenating nfa");
-		}
-		
 		other.finalize();
 		int c = this.size();
 		//copy all states from other
@@ -151,10 +146,6 @@ public class NFA {
 		//move current index
 		this.current_old = this.current;
 		this.current = other.getCurrent()+c;
-		
-		if(Options.DEBUG) {
-			System.out.println("        [NFA] merging nfa");
-		}
 		
 		//copy all states from other
 		for(int i = 0; i < other.size(); i++) {
@@ -236,11 +227,6 @@ public class NFA {
 	 * @param letter value to concatenate
 	 */
 	public void addConcatenation(char letter) {
-		
-		if(Options.DEBUG) {
-			System.out.println("        [NFA] adding concatenation");
-		}
-		
 		this.addState();
 		//current ---(letter)---> new
 		this.addTransition(this.current, this.size()-1, letter);
@@ -254,11 +240,6 @@ public class NFA {
 	 * @param letters list of value to concatenate
 	 */
 	public void addConcatenation(ArrayList<Character> letters) {
-		
-		if(Options.DEBUG) {
-			System.out.println("        [NFA] adding concatenation (list)");
-		}
-		
 		this.addState();
 		//current ---(letters)---> new
 		for(int i = 0; i < letters.size(); i++) {
@@ -273,11 +254,6 @@ public class NFA {
 	 * add union from beginning to new state
 	 */
 	public void addAlternation() {
-		
-		if(Options.DEBUG) {
-			System.out.println("        [NFA] adding union");
-		}
-		
 		this.addState();
 		//start ---(EPS)--> new
 		this.addTransition(this.getStart(), this.size()-1, EPSILON);
@@ -292,11 +268,6 @@ public class NFA {
 	 * add repitition (0 or more) from current
 	 */
 	public void addRepetitionKleene() {
-		
-		if(Options.DEBUG) {
-			System.out.println("        [NFA] adding repitition (*)");
-		}
-		
 		this.addState();
 		//current ---(EPS)---> current_old
 		this.addTransition(this.current, this.current_old, EPSILON);
@@ -311,11 +282,6 @@ public class NFA {
 	 * add repitition (0 or more) on whole nfa
 	 */
 	public void addRepetitionKleeneGlobal() {
-		
-		if(Options.DEBUG) {
-			System.out.println("        [NFA] adding repitition (*) (global)");
-		}
-		
 		this.addState();
 		//current ---(EPS)---> start
 		this.addTransition(this.current, this.getStart(), EPSILON);
@@ -330,11 +296,6 @@ public class NFA {
 	 * add repitition (1 or more) from current
 	 */
 	public void addRepetitionPlus() {
-	
-		if(Options.DEBUG) {
-			System.out.println("        [NFA] adding repitition (+)");
-		}
-		
 		this.addState();
 		//current ---(EPS)---> current_old
 		this.addTransition(this.current, this.current_old, EPSILON);
@@ -349,11 +310,6 @@ public class NFA {
 	 * add repitition (1 or more) on whole nfa
 	 */
 	public void addRepetitionPlusGlobal() {
-		
-		if(Options.DEBUG) {
-			System.out.println("        [NFA] adding repitition (+) (global)");
-		}
-		
 		this.addState();
 		//current ---(EPS)---> start
 		this.addTransition(this.current, this.getStart(), EPSILON);

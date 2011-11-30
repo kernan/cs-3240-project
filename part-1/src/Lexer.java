@@ -1,11 +1,9 @@
-/** 
- * Generates tokens from a buffered input stream.
- * 
- * @author Robert Kernan
- *
- */
 
 import java.util.Scanner;
+
+/** Lexer.java
+ *	Generates tokens from a buffered input stream.
+ */
 
 public class Lexer {
 	
@@ -66,11 +64,6 @@ public class Lexer {
 			//ignore comment lines
 			case '%':
 				if(input_stream.peekNext() == '%') {
-					
-					if(Options.DEBUG) {
-						System.out.println("      [Lexer] ignoring comment line...");
-					}
-					
 					input_stream.gotoNextLine();
 					return makeNewToken();
 				}
@@ -154,10 +147,6 @@ public class Lexer {
 			//everything else (character literals)
 			default:
 				result = new Token(TokenType.LITERAL, new String() + t);
-		}
-		
-		if(Options.DEBUG) {
-			System.out.println("      [Lexer] new Token: " + result.getType() + ", " + result.getValue());
 		}
 		
 		return result;

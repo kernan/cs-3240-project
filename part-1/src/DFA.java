@@ -2,13 +2,12 @@
 import java.util.ArrayList;
 import java.util.Stack;
 
-/**
- * dfa capable of processing input text
+/** DFA.java
+ *	DFA capable of processing input text.
  */
 public class DFA {
 	
 	private ArrayList<State> states;
-	private NFA nfa;
 	private int current;
 	
 	/**
@@ -19,7 +18,6 @@ public class DFA {
 	public DFA(NFA nfa) {
 		this.states = new ArrayList<State>();
 		this.current = 0;
-		this.nfa = nfa;
 		this.build_from_nfa(nfa);
 	}
 	
@@ -33,46 +31,38 @@ public class DFA {
 	}
 	
 	/**
-	 *
+	 * goto the next state via the given letter
 	 */
-	public boolean gotoNext(char letter) {
-		
+	public void gotoNext(char letter) {
 		//if already at invalid state
-		if(this.current == -1) {
-			return false;
-		}
-		
-		State s = this.states.get(this.current);
-		int dfa_index = -1;
-		//find transitions for given letter
-		for(int i = 0; i < s.getTransitions().size(); i++) {
-			if(s.getTransitions().get(i).getLetter() == letter) {
-				dfa_index = s.getTransitions().get(i).getNext();
-				break;
+		if(this.current >= 0) {
+			State s = this.states.get(this.current);
+			int dfa_index = -1;
+			//find transitions for given letter
+			for(int i = 0; i < s.getTransitions().size(); i++) {
+				if(s.getTransitions().get(i).getLetter() == letter) {
+					dfa_index = s.getTransitions().get(i).getNext();
+					break;
+				}
 			}
+			this.current = dfa_index;
 		}
-		this.current = dfa_index;
-		if(current == -1) {
-			return false;
-		}
-		return true;
 	}
 	
 	/**
 	 * check if current state is a final state
 	 */
 	public boolean atFinal() {
-		ArrayList<Integer> s = this.states.get(this.current).getStatesSet();
-		for(int i = 0; i < s.size(); i++) {
-			if(nfa.get(s.get(i)).getEnd()) {
-				return true;
-			}
+		if(this.current < 0) {
+			return false;
 		}
-		return false;
+		else {
+			return this.states.get(current).getEnd();
+		}
 	}
 	
 	/**
-	 *
+	 * resets this nfa's current index to the start
 	 */
 	public void reset() {
 		this.current = 0;
@@ -80,6 +70,7 @@ public class DFA {
 	
 	/**
 	 * create a transition table from the given nfa
+	 * (minimizes the dfa in the process)
 	 * @param nfa machine to build a transition table for
 	 * @return transition table representing the given nfa
 	 */
@@ -164,27 +155,6 @@ public class DFA {
 								transition_index = k;
 							}
 						}
-							
-						/*	//get next state
-							Integer next_state = next_dfa_state.get(k);
-							//for dfa state in the dfa
-							for(int l = 0; l < DTrans.size() && !dud_state; l++) {
-								//get current dfa state
-								ArrayList<Integer> nfa_state_set = DTrans.get(l).getStatesSet();
-								//if state already exists in the dfa
-								if(nfa_state_set.contains(next_state)) {
-									//this new dfa state is a dud
-									dud_state = true;
-									//add all states to the current dfa state (that don't already exist there)
-									for(int m = 0; m < next_dfa_state.size(); m++) {
-										if(!nfa_state_set.contains(next_dfa_state.get(m))) {
-											nfa_state_set.add(next_dfa_state.get(m));
-										}
-									}
-									
-								}
-							}
-						}*/
 						
 						//if next state is NOT a dud
 						if(!dud_state) {
@@ -210,6 +180,18 @@ public class DFA {
 			}
 		}
 		
+		//find what states are final states in the DFA
+		for(int i = 0; i < DTrans.size(); i++) {
+			ArrayList<Integer> state_set = DTrans.get(i).getStatesSet();
+			for(int j = 0; j < state_set.size(); j++) {
+				if(nfa.get(state_set.get(j)).getEnd()) {
+					DTrans.get(i).setEnd(true);
+					break;
+				}
+			}
+		}
+		
+		//return dfa transition table
 		return DTrans;
 	}
 	
@@ -238,13 +220,6 @@ public class DFA {
 			}
 		}
 		return T;
-	}
-	
-	/**
-	 * minimize this dfa
-	 */
-	public void minimize() {
-		//TODO minimize dfa
 	}
 	
 	/**
@@ -277,6 +252,7 @@ public class DFA {
 		
 		private ArrayList<Integer> states_set;
 		private ArrayList<Transition> transitions;
+		private boolean end;
 		
 		/**
 		 * initialize state with empty transition list and states set
@@ -284,6 +260,15 @@ public class DFA {
 		public State() {
 			this.states_set = new ArrayList<Integer>();
 			this.transitions = new ArrayList<State.Transition>();
+			this.end = false;
+		}
+		
+		/**
+		 * accessor fro this dfa state's end status
+		 * @return true: this state is an end state, false: it is not
+		 */
+		public boolean getEnd() {
+			return this.end;
 		}
 		
 		/**
@@ -303,7 +288,15 @@ public class DFA {
 		}
 		
 		/**
-		 * mutator for this dfa's states set
+		 * mutator for this dfa state's end status
+		 * @param end new end status for this dfa state
+		 */
+		public void setEnd(boolean end) {
+			this.end = end;
+		}
+		
+		/**
+		 * mutator for this dfa state's state set
 		 * @param states_set new states set for this dfa state
 		 */
 		public void setStatesSet(ArrayList<Integer> states_set) {

@@ -5,8 +5,9 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.text.ParseException;
 
-/**
- *
+/** Parser.java
+ *	Parses a given grammar specification and builds a state machine for scanning
+ *	input code from it. Scans the input code and outputs tokens.
  */
 public class Parser {
 	
@@ -27,7 +28,7 @@ public class Parser {
 		do {
 			Token id = input.getNextToken();
 			if(id.getType() != TokenType.EOL) {
-				System.out.println("     [Parser] got ID: " + id.getValue());
+				System.out.println("     [Parser] building identifier: " + id.getValue() + "...");
 				if(id.getType() != TokenType.DEFINED) {
 					throw new ParseException("Invalid syntax, new lines must begin with an id definition", -1);
 				}
@@ -35,7 +36,6 @@ public class Parser {
 				NFA_Identifier new_nfa = rd.descend();
 				new_nfa.setName(id.getValue());
 				nfa_list.add(new_nfa);
-				System.out.println("     [Parser] ID finished: " + id.getValue());
 			}
 		} while(input.gotoNextLine());
 		
@@ -44,14 +44,15 @@ public class Parser {
 		System.out.println("     [Parser] NFA MERGE: START");
 		System.out.println();
 		
-		System.out.println("     [Parser] merging...");
-		System.out.println("     [Parser] char class?");
 		NFA big_nfa = new NFA();
 		for(int i = 0; i < nfa_list.size(); i++) {
-			System.out.println("     [Parser]\t" + i + ": " + nfa_list.get(i).getCharClass());
+			System.out.print("     [Parser] " + nfa_list.get(i).getName() + ": ");
 			if(!nfa_list.get(i).getCharClass()) {
-				System.out.println("     [Parser] merging #" + i + " with final");
+				System.out.println("token, merging...");
 				big_nfa.merge(nfa_list.get(i).getNFA());
+			}
+			else {
+				System.out.println("char class");
 			}
 		}
 		big_nfa.finalize();
@@ -69,36 +70,41 @@ public class Parser {
 		
 		System.out.println();
 		System.out.println("     [Parser] NFA CONVERSION: DONE");
-		System.out.println("     [Parser] CODE PARSING: START");
+		System.out.println("     [Parser] CODE SCANNING: START");
 		System.out.println();
 		
 		for(int i = 1; i < args.length; i++) {
 			String file = args[i];
-			System.out.print("     [Parser] " + file + ": ");
+			
+			System.out.println("     [Parser] " + file + ": ");
+			
 			boolean pass= true;
+			boolean file_pass = true;
 			
 			Scanner scan = new Scanner(new File(args[i]));
-			while(scan.hasNext() && pass) {
+			while(scan.hasNext()) {
 				String t = scan.next();
 				for(int j = 0; j < t.length(); j++) {
-					pass = dfa.gotoNext(t.charAt(j));
+					dfa.gotoNext(t.charAt(j));
 				}
-				if(pass) {
-					pass = dfa.atFinal();
-				}
+				pass = dfa.atFinal();
+				System.out.println("     [Parser] [" + file + "] Token: \"" + t + "\", " + pass);
 				dfa.reset();
+				if(!pass) {
+					file_pass = false;
+				}
 			}
 			
-			if(pass) {
-				System.out.println(" PASS");
+			if(file_pass) {
+				System.out.println("     [Parser] [" + file + "] PASS");
 			}
 			else {
-				System.out.println(" FAIL");
+				System.out.println("     [Parser] [" + file + "] FAIL");
 			}
 		}
 		
 		System.out.println();
-		System.out.println("     [Parser] CODE PARSING: DONE");
+		System.out.println("     [Parser] CODE SCANNING: DONE");
 	}
 	
 	/*

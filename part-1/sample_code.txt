@@ -1,4 +1,5 @@
 int xval
+int SLOPE = 3.5
 int intercept
-int y = 0
+int y
 y = SLOPE * xval + intercept 
