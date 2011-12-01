@@ -50,24 +50,6 @@ author: Robert Kernan
 		</jar>
 	</target>
 	
-	<!-- get-args (conditional) -->
-	<target name="-get-args" if="${args.use}" description="get program arguments">
-		<echo message="Getting program arguments..."/>
-		<input
-			message="${args.message}"
-			addproperty="args"/>
-	</target>
-	
-	<!-- run -->
-	<target name="run" depends="-init,-prepare,build,jar,-get-args" description="run the compiled jar">
-		<echo message="Running the executable '${jar.name}.jar'..."/>
-		<java
-			jar="${jar.name}.jar"
-			fork="true">
-			<arg line="${args}"/>
-		</java>
-	</target>
-	
 	<!-- rebuild -->
 	<target name="rebuild" depends="-init,clean,build" description="clean and rebuild the jar">
 		<echo message="Rebuilding the executable '${jar.name}.jar'..."/>
