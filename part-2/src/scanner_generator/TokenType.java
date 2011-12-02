@@ -1,3 +1,4 @@
+package scanner_generator;
 /**
  * Token types for use when scanning a Grammar.
  * 
