@@ -1,3 +1,4 @@
+package scanner_generator;
 
 /** Options.java
  *	Contains option variales for the Parser to use

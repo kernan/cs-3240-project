@@ -1,3 +1,4 @@
+package scanner_generator;
 
 /** Token.java
  *	Represents a token of specified type with specified value.

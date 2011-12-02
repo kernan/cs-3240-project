@@ -1,3 +1,4 @@
+package scanner_generator;
 
 import java.util.Scanner;
 
