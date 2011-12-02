@@ -1,6 +1,7 @@
 package interpreter;
 
-import java.util.List;
+import java.io.File;
+import java.util.ArrayList;
 import scanner_generator.DFA;
 
 /**
@@ -76,101 +77,100 @@ public class Interpreter {
 	 */
 	
 	/**
-	 * 
-	 * @param regex
-	 * @param replacement
-	 * @param input_file
-	 * @param output_file
+	 * replace all regex matches with given replacement word in given files
+	 * @param regex pattern to match
+	 * @param replacement word to replace matches with
+	 * @param input_file file to read and match with
+	 * @param output_file file to output results to
 	 */
-	public void replace(DFA regex, String replacement, String input_file, String output_file) {
+	public void replace(DFA regex, String replacement, File input_file, File output_file) {
 		
 	}
 	
 	/**
-	 * 
-	 * @param regex
-	 * @param replacement
-	 * @param input_file
-	 * @param output_file
+	 * replace all regex matches with given replacement word in given files
+	 * replaces until it cannot replace find anymore patterns
+	 * @param regex pattern to match
+	 * @param replacement word to replace matches with
+	 * @param input_file file to read and match with
+	 * @param output_file file to output results to
 	 */
-	public void recursivereplace(DFA regex, String replacement, String input_file, String output_file) {
+	public void recursivereplace(DFA regex, String replacement, File input_file, File output_file) {
 		
 	}
 	
 	/**
-	 * 
-	 * @param regex
-	 * @param word
-	 * @return
+	 * finds all regex matches in a given file
+	 * @param regex pattern to match
+	 * @param file input to check for matched
+	 * @return the list of all matching words
 	 */
-	private boolean replace(DFA regex, String word) {
-		return false;
+	public ArrayList find(DFA regex, File file) {
+		ArrayList result = new ArrayList();
+		//TODO
+		return result;
 	}
 	
 	/**
-	 * 
-	 * @param regex
-	 * @param file
-	 * @return
+	 * adds two lists together
+	 * @param list1 list to add to
+	 * @param list2 list to add from
+	 * @return list containing the union of both given lists
 	 */
-	public List find(DFA regex, String file) {
-		return null;
+	public ArrayList union(ArrayList list1, ArrayList list2) {
+		ArrayList result = new ArrayList();
+		//TODO
+		return result;
 	}
 	
 	/**
-	 * 
-	 * @param list1
-	 * @param list2
-	 * @return
+	 * removes values from list1 that are also in list2
+	 * @param list1 list to remove values from
+	 * @param list2 list to check for contained values
+	 * @return list containing only value from list1 that are not in list2
 	 */
-	public List union(List list1, List list2) {
-		return null;
+	public ArrayList diff(ArrayList list1, ArrayList list2) {
+		ArrayList result = new ArrayList();
+		//TODO
+		return result;
 	}
 	
 	/**
-	 * 
-	 * @param list1
-	 * @param list2
-	 * @return
+	 * finds values contained in both lists
+	 * @param list1 list to search
+	 * @param list2 list to search
+	 * @return new list containing only value that appeared in both lists
 	 */
-	public List diff(List list1, List list2) {
-		return null;
+	public ArrayList inters(ArrayList list1, ArrayList list2) {
+		ArrayList result = new ArrayList();
+		//TODO
+		return result;
 	}
 	
 	/**
-	 * 
-	 * @param list1
-	 * @param list2
-	 * @return
+	 * finds the length of the given list
+	 * @param list list to get length of
+	 * @return size of the list
 	 */
-	public List inters(List list1, List list2) {
-		return null;
-	}
-	
-	/**
-	 * 
-	 * @param list
-	 * @return
-	 */
-	public int length(List list) {
+	public int length(ArrayList list) {
 		return list.size();
 	}
 	
 	/**
-	 * 
-	 * @param number
-	 * @return
+	 * prints a given number
+	 * @param number value to print
+	 * @return string representation of the value
 	 */
 	public String print(int number) {
 		return ((Integer)number).toString();
 	}
 	
 	/**
-	 * 
-	 * @param list
-	 * @return
+	 * prints a given list
+	 * @param list value to print
+	 * @return string representation of the value
 	 */
-	public String print(List list) {
+	public String print(ArrayList list) {
 		return list.toString();
 	}
 }
