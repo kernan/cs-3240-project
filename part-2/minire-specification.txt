@@ -1,0 +1,23 @@
+
+%% Tokens
+begin end ID = replace with in ; recursivereplace >! print ( ) , #find diff union inters maxfreqstring
+
+%% Start
+$MiniREprogram
+
+%% Rules
+$binop   diff | union | inters
+$filename  ASCII-STR
+$term  find REGEX in  $filename
+$exptail   $binop $term $exptail | \u0000
+$exp  $term $exptail | ID  | ( $exp )
+$explisttail  , $exp $explisttail
+$explist  $exp $explisttail
+$statement  print ( $explist ) ;
+$destinationfile  ASCII-STR
+$sourcefile  ASCII-STR
+$filenames   $sourcefile  >!  $destinationfile
+$statement  ID = $exp ; | ID = # $exp ; | ID = maxfreqstring ( ID ) ; | replace REGEX with ASCII-STR in  $filenames ; | recursivereplace REGEX with ASCII-STR in  $filenames ;
+$statementlisttail  $statement $statementlisttail | \u0000
+$statementlist   $statement $statementlisttail
+$MiniREprogram   begin $statementlist end
