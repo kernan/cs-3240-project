@@ -3,7 +3,9 @@ package interpreter;
 import java.util.ArrayList;
 
 /**
- *
+ * InputString.java
+ * represents a string with data representing it's appearance
+ * in files
  */
 public class InputString {
 	
@@ -11,15 +13,15 @@ public class InputString {
 	private ArrayList<StringFileData> metadata;
 	
 	/**
-	 * 
-	 * @param str
+	 * setup an input string with given value
+	 * @param str value of this string
 	 */
 	public InputString(String str) {
 		this.str = str;
 	}
 	
 	/**
-	 * 
+	 * setup an input string with given 
 	 * @param str
 	 * @param filename
 	 * @param positions
@@ -31,24 +33,24 @@ public class InputString {
 	}
 	
 	/**
-	 * 
-	 * @return
+	 * accessor for this string's metadata
+	 * @return this string's metadata
 	 */
 	public ArrayList<StringFileData> getMetadata() {
 		return this.metadata;
 	}
 	
 	/**
-	 * 
-	 * @param metadata
+	 * add new file metadata to this string's metadata
+	 * @param metadata file data to add
 	 */
 	public void addMetadata(ArrayList<StringFileData> metadata) {
 		this.metadata.addAll(metadata);
 	}
 	
 	/**
-	 * 
-	 * @return
+	 * make a copy of this string
+	 * @return copy of this string
 	 */
 	public InputString clone() {
 		InputString copy = new InputString(this.str);

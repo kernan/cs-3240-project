@@ -2,8 +2,9 @@ package scanner_generator;
 
 import java.util.ArrayList;
 
-/** NFA.java
- *	Represents a non-useable nfa state table.
+/**
+ * NFA.java
+ * Represents a non-useable nfa state table.
  */
 public class NFA {
 	

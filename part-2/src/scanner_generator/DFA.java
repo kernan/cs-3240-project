@@ -3,8 +3,9 @@ package scanner_generator;
 import java.util.ArrayList;
 import java.util.Stack;
 
-/** DFA.java
- *	DFA capable of processing input text.
+/**
+ * DFA.java
+ * DFA capable of processing input text.
  */
 public class DFA {
 	
