@@ -8,7 +8,7 @@ author: Robert Kernan
     <target name="-init" description="set up all build variables">
     	<echo message="Setting up required build variables..."/>
     	<!--    project name    -->
-    	<property name="jar.name" value="GrammarScanner"/>
+    	<property name="jar.name" value="MiniRE_Interpreter"/>
     	<!--    locations   -->
         <property name="src.dir" location="./src/"/>
     	<property name="build.dir" location="./bin"/>
