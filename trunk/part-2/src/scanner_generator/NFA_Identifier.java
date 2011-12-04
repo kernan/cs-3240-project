@@ -1,7 +1,8 @@
 package scanner_generator;
 
-/** NFA_Identifier.java
- *	Maps an nfa with a defined class' name and character class flag.
+/**
+ * NFA_Identifier.java
+ * Maps an nfa with a defined class' name and character class flag.
  */
 
 public class NFA_Identifier {

@@ -1,7 +1,9 @@
-package scanner_generator;
+package specification_scanner;
 
-/** Token.java
- *	Represents a token of specified type with specified value.
+
+/**
+ * Token.java
+ * Represents a token of specified type with specified value.
  */
 
 public class Token {

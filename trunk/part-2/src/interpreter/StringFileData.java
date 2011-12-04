@@ -2,6 +2,11 @@ package interpreter;
 
 import java.util.ArrayList;
 
+/**
+ * StringFileData.java
+ * represents metadata that tells what file and positions in that file
+ * some data appears at
+ */
 public class StringFileData {
 
 	private String filename;
@@ -38,5 +43,18 @@ public class StringFileData {
 	 */
 	public boolean equals(Object other) {
 		return this.filename.equals(((StringFileData)other).getFilename());
+	}
+	
+	/**
+	 * gives a string representation of a StringFileData metadata
+	 * @return string representation of this metadata
+	 */
+	public String toString() {
+		String result = new String();
+		result += "< " + filename + "; ";
+		for(int i = 0; i < positions.size(); i++) {
+			result += positions.get(i).toString() + " ";
+		}
+		return result + ">";
 	}
 }

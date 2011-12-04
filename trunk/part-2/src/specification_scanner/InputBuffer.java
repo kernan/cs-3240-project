@@ -1,9 +1,10 @@
-package scanner_generator;
+package specification_scanner;
  
 import java.util.Scanner;
 
-/** InputBuffer.java
- *	Allows forward and backward stepping through an input stream.
+/**
+ * InputBuffer.java
+ * Allows forward and backward stepping through an input stream.
  */
 
 public class InputBuffer {
@@ -12,6 +13,7 @@ public class InputBuffer {
 	private String buffer;
 	private int currentpos;
 	private boolean peek;
+	private int line;
 	
 	/** 
 	 * setup the buffer with a given string
@@ -22,6 +24,23 @@ public class InputBuffer {
 		this.buffer = input.nextLine();
 		this.currentpos = 0;
 		this.peek = false;
+		this.line = 0;
+	}
+	
+	/**
+	 * accessor for the current line the buffer is reading
+	 * @return the current line position (1 indexed)
+	 */
+	public int getLine() {
+		return this.line + 1;
+	}
+	
+	/**
+	 * accessor for the current position in the line the buffer is reading
+	 * @return the char position in the line (1 indexed)
+	 */
+	public int getPosition() {
+		return this.currentpos + 1;
 	}
 	
 	/**
@@ -65,6 +84,9 @@ public class InputBuffer {
 	public boolean gotoNextLine() {
 		peek = false;
 		if(this.input.hasNextLine()) {
+			//increment file position
+			this.line++;
+			//move the buffer
 			this.buffer = input.nextLine();
 			this.currentpos = 0;
 			this.peek = false;

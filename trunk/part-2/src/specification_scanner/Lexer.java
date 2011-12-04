@@ -1,9 +1,11 @@
-package scanner_generator;
+package specification_scanner;
 
 import java.util.Scanner;
 
-/** Lexer.java
- *	Generates tokens from a buffered input stream.
+
+/**
+ * Lexer.java
+ * Generates tokens from a buffered input stream.
  */
 
 public class Lexer {
@@ -20,6 +22,22 @@ public class Lexer {
 		this.input_stream = new InputBuffer(scanner);
 		this.peek = false;
 		this.current = null;
+	}
+	
+	/**
+	 * accessor for the current line being scanned
+	 * @return the current line being scanned
+	 */
+	public int getLine() {
+		return this.input_stream.getLine();
+	}
+	
+	/**
+	 * accessor for the current line being scanned
+	 * @return the current position in the current line
+	 */
+	public int getPosition() {
+		return this.input_stream.getPosition();
 	}
 
 	/**

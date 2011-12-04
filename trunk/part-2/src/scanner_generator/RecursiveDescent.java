@@ -4,8 +4,13 @@ import java.util.ArrayList;
 import java.util.Stack;
 import java.text.ParseException;
 
-/** RecursiveDescent.java
- *	A recursive descent algorithm that builds an nfa for a given input 
+import specification_scanner.Lexer;
+import specification_scanner.Token;
+import specification_scanner.TokenType;
+
+/**
+ * RecursiveDescent.java
+ * A recursive descent algorithm that builds an nfa for a given input 
  */
 
 public class RecursiveDescent {
@@ -81,18 +86,18 @@ public class RecursiveDescent {
 		TokenType type = lexer.peekNextToken().getType();
 		if (type == TokenType.UNION){
 			
-			if(Options.DEBUG) {
+			/*if(Options.DEBUG) {
 				System.out.println("   [RDescent] UNION found... not in char class");
-			}
+			}*/
 			
 			char_class = false;
 			lexer.getNextToken();//consume UNION
 			
 			NFA t2 = stack.pop();
 			
-			if(Options.DEBUG) {
+			/*if(Options.DEBUG) {
 				System.out.println("   [RDescent] adding alternation...");
-			}
+			}*/
 			
 			t2.addAlternation();
 			stack.push(t2);
@@ -136,10 +141,10 @@ public class RecursiveDescent {
 		TokenType type = lexer.peekNextToken().getType();
 		if(type == TokenType.LPAREN){
 			
-			if(Options.DEBUG) {
+			/*if(Options.DEBUG) {
 				System.out.println("   [RDescent] LPAREN found... not in char class");
 				System.out.println("   [RDescent] Scoping out...");
-			}
+			}*/
 			
 			char_class = false;
 			stack.push(new NFA());
@@ -147,25 +152,26 @@ public class RecursiveDescent {
 			rexp();
 			lexer.getNextToken();//consume RPAREN
 			
-			if(Options.DEBUG) {
+			/*if(Options.DEBUG) {
 				System.out.println("   [RDescent] Scoping in...");
-			}
+			}*/
 			
 			scope_back = true;
 			rexp2Tail();
 		}
 		else if(type == TokenType.LITERAL) {
 			
-			if(Options.DEBUG) {
+			/*if(Options.DEBUG) {
 				System.out.println("   [RDescent] LITERAL found... not in char class");
-			}
+			}*/
 			
 			char_class = false;
 			
 			//make sure it's valid
 			boolean valid = check_valid(lexer.peekNextToken(), RE_CHAR);
 			if(!valid) {
-				throw new ParseException("ERROR: invalid token: " + lexer.peekNextToken().getValue(), -1);
+				throw new ParseException("ERROR: invalid token: " + lexer.peekNextToken().getValue() +
+						", line: " + lexer.getLine() + ", position: " + this.lexer.getPosition(), this.lexer.getLine());
 			}
 			
 			Token token = lexer.getNextToken();//consume LITERAL
@@ -176,9 +182,9 @@ public class RecursiveDescent {
 				trans_val = token.getValue().charAt(1);
 			}
 			
-			if(Options.DEBUG) {
+			/*if(Options.DEBUG) {
 				System.out.println("   [RDescent] adding concatenation (literal)...");
-			}
+			}*/
 			
 			t2.addConcatenation(trans_val);
 			stack.push(t2);
@@ -197,9 +203,9 @@ public class RecursiveDescent {
 		TokenType type = lexer.peekNextToken().getType();
 		if(type == TokenType.KLEENE){
 			
-			if(Options.DEBUG) {
+			/*if(Options.DEBUG) {
 				System.out.println("   [RDescent] KLEENE found... not in char class");
-			}
+			}*/
 			
 			char_class = false;
 			lexer.getNextToken();
@@ -208,9 +214,9 @@ public class RecursiveDescent {
 				NFA t2 = stack.pop();
 				t2.finalize();
 				
-				if(Options.DEBUG) {
+				/*if(Options.DEBUG) {
 					System.out.println("   [RDescent] adding repitition (*) global...");
-				}
+				}*/
 				
 				t2.addRepetitionKleeneGlobal();
 				//scope in
@@ -221,9 +227,9 @@ public class RecursiveDescent {
 			else {
 				NFA t2 = stack.pop();
 				
-				if(Options.DEBUG) {
+				/*if(Options.DEBUG) {
 					System.out.println("   [RDescent] adding repitition (*)...");
-				}
+				}*/
 				
 				t2.addRepetitionKleene();
 				//put back onto stack
@@ -232,9 +238,9 @@ public class RecursiveDescent {
 		}
 		else if(type == TokenType.PLUS){
 			
-			if(Options.DEBUG) {
+			/*if(Options.DEBUG) {
 				System.out.println("   [RDescent] PLUS found... not in char class");
-			}
+			}*/
 			
 			char_class = false;
 			lexer.getNextToken();
@@ -243,9 +249,9 @@ public class RecursiveDescent {
 				NFA t2 = stack.pop();
 				t2.finalize();
 				
-				if(Options.DEBUG) {
+				/*if(Options.DEBUG) {
 					System.out.println("   [RDescent] adding repitition (+) global...");
-				}
+				}*/
 				
 				t2.addRepetitionPlusGlobal();
 				//scope in
@@ -256,9 +262,9 @@ public class RecursiveDescent {
 			else {
 				NFA t2 = stack.pop();
 				
-				if(Options.DEBUG) {
+				/*if(Options.DEBUG) {
 					System.out.println("   [RDescent] adding repitition (+)...");
-				}
+				}*/
 				
 				t2.addRepetitionPlus();
 				//put back onto stack
@@ -336,18 +342,18 @@ public class RecursiveDescent {
 			range = charSetList(new ArrayList<Character>());
 		}
 		
-		if(Options.DEBUG) {
+		/*if(Options.DEBUG) {
 			for(int i = 0; i < range.size(); i++) {
 				System.out.println("   [RDescent] adding to range: " + range.get(i));
 			}
-		}
+		}*/
 		
 		//add range to nfa
 		NFA t2 = stack.pop();
 		
-		if(Options.DEBUG) {
+		/*if(Options.DEBUG) {
 			System.out.println("   [RDescent] adding concatenation (range)...");
-		}
+		}*/
 		
 		t2.addConcatenation(range);
 		
@@ -385,7 +391,8 @@ public class RecursiveDescent {
 		Token start = lexer.getNextToken();//consume LITERAL
 		
 		if(!check_valid(start, CLS_CHAR)) {
-			throw new ParseException("ERROR: Token not a valid CLS_CHAR: " + start.getValue(), -1);
+			throw new ParseException("ERROR: Token not a valid CLS_CHAR: " + start.getValue() +
+					", line: " + this.lexer.getLine() + ", position: " + this.lexer.getPosition(), this.lexer.getLine());
 		}
 		
 		return charSetTail(start, range);
@@ -405,7 +412,8 @@ public class RecursiveDescent {
 			Token end = lexer.getNextToken();
 			
 			if(!check_valid(end, CLS_CHAR)) {
-				throw new ParseException("ERROR: Token not a valid CLS_CHAR: " + end.getValue(), -1);
+				throw new ParseException("ERROR: Token not a valid CLS_CHAR: " + end.getValue() + 
+						", line: " + this.lexer.getLine() + ", position: " + this.lexer.getPosition(), this.lexer.getLine());
 			}
 			//make set from range
 			int start_index;
@@ -497,13 +505,15 @@ public class RecursiveDescent {
 		int index = this.defined.indexOf(phony);
 		//make sure it exists
 		if(index == -1) {
-			throw new ParseException("ERROR: char class doesn't exist: " + phony.getName(), -1);
+			throw new ParseException("ERROR: char class doesn't exist: " + phony.getName()+
+					", line: " + this.lexer.getLine() + ", position: " + this.lexer.getPosition(), this.lexer.getLine());
 		}
 		NFA_Identifier defined_nfa = this.defined.get(index);
 		
 		if(exclude) {
 			if(!defined_nfa.getCharClass()) {
-				throw new ParseException("ERROR: exclusion may only be used on a char class, invalid class: " + phony.getName(), -1);
+				throw new ParseException("ERROR: exclusion may only be used on a char class, invalid class: " + phony.getName() +
+						", line: " + this.lexer.getLine() + ", position: " + this.lexer.getPosition(), this.lexer.getLine());
 			}
 			
 			NFA temp = defined_nfa.getNFA();
@@ -569,7 +579,7 @@ public class RecursiveDescent {
 	
 	/**
 	 * DOT_CHAR set
-	 * set of characters represented by a non-esaped DOT (".") literal 
+	 * set of characters represented by a non-escaped DOT (".") literal 
 	 */
 	public static final char[] DOT_CHAR = {
 			'\\', '*', '+', '?', '|', '[', ']', '(', ')', '.', '\'', '\"'

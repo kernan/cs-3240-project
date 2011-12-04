@@ -6,9 +6,14 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.text.ParseException;
 
-/** Parser.java
- *	Parses a given grammar specification and builds a state machine for scanning
- *	input code from it. Scans the input code and outputs tokens.
+import specification_scanner.Lexer;
+import specification_scanner.Token;
+import specification_scanner.TokenType;
+
+/**
+ * Parser.java
+ * Parses a given grammar specification and builds a state machine for scanning
+ * input code from it. Scans the input code and outputs tokens.
  */
 public class Parser {
 	

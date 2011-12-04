@@ -1,4 +1,4 @@
-package scanner_generator;
+package specification_scanner;
 /**
  * Token types for use when scanning a Grammar.
  * 
@@ -6,8 +6,9 @@ package scanner_generator;
  *
  */
 
-/** TokenType.java
- *	Token types for use when scanning a grammar specification.
+/**
+ * TokenType.java
+ * Token types for use when scanning a grammar specification.
  */
 public enum TokenType {
 	EOF,

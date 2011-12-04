@@ -3,13 +3,53 @@ package interpreter;
 import java.io.File;
 import java.util.ArrayList;
 import scanner_generator.DFA;
+import parser_generator.LL1;
 
 /**
- * 
- *
+ * Interpreter.java
+ * a Mine-RE interpreter that contains all actions that
+ * can be used in a Mini-RE script
  */
-
 public class Interpreter {
+	
+	private ArrayList<Identifier> identifiers;
+	private DFA scanner;
+	private LL1 parser;
+	private File script;
+	
+	/**
+	 * setup interpreter with given scanner and given parser
+	 * @param scanner dfa for lexical analysis of given script
+	 * @param parser ll1 parser for syntactic analysis of given script
+	 * @param script the script for this interpreter instance to run
+	 */
+	public Interpreter(DFA scanner, LL1 parser, File script) {
+		this.scanner = scanner;
+		this.parser = parser;
+		this.script = script;
+		this.identifiers = new ArrayList<Identifier>();
+	}
+	
+	/**
+	 * assign a given identifier a given number value
+	 * @param id identifier to assign a value to
+	 * @param value number to assign to this identifier
+	 * @return the new identifier with assigned value
+	 */
+	private NumIdentifier assign(Identifier id, int value) {
+		return new NumIdentifier(id, value);
+	}
+	
+	/**
+	 * assign a given identifier a given list value
+	 * @param id identifier to assign a value to
+	 * @param value list to assign to this identifier
+	 * @return the new identifier with assigned value
+	 */
+	private ListIdentifier assign(Identifier id, ArrayList<InputString> value) {
+		return new ListIdentifier(id, value);
+	}
+	
 	/*
 	 * Interpreter functions:
 	 *    begin
@@ -77,14 +117,18 @@ public class Interpreter {
 	 */
 	
 	/**
+	 * interpreter actions
+	 */
+	
+	/**
 	 * replace all regex matches with given replacement word in given files
 	 * @param regex pattern to match
 	 * @param replacement word to replace matches with
 	 * @param input_file file to read and match with
 	 * @param output_file file to output results to
 	 */
-	public void replace(DFA regex, String replacement, File input_file, File output_file) {
-		
+	private void replace(DFA regex, String replacement, File input_file, File output_file) {
+		//TODO 
 	}
 	
 	/**
@@ -95,8 +139,8 @@ public class Interpreter {
 	 * @param input_file file to read and match with
 	 * @param output_file file to output results to
 	 */
-	public void recursivereplace(DFA regex, String replacement, File input_file, File output_file) {
-		
+	private void recursivereplace(DFA regex, String replacement, File input_file, File output_file) {
+		//TODO
 	}
 	
 	/**
@@ -105,9 +149,10 @@ public class Interpreter {
 	 * @param file input to check for matched
 	 * @return the list of all matching words
 	 */
-	public ArrayList find(DFA regex, File file) {
-		ArrayList result = new ArrayList();
-		//TODO
+	private ArrayList<InputString> find(DFA regex, File file) {
+		ArrayList<InputString> result = new ArrayList<InputString>();
+		//TODO open the file
+		//TODO read through the file, if a word matches the pattern, add it to result
 		return result;
 	}
 	
@@ -117,9 +162,24 @@ public class Interpreter {
 	 * @param list2 list to add from
 	 * @return list containing the union of both given lists
 	 */
-	public ArrayList union(ArrayList list1, ArrayList list2) {
-		ArrayList result = new ArrayList();
-		//TODO
+	private ArrayList<InputString> union(ArrayList<InputString> list1, ArrayList<InputString> list2) {
+		ArrayList<InputString> result = new ArrayList<InputString>();
+		//clone list1 (so we don't change it)
+		for(int i = 0; i < list1.size(); i++) {
+			result.add(list1.get(i).clone());
+		}
+		for(int i = 0; i < list2.size(); i++) {
+			for(int j = 0; j < result.size(); i++) {
+				//if value is already in results, add the metadata
+				if(result.get(j).equals(list2.get(i))) {
+					result.get(j).addMetadata(list2.get(i).getMetadata());
+				}
+				//otherwise, add a new item
+				else {
+					result.add(list2.get(i).clone());
+				}
+			}
+		}
 		return result;
 	}
 	
@@ -129,9 +189,21 @@ public class Interpreter {
 	 * @param list2 list to check for contained values
 	 * @return list containing only value from list1 that are not in list2
 	 */
-	public ArrayList diff(ArrayList list1, ArrayList list2) {
-		ArrayList result = new ArrayList();
-		//TODO
+	private ArrayList<InputString> diff(ArrayList<InputString> list1, ArrayList<InputString> list2) {
+		ArrayList<InputString> result = new ArrayList<InputString>();
+		for(int i = 0; i < list1.size(); i++) {
+			boolean contains = false;
+			for(int j = 0; j < list2.size(); j++) {
+				//found in both lists, shouldn't add
+				if(list1.get(1).equals(list2.get(j))) {
+					contains = true;
+				}
+			}
+			if(!contains) {
+				result.add(list1.get(i).clone());
+			}
+		}
+		
 		return result;
 	}
 	
@@ -141,9 +213,18 @@ public class Interpreter {
 	 * @param list2 list to search
 	 * @return new list containing only value that appeared in both lists
 	 */
-	public ArrayList inters(ArrayList list1, ArrayList list2) {
-		ArrayList result = new ArrayList();
-		//TODO
+	private ArrayList<InputString> inters(ArrayList<InputString> list1, ArrayList<InputString> list2) {
+		ArrayList<InputString> result = new ArrayList<InputString>();
+		for(int i = 0; i < list1.size(); i++) {
+			for(int j = 0; j < list2.size(); j++) {
+				//if value is in both lists, concatenate their metadata and add them to the new list
+				if(list1.get(i).equals(list2.get(j))) {
+					InputString temp = list1.get(i).clone();
+					temp.addMetadata(list2.get(j).getMetadata());
+					result.add(temp);
+				}
+			}
+		}
 		return result;
 	}
 	
@@ -152,7 +233,7 @@ public class Interpreter {
 	 * @param list list to get length of
 	 * @return size of the list
 	 */
-	public int length(ArrayList list) {
+	private int length(ArrayList<InputString> list) {
 		return list.size();
 	}
 	
@@ -161,7 +242,7 @@ public class Interpreter {
 	 * @param number value to print
 	 * @return string representation of the value
 	 */
-	public String print(int number) {
+	private String print(int number) {
 		return ((Integer)number).toString();
 	}
 	
@@ -170,7 +251,7 @@ public class Interpreter {
 	 * @param list value to print
 	 * @return string representation of the value
 	 */
-	public String print(ArrayList list) {
+	private String print(ArrayList<InputString> list) {
 		return list.toString();
 	}
 }
