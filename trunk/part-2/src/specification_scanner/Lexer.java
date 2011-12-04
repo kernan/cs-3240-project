@@ -80,11 +80,20 @@ public class Lexer {
 		Token result = null;
 		
 		switch(t) {
-			//ignore comment lines
+			//create header token
 			case '%':
 				if(input_stream.peekNext() == '%') {
+					//TODO get header text
+					while(input_stream.peekNext() == ' ') {
+						input_stream.getNext();
+					}
+					String header = new String();
+					while(validDefinedCharacters()) {
+						header += input_stream.getNext();
+					}
 					input_stream.gotoNextLine();
-					return makeNewToken();
+					return new Token(TokenType.HEADER, header);
+					//return makeNewToken();
 				}
 				else {
 					result = new Token(TokenType.LITERAL, "%");
