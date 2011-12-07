@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Stack;
 import java.text.ParseException;
 
-import specification_scanner.Lexer;
+import generator.regex.Regex_Lexer;
 
 import global.Options;
 
@@ -19,7 +19,7 @@ public class RecursiveDescent {
 	//already defined identifiers
 	private ArrayList<NFA_Identifier> defined;
 	//stream to parse
-	private Lexer lexer;
+	private Regex_Lexer lexer;
 	//flag to scope back in
 	private boolean scope_back;
 	///flag to differentiate char classes
@@ -30,7 +30,7 @@ public class RecursiveDescent {
 	 * @param lexer input stream to use
 	 * @param defined list of defined identifiers (char classes and regular expressions)
 	 */
-	public RecursiveDescent(Lexer lexer, ArrayList<NFA_Identifier> defined) {
+	public RecursiveDescent(Regex_Lexer lexer, ArrayList<NFA_Identifier> defined) {
 		this.lexer = lexer;
 		this.defined = defined;
 		this.stack = new Stack<NFA>();
