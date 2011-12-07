@@ -52,7 +52,16 @@ public class DFA {
 	}
 	
 	/**
+	 * accessor for current index being parsed
+	 * @return current index being parsed
+	 */
+	public int getCurrent() {
+		return this.current;
+	}
+	
+	/**
 	 * check if current state is a final state
+	 * @return true: this dfa is in an accept state, fase: it is not
 	 */
 	public boolean atFinal() {
 		if(this.current < 0) {
@@ -61,6 +70,14 @@ public class DFA {
 		else {
 			return this.states.get(current).getEnd();
 		}
+	}
+	
+	/**
+	 * check if the dfa is dead
+	 * @return true: this dfa is in a dead state, false: it is not
+	 */
+	public boolean atDead() {
+		return this.current < 0;
 	}
 	
 	/**

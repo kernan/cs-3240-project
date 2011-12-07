@@ -51,7 +51,7 @@ public class StringFileData {
 	 */
 	public String toString() {
 		String result = new String();
-		result += "< " + filename + "; ";
+		result += "<" + filename + ": ";
 		for(int i = 0; i < positions.size(); i++) {
 			result += positions.get(i).toString() + " ";
 		}
