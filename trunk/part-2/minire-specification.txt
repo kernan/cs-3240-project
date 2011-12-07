@@ -1,24 +1,23 @@
 
+%% Tokens
+begin end ID = replace with in ; recursivereplace >! print ( ) , # find diff union inters maxfreqstring
+
 %% Start
 $MiniREprogram
 
-%% Rules
-$ID	   [A-Za-z] | [A-Za-z][A-Za-z0-9] | [A-Za-z][A-Za-z0-9][A-Za-z0-9] | [A-Za-z][A-Za-z0-9][A-Za-z0-9][A-Za-z0-9] | [A-Za-z][A-Za-z0-9][A-Za-z0-9][A-Za-z0-9][A-Za-z0-9] | [A-Za-z][A-Za-z0-9][A-Za-z0-9][A-Za-z0-9][A-Za-z0-9][A-Za-z0-9] | [A-Za-z][A-Za-z0-9][A-Za-z0-9][A-Za-z0-9][A-Za-z0-9][A-Za-z0-9][A-Za-z0-9] | [A-Za-z][A-Za-z0-9][A-Za-z0-9][A-Za-z0-9][A-Za-z0-9][A-Za-z0-9][A-Za-z0-9][A-Za-z0-9] | [A-Za-z][A-Za-z0-9][A-Za-z0-9][A-Za-z0-9][A-Za-z0-9][A-Za-z0-9][A-Za-z0-9][A-Za-z0-9][A-Za-z0-9] | [A-Za-z][A-Za-z0-9][A-Za-z0-9][A-Za-z0-9][A-Za-z0-9][A-Za-z0-9][A-Za-z0-9][A-Za-z0-9][A-Za-z0-9][A-Za-z0-9]
-$REGEX    
-$ASCII-STR    
-
-$binop    diff | union | inters
-$filename    $ASCII-STR
-$term    find $REGEX in  $filename
-$exptail    $binop $term $exptail | \u0000
-$exp    $term $exptail | $ID  | ( $exp )
-$explisttail    , $exp $explisttail
-$explist    $exp $explisttail
-$statement    print ( $explist ) ;
-$destinationfile    $ASCII-STR
-$sourcefile    $ASCII-STR
-$filenames    $sourcefile  >!  $destinationfile
-$statement    $ID = $exp ; | $ID = # $exp ; | $ID = maxfreqstring ( $ID ) ; | replace $REGEX with $ASCII-STR in  $filenames ; | recursivereplace $REGEX with $ASCII-STR in  $filenames ;
-$statementlisttail    $statement $statementlisttail | \u0000
-$statementlist    $statement $statementlisttail
-$MiniREprogram    begin $statementlist end
+%% Rules  
+$MiniREprogram		begin $statementlist end
+$statementlist		$statement $statementlisttail
+$statementlisttail	$statement $statementlisttail | \u0000
+$statement			ID = $exp ; | ID = # $exp ; | ID = maxfreqstring ( ID ) ; | replace REGEX with ASCII-STR in  $filenames ; | recursivereplace REGEX with ASCII-STR in  $filenames ;
+$filenames			$sourcefile  >!  $destinationfile
+$sourcefile			ASCII-STR
+$destinationfile	ASCII-STR
+$statement			print ( $explist ) ;
+$explist			$exp $explisttail
+$explisttail		, $exp $explisttail
+$exp				$term $exptail | ID  | ( $exp )
+$exptail			$binop $term $exptail | \u0000
+$term				find REGEX in  $filename
+$filename			ASCII-STR
+$binop				diff | union | inters
