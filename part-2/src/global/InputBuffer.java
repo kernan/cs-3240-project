@@ -1,4 +1,4 @@
-package specification_scanner;
+package global;
  
 import java.util.Scanner;
 

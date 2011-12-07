@@ -1,13 +1,14 @@
 package interpreter;
 
+import generator.parser.LL1;
+import generator.regex.DFA;
+import global.InputBuffer;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
-import scanner_generator.DFA;
-import parser_generator.LL1;
-import specification_scanner.InputBuffer;
 
 /**
  * Interpreter.java

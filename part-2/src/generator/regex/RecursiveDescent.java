@@ -1,12 +1,10 @@
-package scanner_generator;
+package generator.regex;
 
 import java.util.ArrayList;
 import java.util.Stack;
 import java.text.ParseException;
 
 import specification_scanner.Lexer;
-import specification_scanner.Token;
-import specification_scanner.TokenType;
 
 import global.Options;
 

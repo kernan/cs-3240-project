@@ -1,6 +1,10 @@
-package specification_scanner;
+package generator.regex;
 
 import java.util.Scanner;
+
+import generator.regex.Token;
+import generator.regex.TokenType;
+import global.InputBuffer;
 
 
 /**
@@ -8,7 +12,7 @@ import java.util.Scanner;
  * Generates tokens from a buffered input stream.
  */
 
-public class Lexer {
+public class Regex_Lexer {
 	
 	private InputBuffer input_stream;
 	private boolean peek;
@@ -18,7 +22,7 @@ public class Lexer {
 	 * setup lexer for given scanner input
 	 * @param input scanner to tokenize from
 	 */
-	public Lexer(Scanner scanner) {
+	public Regex_Lexer(Scanner scanner) {
 		this.input_stream = new InputBuffer(scanner);
 		this.peek = false;
 		this.current = null;

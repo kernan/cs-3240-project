@@ -1,4 +1,4 @@
-package parser_generator;
+package generator.parser;
 
 /**
  * LL1.java

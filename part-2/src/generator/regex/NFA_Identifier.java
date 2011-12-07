@@ -1,4 +1,4 @@
-package scanner_generator;
+package generator.regex;
 
 /**
  * NFA_Identifier.java
