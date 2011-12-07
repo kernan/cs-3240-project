@@ -1,9 +1,13 @@
 package interpreter;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.Scanner;
+
 import scanner_generator.DFA;
 import parser_generator.LL1;
+import specification_scanner.InputBuffer;
 
 /**
  * Interpreter.java
@@ -120,15 +124,58 @@ public class Interpreter {
 	 * interpreter actions
 	 */
 	
+	private String replace(DFA regex, String original, String replacement) {
+		regex.reset();
+		for(int i = 0; i < original.length(); i++) {
+			int match_start, match_end;
+			match_start = i;
+			match_end = -1;
+			//look for a match
+			for(int j = i; j < original.length(); j++) {
+				regex.gotoNext(original.charAt(j));
+				if(regex.atFinal()) {
+					//save the current index
+					match_end = j;
+				}
+				//if at a dead state
+				else if(regex.atDead()) {
+					//go to another start index
+					break;
+				}
+			}
+			//a match was found
+			if(match_end != -1) {
+				String result = new String();
+				//replace the substring
+				for(int k = 0; k < match_start; k++) {
+					result += original.charAt(k);
+				}
+				for(int k = 0; k < replacement.length(); k++) {
+					result += replacement.charAt(k);
+				}
+				for(int k = match_end; k < original.length(); k++) {
+					result += original.charAt(k);
+				}
+				return result;
+			}
+		}
+		//nothing was replaced
+		return original;
+	}
+	
 	/**
 	 * replace all regex matches with given replacement word in given files
 	 * @param regex pattern to match
 	 * @param replacement word to replace matches with
-	 * @param input_file file to read and match with
-	 * @param output_file file to output results to
+	 * @param input file to read and match with
+	 * @return list of replaced strings
 	 */
-	private void replace(DFA regex, String replacement, File input_file, File output_file) {
-		//TODO 
+	private ArrayList<String> replace(DFA regex, String replacement, ArrayList<InputString> input) {
+		ArrayList<String> output = new ArrayList<String>();
+		for(int i = 0; i < input.size(); i++) {
+			output.add(replace(regex, input.get(i).getString(), replacement));
+		}
+		return output;
 	}
 	
 	/**
@@ -136,11 +183,22 @@ public class Interpreter {
 	 * replaces until it cannot replace find anymore patterns
 	 * @param regex pattern to match
 	 * @param replacement word to replace matches with
-	 * @param input_file file to read and match with
-	 * @param output_file file to output results to
+	 * @param input file to read and match with
+	 * @return list of replaced strings
 	 */
-	private void recursivereplace(DFA regex, String replacement, File input_file, File output_file) {
-		//TODO
+	private ArrayList<String> recursivereplace(DFA regex, String replacement, ArrayList<InputString> input) {
+		ArrayList<String> output = new ArrayList<String>();
+		String result, last_result;
+		for(int i = 0; i < input.size(); i++) {
+			result = input.get(i).getString();
+			do {
+				last_result = new String(result);
+				result = replace(regex, result, replacement);
+			}while(input.get(i).getString() != result);
+			
+			output.add(result);
+		}
+		return output;
 	}
 	
 	/**
@@ -149,10 +207,62 @@ public class Interpreter {
 	 * @param file input to check for matched
 	 * @return the list of all matching words
 	 */
-	private ArrayList<InputString> find(DFA regex, File file) {
+	private ArrayList<InputString> find(DFA regex, String file) throws FileNotFoundException {
 		ArrayList<InputString> result = new ArrayList<InputString>();
-		//TODO open the file
-		//TODO read through the file, if a word matches the pattern, add it to result
+		InputBuffer file_reader = new InputBuffer(new Scanner(new File(file)));
+		//convert the file to a string
+		String file_buffer = new String();
+		while(file_reader.peekNext() != '\n') {
+			file_buffer += file_reader.getNext();
+		}
+		//regex match the file
+		regex.reset();
+		for(int i = 0; i < file_buffer.length(); i++) {
+			int match_start, match_end;
+			match_start = i;
+			match_end = -1;
+			//look for matches starting at current index until the end of the file
+			for(int j = i; j < file_buffer.length(); j++) {
+				regex.gotoNext(file_buffer.charAt(j));
+				//if we've found a match
+				if(regex.atFinal()) {
+					//log the match
+					match_end = j;
+					//keep going, want LONGEST match
+				}
+				//if we're deadlocked
+				else if(regex.atDead()) {
+					//stop looking for a match
+					break;
+				}
+			}
+			//if a match was found
+			if(match_end != -1) {
+				//move current position to the end of the match
+				i += match_end - match_start;
+				//create the match (w/ metadata)
+				InputString match = new InputString(file_buffer.substring(match_start, match_end));
+				ArrayList<Integer> positions = new ArrayList<Integer>();
+				positions.add(match_start);
+				StringFileData metadata = new StringFileData(file, positions);
+				match.addMetadata(metadata);
+				//add the match to the results list (no duplicates)
+				boolean added = false;
+				for(int k = 0; k < result.size(); k++) {
+					//if there's already a match
+					if(result.get(k).equals(match)) {
+						//update the metadata
+						result.get(k).addMetadata(match.getMetadata());
+						added = true;
+					}
+				}
+				//if it doesn't exist
+				if(!added) {
+					//add a new element
+					result.add(match);
+				}
+			}
+		}
 		return result;
 	}
 	
@@ -168,16 +278,23 @@ public class Interpreter {
 		for(int i = 0; i < list1.size(); i++) {
 			result.add(list1.get(i).clone());
 		}
+		
+		System.out.println("size: " + result.size());
+		
 		for(int i = 0; i < list2.size(); i++) {
-			for(int j = 0; j < result.size(); i++) {
-				//if value is already in results, add the metadata
+			int pos = -1;
+			
+			for(int j = 0; j < result.size(); j++) {
 				if(result.get(j).equals(list2.get(i))) {
-					result.get(j).addMetadata(list2.get(i).getMetadata());
+					pos = j;
+					break;
 				}
-				//otherwise, add a new item
-				else {
-					result.add(list2.get(i).clone());
-				}
+			}
+			if(pos == -1) {
+				result.add(list2.get(i).clone());
+			}
+			else {
+				result.get(pos).addMetadata(list2.get(i).getMetadata());
 			}
 		}
 		return result;
@@ -195,7 +312,7 @@ public class Interpreter {
 			boolean contains = false;
 			for(int j = 0; j < list2.size(); j++) {
 				//found in both lists, shouldn't add
-				if(list1.get(1).equals(list2.get(j))) {
+				if(list1.get(i).equals(list2.get(j))) {
 					contains = true;
 				}
 			}
@@ -203,7 +320,6 @@ public class Interpreter {
 				result.add(list1.get(i).clone());
 			}
 		}
-		
 		return result;
 	}
 	
@@ -239,19 +355,128 @@ public class Interpreter {
 	
 	/**
 	 * prints a given number
-	 * @param number value to print
+	 * @param id identifier to print
 	 * @return string representation of the value
 	 */
-	private String print(int number) {
-		return ((Integer)number).toString();
+	private String print(NumIdentifier id) {
+		return ((Integer)id.getValue()).toString();
 	}
 	
 	/**
 	 * prints a given list
-	 * @param list value to print
+	 * @param id identifier to print
 	 * @return string representation of the value
 	 */
-	private String print(ArrayList<InputString> list) {
-		return list.toString();
+	private String print(ListIdentifier id) {
+		return id.getValue().toString();
+	}
+	
+	public static void main(String[] args) {
+		//lists
+		ArrayList<InputString> t1 = new ArrayList<InputString>();
+		ArrayList<InputString> t2 = new ArrayList<InputString>();
+		
+		//input strings
+		InputString s1 = new InputString("1");
+		InputString s2 = new InputString("2");
+		InputString s3 = s1.clone();
+		
+		//files
+		String f1 = new String("f1.txt");
+		String f2 = new String("f2.txt");
+		
+		//positions
+		ArrayList<Integer> p1 = new ArrayList<Integer>();
+		p1.add(2);
+		p1.add(4);
+		ArrayList<Integer> p2 = new ArrayList<Integer>();
+		p2.add(1);
+		ArrayList<Integer> p3 = new ArrayList<Integer>();
+		p3.add(30);
+		
+		//metadata
+		StringFileData sfd1 = new StringFileData(f1, p1);
+		StringFileData sfd2 = new StringFileData(f1, p2);
+		StringFileData sfd3 = new StringFileData(f2, p3);
+		
+		//associate metadata
+		s1.addMetadata(sfd1);
+		s2.addMetadata(sfd2);
+		s3.addMetadata(sfd3);
+		
+		System.out.println("s1: " + s1.toString());
+		System.out.println("s2: " + s2.toString());
+		System.out.println("s3: " + s3.toString());
+		
+		InputString s4 = s1.clone();
+		s4.addMetadata(s3.getMetadata());
+		s4.addMetadata(s2.getMetadata());
+		System.out.println("s4: " + s4.toString());
+		s4 = null;
+		
+		//try list operations
+		t1.add(s1);
+		t1.add(s2);
+		t2.add(s3);
+		
+		System.out.println("t1: ");
+		for(int i = 0; i < t1.size(); i++) {
+			System.out.println("\t" + t1.get(i).toString());
+		}
+		System.out.println("t2: ");
+		for(int i = 0; i < t2.size(); i++) {
+			System.out.println("\t" + t2.get(i).toString());
+		}
+		
+		//generate empty Interpreter
+		Interpreter interpreter = new Interpreter(null, null, null);
+		
+		//test UNION
+		System.out.println("\nunion test: ");
+		ArrayList<InputString> union_test = interpreter.union(t1, t2);
+		for(int i = 0; i < union_test.size(); i++) {
+			System.out.println("\t" + union_test.get(i).toString());
+		}
+		//make sure other lists are unchanged
+		System.out.println("t1: ");
+		for(int i = 0; i < t1.size(); i++) {
+			System.out.println("\t" + t1.get(i).toString());
+		}
+		System.out.println("t2: ");
+		for(int i = 0; i < t2.size(); i++) {
+			System.out.println("\t" + t2.get(i).toString());
+		}
+		
+		//test diff
+		System.out.println("\ndiff test");
+		ArrayList<InputString> diff_test = interpreter.diff(t1, t2);
+		for(int i = 0; i < diff_test.size(); i++) {
+			System.out.println("\t" + diff_test.get(i).toString());
+		}
+		//make sure other lists are unchanged
+		System.out.println("t1: ");
+		for(int i = 0; i < t1.size(); i++) {
+			System.out.println("\t" + t1.get(i).toString());
+		}
+		System.out.println("t2: ");
+		for(int i = 0; i < t2.size(); i++) {
+			System.out.println("\t" + t2.get(i).toString());
+		}
+		
+		//test inters
+		System.out.println("\ninters test");
+		ArrayList<InputString> inters_test = interpreter.inters(t1, t2);
+		for(int i = 0; i < inters_test.size(); i++) {
+			System.out.println("\t" + inters_test.get(i).toString());
+		}
+		//make sure other lists are unchanged
+		System.out.println("t1: ");
+		for(int i = 0; i < t1.size(); i++) {
+			System.out.println("\t" + t1.get(i).toString());
+		}
+		System.out.println("t2: ");
+		for(int i = 0; i < t2.size(); i++) {
+			System.out.println("\t" + t2.get(i).toString());
+		}
 	}
 }

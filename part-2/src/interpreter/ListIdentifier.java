@@ -38,6 +38,19 @@ public class ListIdentifier extends Identifier {
 	}
 	
 	/**
+	 * adds a value to a list, if it already exists, it adds metadata
+	 * @param t value to add to the list
+	 */
+	public void add(InputString t) {
+		for(int i = 0; i < this.value.size(); i++) {
+			//if a duplicate is found, replace it and return
+			this.value.get(i).addMetadata(t.getMetadata());
+		}
+		//add normally if not found
+		this.value.add(t);
+	}
+	
+	/**
 	 * generates a string representation of this identifier's value
 	 * @return string representation of this identifier
 	 */

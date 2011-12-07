@@ -92,7 +92,7 @@ public class Lexer {
 						header += input_stream.getNext();
 					}
 					input_stream.gotoNextLine();
-					return new Token(TokenType.HEADER, header);
+					result = new Token(TokenType.HEADER, header);
 					//return makeNewToken();
 				}
 				else {
@@ -111,7 +111,6 @@ public class Lexer {
 			case '$':
 				String name = new String();
 				while(validDefinedCharacters()) {
-
 					name += input_stream.getNext();
 				}
 				//input_stream.getNext();//consume whitespace
