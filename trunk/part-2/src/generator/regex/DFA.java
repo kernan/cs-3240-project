@@ -1,4 +1,4 @@
-package scanner_generator;
+package generator.regex;
 
 import java.util.ArrayList;
 import java.util.Stack;

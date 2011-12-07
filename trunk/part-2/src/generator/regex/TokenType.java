@@ -1,4 +1,4 @@
-package specification_scanner;
+package generator.regex;
 /**
  * Token types for use when scanning a Grammar.
  * 
