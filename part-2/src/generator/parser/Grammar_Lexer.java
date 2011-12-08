@@ -7,7 +7,8 @@ import global.Lexer;
 import global.Token;
 
 /**
- * 
+ * Grammar_Lexer.java
+ * has capability to scan and generate tokens for a specification grammar
  */
 public class Grammar_Lexer extends Lexer<Token<LL1_TokenType>> {
 	
@@ -51,8 +52,7 @@ public class Grammar_Lexer extends Lexer<Token<LL1_TokenType>> {
 				return makeNewToken();
 			//move buffer on new lines
 			case '\n':
-				this.input_stream.gotoNextLine();
-				return makeNewToken();
+				result = new Token<LL1_TokenType>(LL1_TokenType.EOL, "\n");
 			//generate headers
 			case '%':
 				if(input_stream.peekNext() == '%') {
