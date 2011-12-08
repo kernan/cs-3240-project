@@ -25,7 +25,6 @@ public enum TokenType {
 	RBRACKET,
 	LPAREN,
 	RPAREN,
-	IN,
-	HEADER
+	IN
 }
 
