@@ -1,6 +1,10 @@
 package global;
 
-
+/**
+ * Lexer.java
+ * abstract lexer with functionality to get positions and generate tokens
+ * @param <E> defines the generated token type
+ */
 public abstract class Lexer<E> {
 	
 	public static final char NULL_CHAR = '\u0000';

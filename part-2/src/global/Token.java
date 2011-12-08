@@ -3,6 +3,7 @@ package global;
 /**
  * Token.java
  * Represents a token of specified type with specified value.
+ * @param <E> defines a set of valid types
  */
 
 public class Token<E> {

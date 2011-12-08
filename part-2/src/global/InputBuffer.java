@@ -8,7 +8,6 @@ import java.util.Scanner;
  * InputBuffer.java
  * Allows forward and backward stepping through an input stream.
  */
-
 public class InputBuffer {
 	
 	private Scanner input;
