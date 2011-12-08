@@ -1,5 +1,7 @@
 package global;
  
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.Scanner;
 
 /**
@@ -19,8 +21,8 @@ public class InputBuffer {
 	 * setup the buffer with a given string
 	 * @param buffer string of current line
 	 */
-	public InputBuffer(Scanner input) {
-		this.input = input;
+	public InputBuffer(String filename) throws FileNotFoundException {
+		this.input = new Scanner(new File(filename));
 		this.buffer = input.nextLine();
 		this.currentpos = 0;
 		this.peek = false;
@@ -95,5 +97,13 @@ public class InputBuffer {
 		else {
 			return false;
 		}
+	}
+	
+	/**
+	 * determine if the scanner is at the bottom of the file
+	 * @return true: not at end of file, false: it is
+	 */
+	public boolean hasNext() {
+		return input.hasNext();
 	}
 }
