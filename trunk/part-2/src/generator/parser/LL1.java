@@ -42,7 +42,7 @@ public class LL1 {
 	 *     }
 	 * }
 	 */
-	public Token first(Token t){
+/*	public Token first(Token t){*/
 		/* Token tNext = Grammar_Lexer.getNext()
 		 * if(tNext.type = terminal){
 		 *    t.addFirstList(tNext);
@@ -55,7 +55,7 @@ public class LL1 {
 		 * 
 		 * 
 		 */
-	}
+/*	}*/
 	/**
 	 * Follow(start-symbol) := {$} ;
        FOR all nonterminals A != start-symbol DO Follow(A) := {} ;
