@@ -1,14 +1,13 @@
-package generator.regex;
-
+package global;
 
 /**
  * Token.java
  * Represents a token of specified type with specified value.
  */
 
-public class Token {
+public class Token<E> {
 
-	private TokenType type;
+	private E type;
 	private String value;
 	
 	/**
@@ -16,7 +15,7 @@ public class Token {
 	 * @param type type of token
 	 * @param value string the token represents
 	 */
-	public Token(TokenType type, String value) {
+	public Token(E type, String value) {
 		this.type = type;
 		this.value = value;
 	}
@@ -25,7 +24,7 @@ public class Token {
 	 * Accessor for the token type
 	 * @return the token's type
 	 */
-	public TokenType getType() {
+	public E getType() {
 		return this.type;
 	}
 	
@@ -41,7 +40,7 @@ public class Token {
 	 * Mutator for token type
 	 * @param type token enum type
 	 */
-	public void setType(TokenType type) {
+	public void setType(E type) {
 		this.type = type;
 	}
 	
@@ -58,6 +57,6 @@ public class Token {
 	 * @return string representation of a token
 	 */
 	public String toString() {
-		return "value: " + this.value + ", type: " + this.type;
+		return "value: " + this.value + ", type: " + this.type.toString();
 	}
 }
