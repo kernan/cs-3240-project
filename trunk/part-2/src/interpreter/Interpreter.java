@@ -2,10 +2,13 @@ package interpreter;
 
 import generator.parser.LL1;
 import generator.regex.DFA;
+import generator.regex.NFA_Identifier;
+import generator.regex.RecursiveDescent;
 import global.InputBuffer;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -18,7 +21,7 @@ import java.util.Scanner;
 public class Interpreter {
 	
 	private ArrayList<Identifier> identifiers;
-	private DFA scanner;
+	private ArrayList<DFA> terminals;
 	private LL1 parser;
 	private File script;
 	
@@ -28,12 +31,16 @@ public class Interpreter {
 	 * @param parser ll1 parser for syntactic analysis of given script
 	 * @param script the script for this interpreter instance to run
 	 */
-	public Interpreter(DFA scanner, LL1 parser, File script) {
-		this.scanner = scanner;
+	public Interpreter(ArrayList<DFA> terminals, LL1 parser, File script) {
+		this.terminals = terminals;
 		this.parser = parser;
 		this.script = script;
 		this.identifiers = new ArrayList<Identifier>();
 	}
+	
+	/*
+	 * assignments for identifiers 
+	 */
 	
 	/**
 	 * assign a given identifier a given number value
@@ -53,6 +60,33 @@ public class Interpreter {
 	 */
 	private ListIdentifier assign(Identifier id, ArrayList<InputString> value) {
 		return new ListIdentifier(id, value);
+	}
+	
+	/*
+	 * regular expression generation
+	 */
+	
+	/**
+	 * generate a DFA from a given regex string
+	 * @param regex regular expression to generate from
+	 * @return dfa that represents the same language as the regex
+	 * @throws ParseException thrown by RecursiveDescent.descend
+	 */
+	private DFA generateDFA(String regex) throws ParseException {
+		//init the nfa generator
+		RecursiveDescent dfa_generator = new RecursiveDescent(regex, new ArrayList<NFA_Identifier>());
+		NFA_Identifier nfa;
+		try {
+			//generate the nfa
+			nfa = dfa_generator.descend();
+		}
+		catch(ParseException pe) {
+			//TODO something meaningful with the ParseException
+			throw pe;
+		}
+		//convert to dfa
+		DFA dfa = new DFA(nfa.getNFA());
+		return dfa;
 	}
 	
 	/*
@@ -122,9 +156,12 @@ public class Interpreter {
 	 */
 	
 	/**
-	 * interpreter actions
+	 * find first match and replace that substring
+	 * @param regex regular expression to match
+	 * @param original string to match expression to
+	 * @param replacement substring replacement
+	 * @return new string with replaced substring
 	 */
-	
 	private String replace(DFA regex, String original, String replacement) {
 		regex.reset();
 		for(int i = 0; i < original.length(); i++) {
