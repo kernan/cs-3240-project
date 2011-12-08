@@ -340,6 +340,7 @@ public class RecursiveDescent {
 		if(type == Regex_TokenType.CARET){
 			range = excludeSet(new ArrayList<Character>());
 		}
+		
 		else{
 			range = charSetList(new ArrayList<Character>());
 		}
@@ -373,13 +374,16 @@ public class RecursiveDescent {
 		if(type == Regex_TokenType.LITERAL || type == Regex_TokenType.DOT){
 			//make sure the literal is a CLS_CHAR
 			boolean valid = check_valid(lexer.peekNextToken(), CLS_CHAR);
+			//TODO
 			if(!valid) {
 				return range;
+				//throw new ParseException("blah", 1);
 			}
 			range = charSet(range);
 			return charSetList(range);
 		}
 		else
+			lexer.getNextToken();//consume RBRACKET
 			return range;
 	}
 	
@@ -411,10 +415,10 @@ public class RecursiveDescent {
 		Regex_TokenType type = lexer.peekNextToken().getType();
 		if(type == Regex_TokenType.DASH){
 			lexer.getNextToken();//consume DASH
-			Token<Regex_TokenType> end = lexer.getNextToken();
+			Token<Regex_TokenType> end = lexer.getNextToken();//consume LITERAL (end)
 			
 			if(!check_valid(end, CLS_CHAR)) {
-				throw new ParseException("ERROR: Token not a valid CLS_CHAR: " + end.getValue() + 
+				throw new ParseException("Regex ERROR: Token not a valid CLS_CHAR: " + end.getValue() + 
 						", position: " + this.lexer.getPosition(), this.lexer.getPosition());
 			}
 			//make set from range
@@ -454,13 +458,25 @@ public class RecursiveDescent {
 	 * <excludeSet> -> ^ <charSet>] IN <excludeSetTail>
 	 * @param range the range that has been build so far
 	 * @return the range to include
+	 * @throws ParseException thrown if IN is not given
 	 * @throws ParseException thrown by charSet function
 	 */
 	private ArrayList<Character> excludeSet(ArrayList<Character> range) throws ParseException {
 		lexer.getNextToken();//consume CARET
 		ArrayList<Character> exclude = charSet(new ArrayList<Character>());
 		lexer.getNextToken();//consume RBRACKET
-		lexer.getNextToken();//consume IN
+		//check to make sure IN is found
+		String t = lexer.getNextToken().getValue();//consume I
+		if(!t.equals("I")) {
+			throw new ParseException("Regex ERROR: expected IN found literal: " + t+
+					", position: " + this.lexer.getPosition(), this.lexer.getPosition());
+		}
+		t += lexer.getNextToken().getValue();//consume N
+		if(!t.equals("IN")) {
+			throw new ParseException("Regex ERROR: expected IN found literals: " + t+
+					", position: " + this.lexer.getPosition(), this.lexer.getPosition());
+		}
+		
 		ArrayList<Character> in = excludeSetTail();
 		
 		for(int i = 0; i < in.size(); i++) {
@@ -480,7 +496,7 @@ public class RecursiveDescent {
 	 */
 	private ArrayList<Character> excludeSetTail() throws ParseException{
 		Regex_TokenType type = lexer.peekNextToken().getType();
-		if(type == Regex_TokenType.LBRACKET){
+		if(type == Regex_TokenType.LBRACKET) {
 			lexer.getNextToken();//consume LBRACKET
 			ArrayList<Character> range = charSet(new ArrayList<Character>());
 			lexer.getNextToken();//consume RBRACKET
@@ -507,14 +523,14 @@ public class RecursiveDescent {
 		int index = this.defined.indexOf(phony);
 		//make sure it exists
 		if(index == -1) {
-			throw new ParseException("ERROR: char class doesn't exist: " + phony.getName()+
+			throw new ParseException("Regex ERROR: char class doesn't exist: " + phony.getName()+
 					", position: " + this.lexer.getPosition(), this.lexer.getPosition());
 		}
 		NFA_Identifier defined_nfa = this.defined.get(index);
 		
 		if(exclude) {
 			if(!defined_nfa.getCharClass()) {
-				throw new ParseException("ERROR: exclusion may only be used on a char class, invalid class: " + phony.getName() +
+				throw new ParseException("Regex ERROR: exclusion may only be used on a char class, invalid class: " + phony.getName() +
 						", position: " + this.lexer.getPosition(), this.lexer.getPosition());
 			}
 			
