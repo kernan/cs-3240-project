@@ -13,25 +13,24 @@ public class LL1 {
 	
 	private static ArrayList<LL1_Rule> ruleList = new ArrayList<LL1_Rule>();
 	private static ArrayList<Terminal> termList = new ArrayList<Terminal>();
+	private static boolean changeFlag = true;
 	
 	public static void main(String[] args) throws FileNotFoundException{
 		Grammar_Lexer lex = new Grammar_Lexer("minire-specification.txt");
 		
 		//add all terminals to termList
 		while(lex.peekNextToken().getType() != LL1_TokenType.EOL){
-			termList.add(lex.getNextToken());
+			termList.add(new Terminal(lex.getNextToken()));
 		}
 		
-		int i = 0;
 		//turn all non-terminals into a rule and add their tokens to the rule
 		while(lex.peekNextToken().getType() != LL1_TokenType.EOF){
-			
-			ruleList.add(new LL1_Rule(lex.getNextToken()));
-			LL1_Rule currRule = ruleList.get(i);
+
+			LL1_Rule currRule = new LL1_Rule(lex.getNextToken());
+			ruleList.add(currRule);
 			while(lex.peekNextToken().getType() != LL1_TokenType.EOL){
-				currRule.addToTNTList(new NonTerminal(lex.getNextToken()));//lex.getNextToken());
+				currRule.addToTNTList(new NonTerminal(lex.getNextToken()));
 			}
-			i++;
 		}
 		
 		
@@ -51,11 +50,12 @@ public class LL1 {
 	 */
 	private static void First(){
 		LL1_Rule curRule = ruleList.get(0);
-		NonTerminal curTerm = curRule.getNonTerm();
-		  while(curTerm.getFirstFlag = true){
-		      for(int i = 0; i < ruleList.size(); i++){
+		Token<LL1_TokenType> curTerm = curRule.getNonTerm();
+		  while(changeFlag = true){
+		      changeFlag = false;
+			  for(int i = 0; i < ruleList.size(); i++){
 		          int k = 1;
-		          int n = curTerm.getRuleSize();
+		          int n = curRule.getTNTList().size();
 		          boolean Continue = true;
 		          curRule = ruleList.get(i);
 		          curTerm = curRule.getNonTerm();
