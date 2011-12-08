@@ -84,7 +84,7 @@ public class RecursiveDescent {
 	 * @throws ParseException thrown  by rexp1 function
 	 */
 	private void rexp$() throws ParseException {
-		Regex_TokenType type = (Regex_TokenType)lexer.peekNextToken().getType();
+		Regex_TokenType type = lexer.peekNextToken().getType();
 		if (type == Regex_TokenType.UNION){
 			
 			if(Options.DEBUG) {
@@ -115,7 +115,7 @@ public class RecursiveDescent {
 	 * @throws ParseException thrown by rexp2 function
 	 */
 	private void rexp1$() throws ParseException {
-		Regex_TokenType type = (Regex_TokenType)lexer.peekNextToken().getType();
+		Regex_TokenType type = lexer.peekNextToken().getType();
 		if(type == Regex_TokenType.LPAREN || type == Regex_TokenType.DOT ||
 				type == Regex_TokenType.LBRACKET || type == Regex_TokenType.DEFINED) {
 			rexp2();
@@ -140,7 +140,7 @@ public class RecursiveDescent {
 	 * @throws ParseException if an literal is not a valid RE_CHAR
 	 */
 	private void rexp2() throws ParseException {
-		Regex_TokenType type = (Regex_TokenType)lexer.peekNextToken().getType();
+		Regex_TokenType type = lexer.peekNextToken().getType();
 		if(type == Regex_TokenType.LPAREN){
 			
 			if(Options.DEBUG) {
@@ -202,7 +202,7 @@ public class RecursiveDescent {
 	 * <rexp2Tail> -> * | + |  E
 	 */
 	private void rexp2Tail() {
-		Regex_TokenType type = (Regex_TokenType)lexer.peekNextToken().getType();
+		Regex_TokenType type = lexer.peekNextToken().getType();
 		if(type == Regex_TokenType.KLEENE){
 			
 			if(Options.DEBUG) {
@@ -292,7 +292,7 @@ public class RecursiveDescent {
 	 * @throws ParseException thrown by charClass function
 	 */
 	private void rexp3() throws ParseException {
-		Regex_TokenType type = (Regex_TokenType)lexer.peekNextToken().getType();
+		Regex_TokenType type = lexer.peekNextToken().getType();
 		if(type == Regex_TokenType.DOT || type == Regex_TokenType.LBRACKET || type == Regex_TokenType.DEFINED){
 			charClass();
 		}
@@ -305,7 +305,7 @@ public class RecursiveDescent {
 	 * @throws ParseException thrown by definedClass function
 	 */
 	private void charClass() throws ParseException{
-		Regex_TokenType type = (Regex_TokenType)lexer.peekNextToken().getType();
+		Regex_TokenType type = lexer.peekNextToken().getType();
 		
 		if(type == Regex_TokenType.DOT){
 			lexer.getNextToken();//consume DOT
@@ -335,7 +335,7 @@ public class RecursiveDescent {
 	 * @throws ParseException thrown by charSetList function
 	 */
 	private void charClass1() throws ParseException {
-		Regex_TokenType type = (Regex_TokenType)lexer.peekNextToken().getType();
+		Regex_TokenType type = lexer.peekNextToken().getType();
 		ArrayList<Character> range;
 		if(type == Regex_TokenType.CARET){
 			range = excludeSet(new ArrayList<Character>());
@@ -369,7 +369,7 @@ public class RecursiveDescent {
 	 * @throws ParseException thrown by charSet function
 	 */
 	private ArrayList<Character> charSetList(ArrayList<Character> range) throws ParseException{
-		Regex_TokenType type = (Regex_TokenType)lexer.peekNextToken().getType();
+		Regex_TokenType type = lexer.peekNextToken().getType();
 		if(type == Regex_TokenType.LITERAL || type == Regex_TokenType.DOT){
 			//make sure the literal is a CLS_CHAR
 			boolean valid = check_valid(lexer.peekNextToken(), CLS_CHAR);
@@ -408,7 +408,7 @@ public class RecursiveDescent {
 	 * @throws ParseException if range value isn't in CLS_CHAR
 	 */
 	private ArrayList<Character> charSetTail(Token<Regex_TokenType> start, ArrayList<Character> range) throws ParseException {
-		Regex_TokenType type = (Regex_TokenType)lexer.peekNextToken().getType();
+		Regex_TokenType type = lexer.peekNextToken().getType();
 		if(type == Regex_TokenType.DASH){
 			lexer.getNextToken();//consume DASH
 			Token<Regex_TokenType> end = lexer.getNextToken();
@@ -479,7 +479,7 @@ public class RecursiveDescent {
 	 * @throws ParseException thrown by definedClass function
 	 */
 	private ArrayList<Character> excludeSetTail() throws ParseException{
-		Regex_TokenType type = (Regex_TokenType)lexer.peekNextToken().getType();
+		Regex_TokenType type = lexer.peekNextToken().getType();
 		if(type == Regex_TokenType.LBRACKET){
 			lexer.getNextToken();//consume LBRACKET
 			ArrayList<Character> range = charSet(new ArrayList<Character>());
