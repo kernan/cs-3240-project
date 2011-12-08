@@ -6,7 +6,7 @@ import java.util.ArrayList;
 
 public class LL1_Token {
 	private Token<LL1_TokenType> token;
-	private ArrayList<Token<LL1_TokenType>> FirstSet;
+	private ArrayList<Token<Terminal>> FirstSet;
 	
 	/**
 	 * 
@@ -14,14 +14,14 @@ public class LL1_Token {
 	 */
 	public LL1_Token(Token<LL1_TokenType> token){
 		this.token = token;
-		this.FirstSet = new ArrayList<Token<LL1_TokenType>>();
+		this.FirstSet = new ArrayList<Token<Terminal>>();
 	}
 	
 	/**
 	 * 
 	 * @param tok
 	 */
-	public void addToFirstSet(Token<LL1_TokenType> tok){
+	public void addToFirstSet(Token<Terminal> tok){
 		FirstSet.add(tok);	
 	}
 
@@ -38,11 +38,11 @@ public class LL1_Token {
 		this.token = token;
 	}
 
-	public ArrayList<Token<LL1_TokenType>> getFirstSet() {
+	public ArrayList<Token<Terminal>> getFirstSet() {
 		return FirstSet;
 	}
 
-	public void setFirstSet(ArrayList<Token<LL1_TokenType>> firstSet) {
+	public void setFirstSet(ArrayList<Token<Terminal>> firstSet) {
 		FirstSet = firstSet;
 	}
 	

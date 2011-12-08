@@ -26,9 +26,28 @@ public class LL1 {
 		//turn all non-terminals into a rule and add their tokens to the rule
 		while(lex.peekNextToken().getType() != LL1_TokenType.EOF){
 
-			LL1_Rule currRule = new LL1_Rule(lex.getNextToken());
+			LL1_Rule currRule = new LL1_Rule(new NonTerminal(lex.getNextToken()));
 			ruleList.add(currRule);
 			while(lex.peekNextToken().getType() != LL1_TokenType.EOL){
+				//if next token is a terminal, take the object out of termlist
+				//and add it to the current rule
+				if(termList.contains(lex.peekNextToken())){
+					int location = termList.indexOf(new Terminal(lex.peekNextToken()));
+					currRule.addToTNTList(termList.get(location));
+				}
+				//check to see if our new nonterminal is already in the rule list
+				NonTerminal curNonTerm = new NonTerminal(lex.getNextToken());
+				for(int i = 0; i < ruleList.size(); i++){
+					NonTerminal nonTerm = ruleList.get(i).getNonTerm();
+					if(nonTerm.equals(curNonTerm)){
+						curNonTerm = nonTerm;
+					}
+				}
+				//if the new nonterminal is not a duplicate, make it into a new rule
+				//and add it to the rule list, if it is a duplicate, curNonTerm now
+				//points to the duplicate, so make it into a new rule anyways
+				ruleList.add(new LL1_Rule(curNonTerm));
+				
 				currRule.addToTNTList(new NonTerminal(lex.getNextToken()));
 			}
 		}
@@ -50,7 +69,7 @@ public class LL1 {
 	 */
 	private static void First(){
 		LL1_Rule curRule = ruleList.get(0);
-		Token<LL1_TokenType> curTerm = curRule.getNonTerm();
+		NonTerminal curTerm = curRule.getNonTerm();
 		  while(changeFlag = true){
 		      changeFlag = false;
 			  for(int i = 0; i < ruleList.size(); i++){
@@ -61,17 +80,18 @@ public class LL1 {
 		          curTerm = curRule.getNonTerm();
 		          
 		          while( Continue = true && k <= n){
-		              ArrayList<> tokenList = curTerm.getTokenList();
-		              Array kFirstList = tokenList[k].getFirstList();
-		              curTerm.getFirstList.addList(kFirstList);
-		              if(!kList.contains(epsilon){
+		              ArrayList<LL1_Token> tokenList = curRule.getTNTList();
+		              LL1_Token kToken = tokenList.get(k);
+		              ArrayList<Token<Terminal>> kFirstList = kToken.getFirstSet();
+		              curTerm.getFirstSet().addAll(kFirstList);
+		              /*if(!kFirstList.contains(EPSILON){
 		                  Continue = false;
-		              }
+		              }*/
 		              k++;
 		          }
-		          if(Continue){
-		              curTerm.getFirstList.add(epislon);
-		          }
+		          /*if(Continue){
+		              curTerm.getFirstSet().add(EPSILON);
+		          }*/
 		      }
 		  }
 		 
