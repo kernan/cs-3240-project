@@ -1,10 +1,7 @@
 package generator.regex;
 
-import java.util.Scanner;
-
 import generator.regex.Token;
 import generator.regex.TokenType;
-import global.InputBuffer;
 
 /**
  * Lexer.java
