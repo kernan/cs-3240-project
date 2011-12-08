@@ -44,6 +44,7 @@ public class Grammar_Lexer extends Lexer<Token<LL1_TokenType>> {
 		char t = this.input_stream.getNext();
 		
 		switch(t) {
+			//TODO handle special token types
 			//ignore spaces
 			case ' ':
 			case '\t':
