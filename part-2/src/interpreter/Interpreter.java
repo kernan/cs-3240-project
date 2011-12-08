@@ -254,7 +254,7 @@ public class Interpreter {
 	 */
 	private ArrayList<InputString> find(DFA regex, String file) throws FileNotFoundException {
 		ArrayList<InputString> result = new ArrayList<InputString>();
-		InputBuffer file_reader = new InputBuffer(new Scanner(new File(file)));
+		InputBuffer file_reader = new InputBuffer(file);
 		//convert the file to a string
 		String file_buffer = new String();
 		while(file_reader.peekNext() != '\n') {

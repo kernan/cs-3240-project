@@ -8,7 +8,7 @@ import global.Token;
  * Lexer.java
  * Generates tokens from a given input string
  */
-public class Regex_Lexer extends Lexer<Regex_TokenType> {
+public class Regex_Lexer extends Lexer<Token<Regex_TokenType>> {
 	
 	private String input;
 	private int current_pos;
