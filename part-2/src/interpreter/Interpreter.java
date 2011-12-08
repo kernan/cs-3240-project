@@ -38,6 +38,13 @@ public class Interpreter {
 		this.identifiers = new ArrayList<Identifier>();
 	}
 	
+	/**
+	 * run the script
+	 */
+	public void run() {
+		
+	}
+	
 	/*
 	 * assignments for identifiers 
 	 */
