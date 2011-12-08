@@ -10,7 +10,7 @@ import global.Token;
  */
 public class LL1_Rule {
 	private Token<LL1_TokenType> nonTerm;
-	private ArrayList<Token<LL1_TokenType>> TNTList;
+	private ArrayList<LL1_Token> TNTList;
 	
 	/**
 	 * 
@@ -23,7 +23,7 @@ public class LL1_Rule {
 	 * 
 	 * @param tok
 	 */
-	public void addToTNTList(Token<LL1_TokenType> tok){
+	public void addToTNTList(LL1_Token tok){
 		TNTList.add(tok);	
 	}
 	

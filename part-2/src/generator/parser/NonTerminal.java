@@ -7,7 +7,7 @@ import java.util.ArrayList;
  * 
  *
  */
-public class NonTerminal {
+public class NonTerminal extends LL1_Token {
 	private Token<LL1_TokenType> token;
 	private ArrayList<Token<LL1_TokenType>> FirstSet;
 	private ArrayList<Token<LL1_TokenType>> FollowSet;

@@ -6,7 +6,7 @@ import global.Token;
 /**
  *
  */
-public class Terminal {
+public class Terminal extends LL1_Token {
 	private Token<LL1_TokenType> token;
 	private ArrayList<Token<LL1_TokenType>> FirstSet;
 	
