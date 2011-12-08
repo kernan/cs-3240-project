@@ -7,6 +7,7 @@ import java.text.ParseException;
 import generator.regex.Regex_Lexer;
 
 import global.Options;
+import global.Token;
 
 /**
  * RecursiveDescent.java
@@ -83,8 +84,8 @@ public class RecursiveDescent {
 	 * @throws ParseException thrown  by rexp1 function
 	 */
 	private void rexp$() throws ParseException {
-		TokenType type = lexer.peekNextToken().getType();
-		if (type == TokenType.UNION){
+		Regex_TokenType type = (Regex_TokenType)lexer.peekNextToken().getType();
+		if (type == Regex_TokenType.UNION){
 			
 			if(Options.DEBUG) {
 				System.out.println("   [RDescent] UNION found... not in char class");
@@ -114,12 +115,13 @@ public class RecursiveDescent {
 	 * @throws ParseException thrown by rexp2 function
 	 */
 	private void rexp1$() throws ParseException {
-		TokenType type = lexer.peekNextToken().getType();
-		if(type == TokenType.LPAREN || type == TokenType.DOT || type == TokenType.LBRACKET || type == TokenType.DEFINED) {
+		Regex_TokenType type = (Regex_TokenType)lexer.peekNextToken().getType();
+		if(type == Regex_TokenType.LPAREN || type == Regex_TokenType.DOT ||
+				type == Regex_TokenType.LBRACKET || type == Regex_TokenType.DEFINED) {
 			rexp2();
 			rexp1$();
 		}
-		else if(type == TokenType.LITERAL) {
+		else if(type == Regex_TokenType.LITERAL) {
 			//make sure it's an RE_CHAR
 			boolean valid = check_valid(lexer.peekNextToken(), RE_CHAR);
 			if(!valid) {
@@ -138,8 +140,8 @@ public class RecursiveDescent {
 	 * @throws ParseException if an literal is not a valid RE_CHAR
 	 */
 	private void rexp2() throws ParseException {
-		TokenType type = lexer.peekNextToken().getType();
-		if(type == TokenType.LPAREN){
+		Regex_TokenType type = (Regex_TokenType)lexer.peekNextToken().getType();
+		if(type == Regex_TokenType.LPAREN){
 			
 			if(Options.DEBUG) {
 				System.out.println("   [RDescent] LPAREN found... not in char class");
@@ -159,7 +161,7 @@ public class RecursiveDescent {
 			scope_back = true;
 			rexp2Tail();
 		}
-		else if(type == TokenType.LITERAL) {
+		else if(type == Regex_TokenType.LITERAL) {
 			
 			if(Options.DEBUG) {
 				System.out.println("   [RDescent] LITERAL found... not in char class");
@@ -174,7 +176,7 @@ public class RecursiveDescent {
 						", position: " + this.lexer.getPosition(), this.lexer.getPosition());
 			}
 			
-			Token token = lexer.getNextToken();//consume LITERAL
+			Token<Regex_TokenType> token = lexer.getNextToken();//consume LITERAL
 			NFA t2 = stack.pop();
 			
 			char trans_val = token.getValue().charAt(0);
@@ -200,8 +202,8 @@ public class RecursiveDescent {
 	 * <rexp2Tail> -> * | + |  E
 	 */
 	private void rexp2Tail() {
-		TokenType type = lexer.peekNextToken().getType();
-		if(type == TokenType.KLEENE){
+		Regex_TokenType type = (Regex_TokenType)lexer.peekNextToken().getType();
+		if(type == Regex_TokenType.KLEENE){
 			
 			if(Options.DEBUG) {
 				System.out.println("   [RDescent] KLEENE found... not in char class");
@@ -236,7 +238,7 @@ public class RecursiveDescent {
 				stack.push(t2);
 			}
 		}
-		else if(type == TokenType.PLUS){
+		else if(type == Regex_TokenType.PLUS){
 			
 			if(Options.DEBUG) {
 				System.out.println("   [RDescent] PLUS found... not in char class");
@@ -290,8 +292,8 @@ public class RecursiveDescent {
 	 * @throws ParseException thrown by charClass function
 	 */
 	private void rexp3() throws ParseException {
-		TokenType type = lexer.peekNextToken().getType();
-		if(type == TokenType.DOT || type == TokenType.LBRACKET || type == TokenType.DEFINED){
+		Regex_TokenType type = (Regex_TokenType)lexer.peekNextToken().getType();
+		if(type == Regex_TokenType.DOT || type == Regex_TokenType.LBRACKET || type == Regex_TokenType.DEFINED){
 			charClass();
 		}
 		else
@@ -303,9 +305,9 @@ public class RecursiveDescent {
 	 * @throws ParseException thrown by definedClass function
 	 */
 	private void charClass() throws ParseException{
-		TokenType type = lexer.peekNextToken().getType();
+		Regex_TokenType type = (Regex_TokenType)lexer.peekNextToken().getType();
 		
-		if(type == TokenType.DOT){
+		if(type == Regex_TokenType.DOT){
 			lexer.getNextToken();//consume DOT
 			
 			NFA t2 = stack.pop();
@@ -317,12 +319,12 @@ public class RecursiveDescent {
 			t2.addConcatenation(dot_char);
 			stack.push(t2);
 		}
-		else if(type == TokenType.LBRACKET){
+		else if(type == Regex_TokenType.LBRACKET){
 			lexer.getNextToken();//consume LBRACKET
 			charClass1();
 		}
 		else  {
-			Token defined = lexer.getNextToken();
+			Token<Regex_TokenType> defined = lexer.getNextToken();
 			definedClass(defined, false);
 		}
 	}
@@ -333,9 +335,9 @@ public class RecursiveDescent {
 	 * @throws ParseException thrown by charSetList function
 	 */
 	private void charClass1() throws ParseException {
-		TokenType type = lexer.peekNextToken().getType();
+		Regex_TokenType type = (Regex_TokenType)lexer.peekNextToken().getType();
 		ArrayList<Character> range;
-		if(type == TokenType.CARET){
+		if(type == Regex_TokenType.CARET){
 			range = excludeSet(new ArrayList<Character>());
 		}
 		else{
@@ -367,8 +369,8 @@ public class RecursiveDescent {
 	 * @throws ParseException thrown by charSet function
 	 */
 	private ArrayList<Character> charSetList(ArrayList<Character> range) throws ParseException{
-		TokenType type = lexer.peekNextToken().getType();
-		if(type == TokenType.LITERAL || type == TokenType.DOT){
+		Regex_TokenType type = (Regex_TokenType)lexer.peekNextToken().getType();
+		if(type == Regex_TokenType.LITERAL || type == Regex_TokenType.DOT){
 			//make sure the literal is a CLS_CHAR
 			boolean valid = check_valid(lexer.peekNextToken(), CLS_CHAR);
 			if(!valid) {
@@ -388,7 +390,7 @@ public class RecursiveDescent {
 	 * @throws ParseException if range value isn't in CLS_CHAR
 	 */
 	private ArrayList<Character> charSet(ArrayList<Character> range) throws ParseException {
-		Token start = lexer.getNextToken();//consume LITERAL
+		Token<Regex_TokenType> start = lexer.getNextToken();//consume LITERAL
 		
 		if(!check_valid(start, CLS_CHAR)) {
 			throw new ParseException("Regex ERROR: Token not a valid CLS_CHAR: " + start.getValue() +
@@ -405,11 +407,11 @@ public class RecursiveDescent {
 	 * @return the range to include
 	 * @throws ParseException if range value isn't in CLS_CHAR
 	 */
-	private ArrayList<Character> charSetTail(Token start, ArrayList<Character> range) throws ParseException {
-		TokenType type = lexer.peekNextToken().getType();
-		if(type == TokenType.DASH){
+	private ArrayList<Character> charSetTail(Token<Regex_TokenType> start, ArrayList<Character> range) throws ParseException {
+		Regex_TokenType type = (Regex_TokenType)lexer.peekNextToken().getType();
+		if(type == Regex_TokenType.DASH){
 			lexer.getNextToken();//consume DASH
-			Token end = lexer.getNextToken();
+			Token<Regex_TokenType> end = lexer.getNextToken();
 			
 			if(!check_valid(end, CLS_CHAR)) {
 				throw new ParseException("ERROR: Token not a valid CLS_CHAR: " + end.getValue() + 
@@ -477,15 +479,15 @@ public class RecursiveDescent {
 	 * @throws ParseException thrown by definedClass function
 	 */
 	private ArrayList<Character> excludeSetTail() throws ParseException{
-		TokenType type = lexer.peekNextToken().getType();
-		if(type == TokenType.LBRACKET){
+		Regex_TokenType type = (Regex_TokenType)lexer.peekNextToken().getType();
+		if(type == Regex_TokenType.LBRACKET){
 			lexer.getNextToken();//consume LBRACKET
 			ArrayList<Character> range = charSet(new ArrayList<Character>());
 			lexer.getNextToken();//consume RBRACKET
 			return range;
 		}
 		else{
-			Token token = lexer.getNextToken();
+			Token<Regex_TokenType> token = lexer.getNextToken();
 			ArrayList<Character> range = definedClass(token, true);
 			return range;
 		}
@@ -499,7 +501,7 @@ public class RecursiveDescent {
 	 * @throws ParseException when character class doesn't exist
 	 * @throws ParseException when character class isn't valid
 	 */
-	private ArrayList<Character> definedClass(Token token, boolean exclude) throws ParseException {
+	private ArrayList<Character> definedClass(Token<Regex_TokenType> token, boolean exclude) throws ParseException {
 		
 		NFA_Identifier phony = new NFA_Identifier(token.getValue(), null, false);
 		int index = this.defined.indexOf(phony);
@@ -542,7 +544,7 @@ public class RecursiveDescent {
 	 * @param set set to check validity with
 	 * @return true: token if valid, false: token is invalid
 	 */
-	private boolean check_valid(Token token, String[] set) {
+	private boolean check_valid(Token<Regex_TokenType> token, String[] set) {
 		for(int i = 0; i < set.length; i++) {
 			if(set[i].equals(token.getValue())) {
 				return true;

@@ -1,31 +1,26 @@
 package generator.regex;
 
-import generator.regex.Token;
-import generator.regex.TokenType;
+import generator.regex.Regex_TokenType;
+import global.Lexer;
+import global.Token;
 
 /**
  * Lexer.java
  * Generates tokens from a given input string
  */
-
-public class Regex_Lexer {
-	
-	public static final char NULL_CHAR = '\u0000';
+public class Regex_Lexer extends Lexer<Regex_TokenType> {
 	
 	private String input;
 	private int current_pos;
-	private boolean peek;
-	private Token current;
 	
 	/**
 	 * setup lexer for given scanner input
 	 * @param input scanner to tokenize from
 	 */
 	public Regex_Lexer(String input) {
+		super();
 		this.input = input;
 		this.current_pos = 0;
-		this.peek = false;
-		this.current = null;
 	}
 	
 	/**
@@ -33,36 +28,11 @@ public class Regex_Lexer {
 	 * @return the current position in the current line
 	 */
 	public int getPosition() {
-		return this.current_pos;
-	}
-
-	/**
-	 * get the next token in the stream
-	 * @return next token in stream
-	 */
-	public Token getNextToken() {
 		if(peek) {
-			peek = false;
-			return current;
+			return this.current_pos-1;
 		}
 		else {
-			current = makeNewToken();
-			return current;
-		}
-	}
-	
-	/**
-	 * peek at the next token in the stream
-	 * @return next token in the stream
-	 */
-	public Token peekNextToken() {
-		if(peek) {
-			return current;
-		}
-		else {
-			current = getNextToken();
-			peek = true;
-			return current;
+			return this.current_pos;
 		}
 	}
 	
@@ -70,14 +40,14 @@ public class Regex_Lexer {
 	 * make a new token from the stream
 	 * @return new token
 	 */
-	public Token makeNewToken() {
+	public Token<Regex_TokenType> makeNewToken() {
 		char t = this.getNextChar();
 		//if there isn't a token left
 		if(t == NULL_CHAR) {
 			//pass end of stream token
-			return new Token(TokenType.EOF, null);
+			return new Token<Regex_TokenType>(Regex_TokenType.EOF, null);
 		}
-		Token result = null;
+		Token<Regex_TokenType> result = null;
 		
 		switch(t) {
 			//ignore whitespace
@@ -86,52 +56,52 @@ public class Regex_Lexer {
 				return makeNewToken();
 			//handle possible line returns
 			case '\n':
-				result = new Token(TokenType.EOL, "\n");
+				result = new Token<Regex_TokenType>(Regex_TokenType.EOL, "\n");
 				break;
 			//alternation
 			case '|':
-				result = new Token(TokenType.UNION, "|");
+				result = new Token<Regex_TokenType>(Regex_TokenType.UNION, "|");
 				break;
 			//repetition >= 0
 			case '*':
-				result = new Token(TokenType.KLEENE, "*");
+				result = new Token<Regex_TokenType>(Regex_TokenType.KLEENE, "*");
 				break;
 			//repetition > 0
 			case '+':
-				result = new Token(TokenType.PLUS, "+");
+				result = new Token<Regex_TokenType>(Regex_TokenType.PLUS, "+");
 				break;
 			//dash (used when defining a range)
 			case '-':
-				result = new Token(TokenType.DASH, "-");
+				result = new Token<Regex_TokenType>(Regex_TokenType.DASH, "-");
 				break;
 			//dot (wild card)
 			case '.':
-				result = new Token(TokenType.DOT, ".");
+				result = new Token<Regex_TokenType>(Regex_TokenType.DOT, ".");
 				break;
 			//left bracket
 			case '[':
-				result = new Token(TokenType.LBRACKET, "[");
+				result = new Token<Regex_TokenType>(Regex_TokenType.LBRACKET, "[");
 				break;
 			//right bracket
 			case ']':
-				result = new Token(TokenType.RBRACKET, "]");
+				result = new Token<Regex_TokenType>(Regex_TokenType.RBRACKET, "]");
 				break;
 			//left parentheses (scope out)
 			case '(':
-				result = new Token(TokenType.LPAREN, "(");
+				result = new Token<Regex_TokenType>(Regex_TokenType.LPAREN, "(");
 				break;
 			//right parentheses (scope in)
 			case ')':
-				result = new Token(TokenType.RPAREN, ")");
+				result = new Token<Regex_TokenType>(Regex_TokenType.RPAREN, ")");
 				break;
 			//escaped characters
 			case '\\':
 				String escaped = "\\" + this.getNextChar();
-				result = new Token(TokenType.LITERAL, escaped);
+				result = new Token<Regex_TokenType>(Regex_TokenType.LITERAL, escaped);
 				break;
 			//everything else (character literals)
 			default:
-				result = new Token(TokenType.LITERAL, ((Character)t).toString());
+				result = new Token<Regex_TokenType>(Regex_TokenType.LITERAL, ((Character)t).toString());
 		}
 		
 		return result;

@@ -10,7 +10,7 @@ package generator.regex;
  * TokenType.java
  * Token types for use when scanning a grammar specification.
  */
-public enum TokenType {
+public enum Regex_TokenType {
 	EOF,
 	EOL,
 	LITERAL,
