@@ -8,16 +8,26 @@ $MiniREprogram
 %% Rules  
 $MiniREprogram		begin $statementlist end
 $statementlist		$statement $statementlisttail
-$statementlisttail	$statement $statementlisttail | \u0000
-$statement			ID = $exp ; | ID = # $exp ; | ID = maxfreqstring ( ID ) ; | replace REGEX with ASCII-STR in  $filenames ; | recursivereplace REGEX with ASCII-STR in  $filenames ;
+$statementlisttail	$statement $statementlisttail 
+$statementlisttail	EPSILON
+$statement			ID = $exp ;
+$statement			ID = # $exp ;
+$statement			ID = maxfreqstring ( ID ) ;
+$statement			replace REGEX with ASCII-STR in  $filenames ;
+$statement			recursivereplace REGEX with ASCII-STR in  $filenames ;
 $filenames			$sourcefile  >!  $destinationfile
 $sourcefile			ASCII-STR
 $destinationfile	ASCII-STR
 $statement			print ( $explist ) ;
 $explist			$exp $explisttail
 $explisttail		, $exp $explisttail
-$exp				$term $exptail | ID  | ( $exp )
-$exptail			$binop $term $exptail | \u0000
+$exp				$term $exptail
+$exp				ID
+$exp				( $exp )
+$exptail			$binop $term $exptail
+$exptail			EPSILON
 $term				find REGEX in  $filename
 $filename			ASCII-STR
-$binop				diff | union | inters
+$binop				diff
+$binop				union
+$binop				inters
