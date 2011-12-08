@@ -4,6 +4,10 @@ import java.util.ArrayList;
 
 import global.Token;
 
+/**
+ * 
+ *
+ */
 public class LL1_Rule {
 	private Token<LL1_TokenType> nonTerm;
 	private ArrayList<Token<LL1_TokenType>> TNTList;
