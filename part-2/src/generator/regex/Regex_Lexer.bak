@@ -6,17 +6,15 @@ import generator.regex.Token;
 import generator.regex.TokenType;
 import global.InputBuffer;
 
+
 /**
  * Lexer.java
- * Generates tokens from a given input string
+ * Generates tokens from a buffered input stream.
  */
 
 public class Regex_Lexer {
 	
-	public static final char NULL_CHAR = '\u0000';
-	
-	private String input;
-	private int current_pos;
+	private InputBuffer input_stream;
 	private boolean peek;
 	private Token current;
 	
@@ -24,11 +22,18 @@ public class Regex_Lexer {
 	 * setup lexer for given scanner input
 	 * @param input scanner to tokenize from
 	 */
-	public Regex_Lexer(String input) {
-		this.input = input;
-		this.current_pos = 0;
+	public Regex_Lexer(Scanner scanner) {
+		this.input_stream = new InputBuffer(scanner);
 		this.peek = false;
 		this.current = null;
+	}
+	
+	/**
+	 * accessor for the current line being scanned
+	 * @return the current line being scanned
+	 */
+	public int getLine() {
+		return this.input_stream.getLine();
 	}
 	
 	/**
@@ -36,7 +41,7 @@ public class Regex_Lexer {
 	 * @return the current position in the current line
 	 */
 	public int getPosition() {
-		return this.current_pos;
+		return this.input_stream.getPosition();
 	}
 
 	/**
@@ -74,15 +79,30 @@ public class Regex_Lexer {
 	 * @return new token
 	 */
 	public Token makeNewToken() {
-		char t = this.getNextChar();
-		//if there isn't a token left
-		if(t == NULL_CHAR) {
-			//pass end of stream token
-			return new Token(TokenType.EOF, null);
-		}
+		char t = input_stream.getNext();
+		
 		Token result = null;
 		
 		switch(t) {
+			//create header token
+			case '%':
+				if(input_stream.peekNext() == '%') {
+					//TODO get header text
+					while(input_stream.peekNext() == ' ') {
+						input_stream.getNext();
+					}
+					String header = new String();
+					while(validDefinedCharacters()) {
+						header += input_stream.getNext();
+					}
+					input_stream.gotoNextLine();
+					result = new Token(TokenType.HEADER, header);
+					//return makeNewToken();
+				}
+				else {
+					result = new Token(TokenType.LITERAL, "%");
+				}
+				break;
 			//ignore whitespace
 			case '\t':
 			case ' ':
@@ -90,6 +110,15 @@ public class Regex_Lexer {
 			//handle possible line returns
 			case '\n':
 				result = new Token(TokenType.EOL, "\n");
+				break;
+			//defined name
+			case '$':
+				String name = new String();
+				while(validDefinedCharacters()) {
+					name += input_stream.getNext();
+				}
+				//input_stream.getNext();//consume whitespace
+				result = new Token(TokenType.DEFINED, name);
 				break;
 			//alternation
 			case '|':
@@ -106,6 +135,10 @@ public class Regex_Lexer {
 			//dash (used when defining a range)
 			case '-':
 				result = new Token(TokenType.DASH, "-");
+				break;
+			//caret (exclude set)
+			case '^':
+				result = new Token(TokenType.CARET, "^");
 				break;
 			//dot (wild card)
 			case '.':
@@ -127,32 +160,49 @@ public class Regex_Lexer {
 			case ')':
 				result = new Token(TokenType.RPAREN, ")");
 				break;
+			//IN (for defining ranges)
+			case 'I':
+				if(input_stream.peekNext() == 'N') {
+					result = new Token(TokenType.IN, "IN");
+					input_stream.getNext();
+				}
+				else {
+					result = new Token(TokenType.LITERAL, "L");
+				}
+				break;
 			//escaped characters
 			case '\\':
-				String escaped = "\\" + this.getNextChar();
+				String escaped = "\\" + input_stream.getNext();
 				result = new Token(TokenType.LITERAL, escaped);
 				break;
 			//everything else (character literals)
 			default:
-				result = new Token(TokenType.LITERAL, ((Character)t).toString());
+				result = new Token(TokenType.LITERAL, new String() + t);
 		}
 		
 		return result;
 	}
 	
 	/**
-	 * get next character in the input
-	 * @return next char in the input
+	 * moves the stream to the next line of the file
+	 * @return true: there is another line, false: end of file
 	 */
-	public char getNextChar() {
-		//if we've reached the end of the input
-		if(this.current_pos >= input.length()) {
-			//return empty character
-			return NULL_CHAR;
+	public boolean gotoNextLine() {
+		peek = false;
+		return input_stream.gotoNextLine();
+	}
+	
+	/**
+	 *
+	 * @return 
+	 */
+	public boolean validDefinedCharacters() {
+		int t = ((int)input_stream.peekNext());
+		if((t >= 48 && t <= 57) || (t >= 65 && t <= 90) || (t >= 97 && t <= 122) || (t == 45) || (t == 95)) {
+			return true;
 		}
 		else {
-			//return next character
-			return this.input.charAt(current_pos++);
+			return false;
 		}
 	}
 }

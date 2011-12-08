@@ -24,14 +24,14 @@ public class RecursiveDescent {
 	private boolean scope_back;
 	///flag to differentiate char classes
 	private boolean char_class;
-
+	
 	/**
 	 * setup parser with given input stream and defined identifiers
 	 * @param lexer input stream to use
 	 * @param defined list of defined identifiers (char classes and regular expressions)
 	 */
-	public RecursiveDescent(Regex_Lexer lexer, ArrayList<NFA_Identifier> defined) {
-		this.lexer = lexer;
+	public RecursiveDescent(String regex, ArrayList<NFA_Identifier> defined) {
+		this.lexer = new Regex_Lexer(regex);
 		this.defined = defined;
 		this.stack = new Stack<NFA>();
 		this.scope_back = false;
@@ -170,8 +170,8 @@ public class RecursiveDescent {
 			//make sure it's valid
 			boolean valid = check_valid(lexer.peekNextToken(), RE_CHAR);
 			if(!valid) {
-				throw new ParseException("ERROR: invalid token: " + lexer.peekNextToken().getValue() +
-						", line: " + lexer.getLine() + ", position: " + this.lexer.getPosition(), this.lexer.getLine());
+				throw new ParseException("Regex ERROR: invalid token: " + lexer.peekNextToken().getValue() +
+						", position: " + this.lexer.getPosition(), this.lexer.getPosition());
 			}
 			
 			Token token = lexer.getNextToken();//consume LITERAL
@@ -391,8 +391,8 @@ public class RecursiveDescent {
 		Token start = lexer.getNextToken();//consume LITERAL
 		
 		if(!check_valid(start, CLS_CHAR)) {
-			throw new ParseException("ERROR: Token not a valid CLS_CHAR: " + start.getValue() +
-					", line: " + this.lexer.getLine() + ", position: " + this.lexer.getPosition(), this.lexer.getLine());
+			throw new ParseException("Regex ERROR: Token not a valid CLS_CHAR: " + start.getValue() +
+					", position: " + this.lexer.getPosition(), this.lexer.getPosition());
 		}
 		
 		return charSetTail(start, range);
@@ -413,7 +413,7 @@ public class RecursiveDescent {
 			
 			if(!check_valid(end, CLS_CHAR)) {
 				throw new ParseException("ERROR: Token not a valid CLS_CHAR: " + end.getValue() + 
-						", line: " + this.lexer.getLine() + ", position: " + this.lexer.getPosition(), this.lexer.getLine());
+						", position: " + this.lexer.getPosition(), this.lexer.getPosition());
 			}
 			//make set from range
 			int start_index;
@@ -506,14 +506,14 @@ public class RecursiveDescent {
 		//make sure it exists
 		if(index == -1) {
 			throw new ParseException("ERROR: char class doesn't exist: " + phony.getName()+
-					", line: " + this.lexer.getLine() + ", position: " + this.lexer.getPosition(), this.lexer.getLine());
+					", position: " + this.lexer.getPosition(), this.lexer.getPosition());
 		}
 		NFA_Identifier defined_nfa = this.defined.get(index);
 		
 		if(exclude) {
 			if(!defined_nfa.getCharClass()) {
 				throw new ParseException("ERROR: exclusion may only be used on a char class, invalid class: " + phony.getName() +
-						", line: " + this.lexer.getLine() + ", position: " + this.lexer.getPosition(), this.lexer.getLine());
+						", position: " + this.lexer.getPosition(), this.lexer.getPosition());
 			}
 			
 			NFA temp = defined_nfa.getNFA();

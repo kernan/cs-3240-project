@@ -101,6 +101,7 @@ public class InputString {
 	 * make a copy of this string
 	 * @return copy of this string
 	 */
+	@SuppressWarnings("unchecked")
 	public InputString clone() {
 		InputString copy = new InputString(this.str);
 		copy.addMetadata(((ArrayList<StringFileData>)this.metadata.clone()));
