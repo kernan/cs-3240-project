@@ -58,6 +58,9 @@ public class Regex_Lexer extends Lexer<Token<Regex_TokenType>> {
 			case '\n':
 				result = new Token<Regex_TokenType>(Regex_TokenType.EOL, "\n");
 				break;
+			case '^':
+				result = new Token<Regex_TokenType>(Regex_TokenType.CARET, "^");
+				break;
 			//alternation
 			case '|':
 				result = new Token<Regex_TokenType>(Regex_TokenType.UNION, "|");
@@ -99,7 +102,7 @@ public class Regex_Lexer extends Lexer<Token<Regex_TokenType>> {
 				String escaped = "\\" + this.getNextChar();
 				result = new Token<Regex_TokenType>(Regex_TokenType.LITERAL, escaped);
 				break;
-			//everything else (character literals)
+			//literal
 			default:
 				result = new Token<Regex_TokenType>(Regex_TokenType.LITERAL, ((Character)t).toString());
 		}
