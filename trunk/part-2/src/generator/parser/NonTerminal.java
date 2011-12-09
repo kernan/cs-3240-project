@@ -9,11 +9,11 @@ import java.util.ArrayList;
  */
 public class NonTerminal extends LL1_Token {
 	
-	private ArrayList<Token<Terminal>> FollowSet;
+	private ArrayList<Terminal> FollowSet;
 	
 	public NonTerminal(Token<LL1_TokenType> token) {
 		super(token);
-		FollowSet = new ArrayList<Token<Terminal>>();
+		FollowSet = new ArrayList<Terminal>();
 	}
 	
 	
@@ -22,7 +22,7 @@ public class NonTerminal extends LL1_Token {
 	 * 
 	 * @param tok
 	 */
-	public void addToFollowSet(Token<Terminal> tok){
+	public void addToFollowSet(Terminal tok){
 		FollowSet.add(tok);	
 	}
 	
@@ -33,10 +33,10 @@ public class NonTerminal extends LL1_Token {
 
 
 
-	public ArrayList<Token<Terminal>> getFollowSet() {
+	public ArrayList<Terminal> getFollowSet() {
 		return FollowSet;
 	}
-	public void setFollowSet(ArrayList<Token<Terminal>> followSet) {
+	public void setFollowSet(ArrayList<Terminal> followSet) {
 		FollowSet = followSet;
 	}
 	

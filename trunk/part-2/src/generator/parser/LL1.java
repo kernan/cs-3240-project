@@ -14,6 +14,7 @@ public class LL1 {
 	private static ArrayList<LL1_Rule> ruleList = new ArrayList<LL1_Rule>();
 	private static ArrayList<Terminal> termList = new ArrayList<Terminal>();
 	private static boolean changeFlag = true;
+	private NonTerminal startSymbol;
 	
 	public static void main(String[] args) throws FileNotFoundException{
 		Grammar_Lexer lex = new Grammar_Lexer("minire-specification.txt");
@@ -82,7 +83,7 @@ public class LL1 {
 		          while( Continue = true && k <= n){
 		              ArrayList<LL1_Token> tokenList = curRule.getTNTList();
 		              LL1_Token kToken = tokenList.get(k);
-		              ArrayList<Token<Terminal>> kFirstList = kToken.getFirstSet();
+		              ArrayList<Terminal> kFirstList = kToken.getFirstSet();
 		              curTerm.getFirstSet().addAll(kFirstList);
 		              /*if(!kFirstList.contains(EPSILON){
 		                  Continue = false;
@@ -109,9 +110,11 @@ public class LL1 {
 			   IF epsilon is in First(Xi+1Xi+2...Xn) THEN
 			     add Follow(A) to Follow(Xi
 	 */
-	/* public void follow(){
-	 *     nonTerminalList
-	   }*/
+	public void follow(){
+		Terminal endOfFile = new Terminal(new Token<LL1_TokenType>(LL1_TokenType.EOF, null));
+		startSymbol.addToFollowSet(endOfFile);
+		
+	}
 }
 
 
