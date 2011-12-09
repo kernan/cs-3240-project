@@ -52,9 +52,15 @@ public class StringFileData {
 	public String toString() {
 		String result = new String();
 		result += "<" + filename + ": ";
-		for(int i = 0; i < positions.size(); i++) {
-			result += positions.get(i).toString() + " ";
+		if(positions.size() == 0) {
+			return result;
 		}
-		return result + ">";
+		else {
+			result += positions.get(0).toString();
+			for(int i = 1; i < positions.size(); i++) {
+				result += " " + positions.get(i).toString();
+			}
+			return result + ">";
+		}
 	}
 }

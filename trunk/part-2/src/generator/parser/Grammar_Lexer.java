@@ -53,6 +53,8 @@ public class Grammar_Lexer extends Lexer<Token<LL1_TokenType>> {
 			//move buffer on new lines
 			case '\n':
 				result = new Token<LL1_TokenType>(LL1_TokenType.EOL, "\n");
+				input_stream.gotoNextLine();
+				break;
 			//generate headers
 			case '%':
 				if(input_stream.peekNext() == '%') {

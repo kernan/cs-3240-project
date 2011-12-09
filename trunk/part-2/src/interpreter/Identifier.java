@@ -1,12 +1,15 @@
 package interpreter;
 
+import java.util.Collection;
+
 /**
  * Identifier.java
  * generic identifier with no type
  */
 public class Identifier {
 
-	private String name;
+	protected String name;
+	private Object value;
 	
 	/**
 	 * setup generic identifier with given name
@@ -14,6 +17,7 @@ public class Identifier {
 	 */
 	public Identifier(String name) {
 		this.name = name;
+		this.value = null;
 	}
 	
 	/**
@@ -25,10 +29,32 @@ public class Identifier {
 	}
 	
 	/**
+	 * accessor for identifier value
+	 * @return null pointer
+	 */
+	public Object getValue() {
+		return null;
+	}
+	
+	public void setValue(Object value) {
+		this.value = value;
+	}
+	
+	/**
 	 * give a string representation of an empty identifier
 	 * @return string representation of this empty identifier
 	 */
 	public String toString() {
-		return "NULL";
+		if(this.value instanceof Collection) {
+			String result = this.name + " = {\n";
+			for(Object value: ((Collection<?>)this.value)) {
+				result += "\t" + value.toString() + "\n";
+			}
+			result += "}";
+			return result;
+		}
+		else {
+			return this.name + " = " + this.value;
+		}
 	}
 }
