@@ -14,26 +14,118 @@ public class LL1 {
 	private static ArrayList<LL1_Rule> ruleList = new ArrayList<LL1_Rule>();
 	private static ArrayList<Terminal> termList = new ArrayList<Terminal>();
 	private static boolean changeFlag = true;
-	private NonTerminal startSymbol;
+	private static NonTerminal startSymbol;
 	
 	public static void main(String[] args) throws FileNotFoundException{
 		Grammar_Lexer lex = new Grammar_Lexer("minire-specification.txt");
 		
-		//add all terminals to termList
-		while(lex.peekNextToken().getType() != LL1_TokenType.EOL){
-			termList.add(new Terminal(lex.getNextToken()));
+		//Skip to first Header
+		while(lex.peekNextToken().getType() != LL1_TokenType.HEADER){
+			lex.getNextToken();
+		}
+		
+		//Check for Headers
+		
+		if(lex.peekNextToken().getValue() == "Tokens"){
+		    //Skip to next line to get list of tokens	
+			while(lex.peekNextToken().getType() != LL1_TokenType.TERMINAL){
+				lex.getNextToken();
+			}
+			
+			//add all terminals to termList
+			while(lex.peekNextToken().getType() != LL1_TokenType.EOL){
+				termList.add(new Terminal(lex.getNextToken()));
+			}
+
+			//skip to next header
+			while(lex.peekNextToken().getType() != LL1_TokenType.HEADER){
+				lex.getNextToken();
+			}
+			
+			//make sure next header is Start
+			if(lex.peekNextToken().getValue() == "Start"){
+				//skip to start symbol
+				while(lex.peekNextToken().getType() != LL1_TokenType.NON_TERMINAL){
+					lex.getNextToken();
+				}
+				//consume start symbol
+				startSymbol = new NonTerminal(lex.getNextToken());
+			}
+			else{
+				//TODO error
+				System.out.println("Start symbol must come after tokens");
+			}
+		}
+		else if(lex.peekNextToken().getValue() == "Start"){
+				//skip to start symbol
+				while(lex.peekNextToken().getType() != LL1_TokenType.NON_TERMINAL){
+					lex.getNextToken();
+				}
+				//consume start symbol
+				startSymbol = new NonTerminal(lex.getNextToken());
+				
+				//skip to next header
+				while(lex.peekNextToken().getType() != LL1_TokenType.HEADER){
+					if(lex.peekNextToken().getType() == LL1_TokenType.EOF){
+						//TODO error
+					}
+					lex.getNextToken();
+				}
+				
+				if(lex.peekNextToken().getValue() == "Tokens"){
+					
+					//skip to tokens
+					while(lex.peekNextToken().getType() != LL1_TokenType.TERMINAL){
+						lex.getNextToken();
+					}
+					
+					//consume each token and add to terminal list
+					while(lex.peekNextToken().getType() != LL1_TokenType.EOL){
+						termList.add(new Terminal(lex.getNextToken()));
+					}
+				}
+				else{
+					//TODO error
+					System.out.println("Tokens must come after start symbol");
+				}	
+		}
+		else{
+			//TODO error catching
+			System.out.println("Tokens and start symbol must be listed before rules");
+		}
+		
+		//skip to rules header
+		while(lex.peekNextToken().getType() != LL1_TokenType.HEADER){
+			lex.getNextToken();
+		}
+		
+		if(lex.peekNextToken().getValue() == "Rules"){
+			lex.getNextToken();
+		}
+		else{
+			//TODO error
+		}
+		
+		//skip to the rules lists
+		while(lex.peekNextToken().getType() != LL1_TokenType.NON_TERMINAL){
+			if(lex.peekNextToken().getType() == LL1_TokenType.EOF){
+				//TODO error
+			}
+			lex.getNextToken();
 		}
 		
 		//turn all non-terminals into a rule and add their tokens to the rule
-		while(lex.peekNextToken().getType() != LL1_TokenType.EOF){
-
+		while(lex.peekNextToken().getType() != LL1_TokenType.EOF){	
+			
 			LL1_Rule currRule = new LL1_Rule(new NonTerminal(lex.getNextToken()));
 			ruleList.add(currRule);
-			while(lex.peekNextToken().getType() != LL1_TokenType.EOL){
+			while(lex.peekNextToken().getType() != LL1_TokenType.EOL && 
+			      lex.peekNextToken().getType() != LL1_TokenType.EOF){
 				//if next token is a terminal, take the object out of termlist
 				//and add it to the current rule
-				if(termList.contains(lex.peekNextToken())){
-					int location = termList.indexOf(new Terminal(lex.peekNextToken()));
+				Terminal testTerm = new Terminal(lex.peekNextToken());
+				if(termList.contains(testTerm)){
+					int location = termList.indexOf(testTerm);
 					currRule.addToTNTList(termList.get(location));
 				}
 				//check to see if our new nonterminal is already in the rule list
@@ -51,6 +143,9 @@ public class LL1 {
 				
 				currRule.addToTNTList(new NonTerminal(lex.getNextToken()));
 			}
+			//consume EOL token
+			lex.getNextToken();
+			
 		}
 		
 		
