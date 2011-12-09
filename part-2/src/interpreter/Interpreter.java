@@ -5,13 +5,14 @@ import generator.regex.DFA;
 import generator.regex.NFA_Identifier;
 import generator.regex.RecursiveDescent;
 import global.InputBuffer;
-import global.Options;
 
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.text.ParseException;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
 import java.util.ArrayList;
-import java.util.Scanner;
 
 
 /**
@@ -51,23 +52,14 @@ public class Interpreter {
 	 */
 	
 	/**
-	 * assign a given identifier a given number value
-	 * @param id identifier to assign a value to
-	 * @param value number to assign to this identifier
-	 * @return the new identifier with assigned value
-	 */
-	private NumIdentifier assign(Identifier id, int value) {
-		return new NumIdentifier(id, value);
-	}
-	
-	/**
 	 * assign a given identifier a given list value
 	 * @param id identifier to assign a value to
-	 * @param value list to assign to this identifier
+	 * @param value value to assign to the id
 	 * @return the new identifier with assigned value
 	 */
-	private ListIdentifier assign(Identifier id, ArrayList<InputString> value) {
-		return new ListIdentifier(id, value);
+	private Identifier assign(Identifier id, Object value) {
+		id.setValue(value);
+		return id;
 	}
 	
 	/*
@@ -171,7 +163,6 @@ public class Interpreter {
 	 * @return new string with replaced substring
 	 */
 	private String replace(DFA regex, String original, String replacement) {
-		//TODO test
 		for(int i = 0; i < original.length(); i++) {
 			regex.reset();
 			int match_start, match_end;
@@ -218,7 +209,6 @@ public class Interpreter {
 	 * @return list of replaced strings
 	 */
 	private ArrayList<String> replace(DFA regex, String replacement, ArrayList<InputString> input) {
-		//TODO test
 		ArrayList<String> output = new ArrayList<String>();
 		for(int i = 0; i < input.size(); i++) {
 			output.add(replace(regex, input.get(i).getString(), replacement));
@@ -235,7 +225,6 @@ public class Interpreter {
 	 * @return list of replaced strings
 	 */
 	private ArrayList<String> recursivereplace(DFA regex, String replacement, ArrayList<InputString> input) {
-		//TODO test
 		ArrayList<String> output = new ArrayList<String>();
 		String result, last_result;
 		for(int i = 0; i < input.size(); i++) {
@@ -243,7 +232,7 @@ public class Interpreter {
 			do {
 				last_result = new String(result);
 				result = replace(regex, result, replacement);
-			}while(input.get(i).getString() != result);
+			}while(!last_result.equals(result));
 			
 			output.add(result);
 		}
@@ -257,7 +246,6 @@ public class Interpreter {
 	 * @return the list of all matching words
 	 */
 	private ArrayList<InputString> find(DFA regex, String file) throws FileNotFoundException {
-		//TODO test
 		ArrayList<InputString> result = new ArrayList<InputString>();
 		InputBuffer file_reader = new InputBuffer(file);
 		//convert the file to a string
@@ -266,8 +254,8 @@ public class Interpreter {
 			file_buffer += file_reader.getNext();
 		}
 		//regex match the file
-		regex.reset();
 		for(int i = 0; i < file_buffer.length(); i++) {
+			regex.reset();
 			int match_start, match_end;
 			match_start = i;
 			match_end = -1;
@@ -291,7 +279,7 @@ public class Interpreter {
 				//move current position to the end of the match
 				i += match_end - match_start;
 				//create the match (w/ metadata)
-				InputString match = new InputString(file_buffer.substring(match_start, match_end));
+				InputString match = new InputString(file_buffer.substring(match_start, match_end+1));
 				ArrayList<Integer> positions = new ArrayList<Integer>();
 				positions.add(match_start);
 				StringFileData metadata = new StringFileData(file, positions);
@@ -314,6 +302,20 @@ public class Interpreter {
 			}
 		}
 		return result;
+	}
+	
+	/**
+	 * write given list to the given file
+	 * @param list collection to write to a file
+	 * @param filename file to write to
+	 */
+	private void writeFile(ArrayList<String> list, String filename) throws IOException {
+		BufferedWriter out = new BufferedWriter(new FileWriter(filename));
+		for(int i = 0; i < list.size(); i++) {
+			out.write(list.get(i));
+			out.write(" ");
+		}
+		out.close();
 	}
 	
 	/**
@@ -392,34 +394,7 @@ public class Interpreter {
 			}
 		}
 		return result;
-	}
-	
-	/**
-	 * finds the length of the given list
-	 * @param list list to get length of
-	 * @return size of the list
-	 */
-	private int length(ArrayList<InputString> list) {
-		return list.size();
-	}
-	
-	/**
-	 * prints a given number
-	 * @param id identifier to print
-	 * @return string representation of the value
-	 */
-	private String print(NumIdentifier id) {
-		return ((Integer)id.getValue()).toString();
-	}
-	
-	/**
-	 * prints a given list
-	 * @param id identifier to print
-	 * @return string representation of the value
-	 */
-	private String print(ListIdentifier id) {
-		return id.getValue().toString();
-	}
+	}	
 	
 	public static void main(String[] args) {
 		
@@ -586,6 +561,28 @@ public class Interpreter {
 		}
 		System.out.println("dead = " + testdfa.atDead() + ", accept = " + testdfa.atFinal());
 		
+		System.out.println();
+		testregex = "abc([a-zA-Z])*";
+		//String testregex = "([a-z])*";
+		System.out.println("regex = " + testregex);
+		try {
+			testdfa = interpreter.generateDFA(testregex);
+		}
+		catch(ParseException pe) {
+			System.out.println("test dfa generation failed...");
+			System.out.println(pe.getMessage());
+			return;
+		}
+		testdfa_in = "abcZabc";
+		System.out.println("string = " + testdfa_in);
+		for(int i = 0; i < testdfa_in.length(); i++) {
+			testdfa.gotoNext(testdfa_in.charAt(i));
+			if(testdfa.atDead()) {
+				break;
+			}
+		}
+		System.out.println("dead = " + testdfa.atDead() + ", accept = " + testdfa.atFinal());
+		
 		/*
 		 * Replace
 		 */
@@ -614,15 +611,15 @@ public class Interpreter {
 		
 		DFA d2 = null;
 		try {
-			d2 = interpreter.generateDFA("abc[A-Za-z]*");
+			d2 = interpreter.generateDFA("abc([A-Za-z])*");
 		}
 		catch(ParseException pe) {
 			System.out.println("dfa 2 generation failed...");
 		}
 		System.out.println();
 		System.out.println("original: " + o1);
-		System.out.println("replacing \'abc[A-Za-z]*\' with \'replaced\'");
-		String r3 = interpreter.replace(d2, "ZabcZZ", "replaced");
+		System.out.println("replacing \'abc([A-Za-z])*\' with \'replaced\'");
+		String r3 = interpreter.replace(d2, o1, "replaced");
 		System.out.println("replaced: " + r3);
 		System.out.println("original: " + o1);
 		
@@ -633,10 +630,10 @@ public class Interpreter {
 		System.out.println("FIND:");
 		DFA d3 = null;
 		try {
-			d3 = interpreter.generateDFA("abc[A-Za-z]*");
+			d3 = interpreter.generateDFA("abc([A-Za-z])*");
 		}
 		catch(ParseException pe) {
-			System.out.println("dfa 2 generation failed...");
+			System.out.println("dfa 3 generation failed...");
 		}
 		ArrayList<InputString> fd1 = null;
 		try {
@@ -647,7 +644,152 @@ public class Interpreter {
 		}
 		System.out.println("f1");
 		for(int i = 0; i < fd1.size(); i++) {
-			System.out.println(fd1.get(i).toString());
+			System.out.println("\t" + fd1.get(i).toString());
 		}
+		
+		System.out.println();
+		DFA d4 = null;
+		try {
+			d4 = interpreter.generateDFA("([A-Za-z])*");
+		}
+		catch(ParseException pe) {
+			System.out.println("dfa 4 generation failed...");
+		}
+		ArrayList<InputString> fd2 = null;
+		try {
+			fd2 = interpreter.find(d4, "test.txt");
+		}
+		catch(FileNotFoundException fnfe) {
+			System.out.println("file test.txt not found");
+		}
+		System.out.println("f2");
+		for(int i = 0; i < fd2.size(); i++) {
+			System.out.println("\t" + fd2.get(i).toString());
+		}
+		
+		/*
+		 * REPLACE
+		 */
+		System.out.println("\nREPLACE:");
+		
+		DFA rd1 = null;
+		try {
+			rd1 = interpreter.generateDFA("([A-Za-z])*");
+		}
+		catch(ParseException pe) {
+			System.out.println("dfa replace 1 generation failed...");
+		}
+		ArrayList<String> replace1 = interpreter.replace(rd1, "TEST", fd1);
+		System.out.println("original");
+		for(int i = 0; i < fd1.size(); i++) {
+			System.out.println("\t" + fd1.get(i).toString());
+		}
+		System.out.println("rd1");
+		for(int i = 0; i < replace1.size(); i++) {
+			System.out.println("\t" + replace1.get(i).toString());
+		}
+		
+		System.out.println();
+		DFA rd2 = null;
+		try {
+			rd2 = interpreter.generateDFA("abc");
+		}
+		catch(ParseException pe) {
+			System.out.println("dfa replace 2 generation failed...");
+		}
+		ArrayList<String> replace2 = interpreter.replace(rd2, "TEST", fd2);
+		System.out.println("original");
+		for(int i = 0; i < fd2.size(); i++) {
+			System.out.println("\t" + fd2.get(i).toString());
+		}
+		System.out.println("rd2");
+		for(int i = 0; i < replace2.size(); i++) {
+			System.out.println("\t" + replace2.get(i).toString());
+		}
+		
+		System.out.println("\nRECURSIVEREPLACE:");
+		
+		System.out.println();
+		DFA rrd1 = null;
+		try {
+			rrd1 = interpreter.generateDFA("abc");
+		}
+		catch(ParseException pe) {
+			System.out.println("dfa recursive replace 1 generation failed...");
+		}
+		ArrayList<String> rr1 = interpreter.recursivereplace(rrd1, "TEST", fd2);
+		System.out.println("original");
+		for(int i = 0; i < fd2.size(); i++) {
+			System.out.println("\t" + fd2.get(i).toString());
+		}
+		System.out.println("rr1");
+		for(int i = 0; i < rr1.size(); i++) {
+			System.out.println("\t" + rr1.get(i).toString());
+		}
+		
+		System.out.println();
+		DFA rrd2 = null;
+		try {
+			rrd2 = interpreter.generateDFA("([a-zA-Z])*");
+		}
+		catch(ParseException pe) {
+			System.out.println("dfa resursive replace 2 generation failed...");
+		}
+		ArrayList<String> rr2 = interpreter.recursivereplace(rrd2, "herp", fd2);
+		System.out.println("original");
+		for(int i = 0; i < fd2.size(); i++) {
+			System.out.println("\t" + fd2.get(i).toString());
+		}
+		System.out.println("rrd2");
+		for(int i = 0; i < rr2.size(); i++) {
+			System.out.println("\t" + rr2.get(i).toString());
+		}
+		
+		/*
+		 * IDENTIFIER
+		 */
+		System.out.println("\nIDENTIFIER:");
+		System.out.println("assign");
+		Identifier id1, id2, id3;
+		//empty identifiers
+		id1 = new Identifier("id1");
+		id2 = new Identifier("id2");
+		id3 = new Identifier("id3");
+		
+		id2 = interpreter.assign(id2, fd1);
+		//id3 = interpreter.assign(id3, 20);
+		
+		System.out.println(id1);
+		System.out.println(id2);
+		System.out.println(id3);
+		
+		//reassigning identifiers
+		System.out.println("\nreassign");
+		id1 = interpreter.assign(id1,  id3.getValue());
+		id2 = interpreter.assign(id3, fd2);
+		
+		System.out.println(id1);
+		System.out.println(id2);
+		System.out.println(id3);
+		
+		/*
+		 * FILE WRITE
+		 */
+		System.out.println("\nfile write:");
+		ArrayList<String> wf = new ArrayList<String>();
+		wf.add("bob");
+		wf.add("bob");
+		wf.add("sue");
+		wf.add("nick");
+		wf.add("sue");
+		try {
+			System.out.println("writing file...");
+			interpreter.writeFile(wf, "writetest.txt");
+		}
+		catch(IOException ioe) {
+			System.out.println(ioe.getMessage());
+		}
+		
+		System.out.println("\nend tests");
 	}
 }
