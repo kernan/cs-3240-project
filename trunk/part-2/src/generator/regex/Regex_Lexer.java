@@ -40,7 +40,7 @@ public class Regex_Lexer extends Lexer<Token<Regex_TokenType>> {
 	 * make a new token from the stream
 	 * @return new token
 	 */
-	public Token<Regex_TokenType> makeNewToken() {
+	protected Token<Regex_TokenType> makeNewToken() {
 		char t = this.getNextChar();
 		//if there isn't a token left
 		if(t == NULL_CHAR) {
