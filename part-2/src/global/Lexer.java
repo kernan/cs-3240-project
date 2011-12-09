@@ -30,7 +30,7 @@ public abstract class Lexer<E> {
 	 * generate next token from the stream
 	 * @return new token from the stream
 	 */
-	public abstract E makeNewToken();
+	protected abstract E makeNewToken();
 	
 	/**
 	 * consume the next token in the stream
