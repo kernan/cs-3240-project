@@ -31,10 +31,10 @@ public class LL1 {
 		System.out.println("Starting Parsing.");
 		LL1parser.Parse();
 		System.out.println("Completed Parsing.");
-		/*System.out.println("Starting First.");
+		System.out.println("Starting First.");
 		LL1parser.first();
 		System.out.println("Completed First.");
-		System.out.println("Starting Follow.");
+		/*System.out.println("Starting Follow.");
 		LL1parser.follow();
 		System.out.println("Completed Follow.");*/
 	}
@@ -231,25 +231,37 @@ public class LL1 {
 	 * 
 	 */
 	private void first(){
-		LL1_Rule curRule = ruleList.get(0);
-		NonTerminal curTerm = curRule.getNonTerm();
+		LL1_Rule curRule;
+		NonTerminal curTerm;
 		while(changeFlag){
 			changeFlag = false;
 			for(int i = 0; i < ruleList.size(); i++){
 				int k = 0;
-				int n = curRule.getTNTList().size();
 				boolean Continue = true;
 				curRule = ruleList.get(i);
 				curTerm = curRule.getNonTerm();
+				int n = curRule.getTNTList().size();
 
-				while( Continue = true && k < n){
+				while( Continue && k < n){
 					ArrayList<LL1_Token> tokenList = curRule.getTNTList();
 					LL1_Token kToken = tokenList.get(k);
 					ArrayList<Terminal> kFirstList = kToken.getFirstSet();
 					ArrayList<Terminal> curFirst = curTerm.getFirstSet();
-					if(curFirst.addAll(kFirstList)){
+					
+					int checkSize = curFirst.size();
+					for(int j = 0; j < kFirstList.size(); j++){
+						if(!kFirstList.get(j).equals(EPSILON)){
+							curFirst.add(kFirstList.get(j));
+						}
+					}
+					
+					if(curFirst.size() != checkSize){
 						changeFlag = true;
 					}
+					
+				/*	if(curFirst.addAll(kFirstList)){
+						changeFlag = true;
+					}*/
 					curTerm.setFirstSet(curFirst);
 					
 					if(!kFirstList.contains(EPSILON)){
@@ -282,7 +294,7 @@ public class LL1 {
 	 * 
 	 */
 	private void follow(){
-		Terminal endOfFile = new Terminal(new Token<LL1_TokenType>(LL1_TokenType.EOF, null));
+		Terminal endOfFile = new Terminal(new Token<LL1_TokenType>(LL1_TokenType.EOF, "EOF"));
 		startSymbol.addToFollowSet(endOfFile);
 		while(changeFlag){
 			changeFlag = false;

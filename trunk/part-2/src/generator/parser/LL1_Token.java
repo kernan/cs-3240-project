@@ -75,6 +75,12 @@ public class LL1_Token {
 		return true;
 	}
 
+	@Override
+	public String toString() {
+		
+		return "" + token.getValue();
+	}
+
 	
 	
 }
