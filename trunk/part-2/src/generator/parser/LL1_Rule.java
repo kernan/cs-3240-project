@@ -51,7 +51,7 @@ public class LL1_Rule {
 	public String toString() {
 		String retString = "" + nonTerm + "\t";
 		for(int i = 0; i < TNTList.size(); i++){
-			retString += TNTList.get(i);
+			retString += TNTList.get(i).getToken().getValue();
 			retString += " ";
 		}
 		
