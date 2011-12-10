@@ -4,8 +4,7 @@ begin end ID = replace with in ; recursivereplace >! print ( ) , # find diff uni
 %% Start
 <MiniRE-program>
 
-%% Rules  /* This section specifies the rules – non terminals are enclosed in < > - BNF notation is used */
-
+%% Rules
 <MiniRE-program>		begin <statement-list> end
 <statement-list>		<statement> <statement-list-tail>
 <statement-list-tail>	<statement> <statement-list-tail>
