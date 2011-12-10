@@ -154,6 +154,7 @@ public class LL1 {
 			if(!nonTermList.contains(first)){
 				nonTermList.add(first);
 			}
+			System.out.println("Making new rule with " + first.getToken().getValue());
 			LL1_Rule currRule = new LL1_Rule(first);
 			ruleList.add(currRule);
 			while(lex.peekNextToken().getType() != LL1_TokenType.EOL && 
@@ -180,9 +181,10 @@ public class LL1 {
 			}
 			//consume EOL token
 			lex.getNextToken();
+			System.out.println("Next while test = " + lex.peekNextToken().getValue());
 		}
 		System.out.println("Start Symbol: " + startSymbol.getToken().getValue());
-		System.out.println("TermList: ");
+		//System.out.println("TermList: ");
 		/*for(int i = 0; i < termList.size(); i++){
 			System.out.println(termList.get(i).getToken().getValue());
 		}*/
