@@ -27,6 +27,7 @@ public class Regex_Lexer extends Lexer<Token<Regex_TokenType>> {
 	 * accessor for the current line being scanned
 	 * @return the current position in the current line
 	 */
+	@Override
 	public int getPosition() {
 		if(peek) {
 			return this.current_pos-1;
@@ -40,6 +41,7 @@ public class Regex_Lexer extends Lexer<Token<Regex_TokenType>> {
 	 * make a new token from the stream
 	 * @return new token
 	 */
+	@Override
 	protected Token<Regex_TokenType> makeNewToken() {
 		char t = this.getNextChar();
 		//if there isn't a token left

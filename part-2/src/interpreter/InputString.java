@@ -68,6 +68,14 @@ public class InputString {
 		for(int i = 0; i < this.metadata.size(); i++) {
 			if(this.metadata.get(i).equals(metadata)) {
 				contains = true;
+				//add the positions to it
+				ArrayList<Integer> positions = metadata.getPositions();
+				for(int j = 0; j < positions.size(); j++) {
+					//add the new position
+					if(!this.metadata.get(i).getPositions().contains((Object)positions.get(j))) {
+						this.metadata.get(i).addPosition(positions.get(j));
+					}
+				}
 				break;
 			}
 		}
@@ -77,9 +85,22 @@ public class InputString {
 	}
 	
 	/**
+	 * 
+	 * @return
+	 */
+	public int getNumOccurances() {
+		int num = 0;
+		for(int i = 0; i < this.metadata.size(); i++) {
+			num += this.metadata.get(i).getNumOccurances();
+		}
+		return num;
+	}
+	
+	/**
 	 * check if this is equal to another
 	 * @return true: they are equal, false: they are not
 	 */
+	@Override
 	public boolean equals(Object other) {
 		return this.str.equals(((InputString)other).getString());
 	}
@@ -88,6 +109,7 @@ public class InputString {
 	 * generate string representation of this input string
 	 * @return string representation of this input string
 	 */
+	@Override
 	public String toString() {
 		String result = new String();
 		result += "\"" + this.str + "\" ";
@@ -101,6 +123,7 @@ public class InputString {
 	 * make a copy of this string
 	 * @return copy of this string
 	 */
+	@Override
 	@SuppressWarnings("unchecked")
 	public InputString clone() {
 		InputString copy = new InputString(this.str);

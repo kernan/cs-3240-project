@@ -30,11 +30,27 @@ public class StringFileData {
 	}
 	
 	/**
+	 * accessor for the number of occurances of this input string
+	 * @return number of occurances
+	 */
+	public int getNumOccurances() {
+		return this.positions.size();
+	}
+	
+	/**
 	 * adds a position to this metadata
 	 * @param new_position new position to add
 	 */
 	public void addPosition(int new_position) {
 		this.positions.add(new_position);
+	}
+	
+	/**
+	 * accessor for positions array
+	 * @return
+	 */
+	public ArrayList<Integer> getPositions() {
+		return this.positions;
 	}
 	
 	/**

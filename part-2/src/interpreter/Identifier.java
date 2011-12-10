@@ -33,9 +33,21 @@ public class Identifier {
 	 * @return null pointer
 	 */
 	public Object getValue() {
-		return null;
+		return value;
 	}
 	
+	/**
+	 * checks if this identifier is a list
+	 * @return true: this id represents a list, false: it does not
+	 */
+	public boolean isList() {
+		return (this.value instanceof Collection);
+	}
+	
+	/**
+	 * mutator for identifier value
+	 * @param value new value
+	 */
 	public void setValue(Object value) {
 		this.value = value;
 	}
