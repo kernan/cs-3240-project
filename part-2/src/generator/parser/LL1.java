@@ -160,26 +160,23 @@ public class LL1 {
 					lex.peekNextToken().getType() != LL1_TokenType.EOF){
 				//if next token is a terminal, take the object out of termlist
 				//and add it to the current rule
-				Terminal testTerm = new Terminal(lex.peekNextToken());
-				if(termList.contains(testTerm)){
+				if(lex.peekNextToken().getType() == LL1_TokenType.TERMINAL){
+					System.out.println("This should be a terminal: " + lex.peekNextToken().getValue());
+					Terminal testTerm = new Terminal(lex.getNextToken());
 					int location = termList.indexOf(testTerm);
 					currRule.addToTNTList(termList.get(location));
 				}
-				//check to see if our new nonterminal is already in the rule list
-				System.out.println("Next non terminal is: " + lex.peekNextToken().getValue());
-				NonTerminal curNonTerm = new NonTerminal(lex.getNextToken());
-				for(int i = 0; i < ruleList.size(); i++){
-					NonTerminal nonTerm = ruleList.get(i).getNonTerm();
-					if(nonTerm.equals(curNonTerm)){
-						curNonTerm = nonTerm;
+				else if(lex.peekNextToken().getType() == LL1_TokenType.NON_TERMINAL){
+					NonTerminal curNonTerm = new NonTerminal(lex.getNextToken());
+					if(nonTermList.contains(curNonTerm)){
+						int location = nonTermList.indexOf(curNonTerm);
+						currRule.addToTNTList(nonTermList.get(location));
+					}
+					else{
+						nonTermList.add(curNonTerm);
+						currRule.addToTNTList(curNonTerm);
 					}
 				}
-				//if the new nonterminal is not a duplicate, make it into a new rule
-				//and add it to the rule list, if it is a duplicate, curNonTerm now
-				//points to the duplicate, so make it into a new rule anyways
-				ruleList.add(new LL1_Rule(curNonTerm));
-
-				currRule.addToTNTList(new NonTerminal(lex.getNextToken()));
 			}
 			//consume EOL token
 			lex.getNextToken();
