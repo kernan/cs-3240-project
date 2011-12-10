@@ -3,31 +3,31 @@
 begin end ID = replace with in ; recursivereplace >! print ( ) , # find diff union inters maxfreqstring
 
 %% Start
-$MiniREprogram
+<MiniREprogram>
 
 %% Rules  
-$MiniREprogram		begin $statementlist end
-$statementlist		$statement $statementlisttail
-$statementlisttail	$statement $statementlisttail 
-$statementlisttail	EPSILON
-$statement			ID = $exp ;
-$statement			ID = # $exp ;
-$statement			ID = maxfreqstring ( ID ) ;
-$statement			replace REGEX with ASCII-STR in  $filenames ;
-$statement			recursivereplace REGEX with ASCII-STR in  $filenames ;
-$filenames			$sourcefile  >!  $destinationfile
-$sourcefile			ASCII-STR
-$destinationfile	ASCII-STR
-$statement			print ( $explist ) ;
-$explist			$exp $explisttail
-$explisttail		, $exp $explisttail
-$exp				$term $exptail
-$exp				ID
-$exp				( $exp )
-$exptail			$binop $term $exptail
-$exptail			EPSILON
-$term				find REGEX in  $filename
-$filename			ASCII-STR
-$binop				diff
-$binop				union
-$binop				inters
+<MiniREprogram>		begin <statementlist> end
+<statementlist>		<statement> <statementlisttail>
+<statementlisttail>	<statement> <statementlisttail> 
+<statementlisttail>	EPSILON
+<statement>			ID = <exp> ;
+<statement>			ID = # <exp> ;
+<statement> 		ID = maxfreqstring ( ID ) ;
+<statement>			replace REGEX with ASCII-STR in  <filenames> ;
+<statement>			recursivereplace REGEX with ASCII-STR in  <filenames> ;
+<filenames>			<sourcefile>  >!  <destinationfile>
+<sourcefile>		ASCII-STR
+<destinationfile>	ASCII-STR
+<statement>			print ( <explist> ) ;
+<explist>			<exp> <explisttail>
+<explisttail>		, <exp> <explisttail>
+<exp>				<term> <exptail>
+<exp>				ID
+<exp>				( <exp> )
+<exptail>			<binop> <term> <exptail>
+<exptail>			EPSILON
+<term>				find REGEX in  <filename>
+<filename>			ASCII-STR
+<binop>				diff
+<binop>				union
+<binop>				inters
