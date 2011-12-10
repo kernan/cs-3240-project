@@ -222,18 +222,21 @@ public class LL1 {
 			   add First(Xi+1 Xi+2 ...Xn) - {epsilon} to Follow(Xi)
 			   (* Note: if i=n, then Xi+1 Xi+2...Xn = epsilon *)
 			   IF epsilon is in First(Xi+1 Xi+2...Xn) THEN
-			     add Follow(A) to Follow(Xi
+			     add Follow(A) to Follow(Xi)
 	 */
 	private void follow(){
 		Terminal endOfFile = new Terminal(new Token<LL1_TokenType>(LL1_TokenType.EOF, null));
 		startSymbol.addToFollowSet(endOfFile);
 		while(changeFlag){
 			changeFlag = false;
+			//for each rule
 			for(int ruleNum = 0; ruleNum < ruleList.size(); ruleNum++){
 				LL1_Rule curRule = ruleList.get(ruleNum);
 				ArrayList<LL1_Token> TNTList = curRule.getTNTList();
+				//for each token in the rule 
 				for(int x = 0; x < TNTList.size(); x++){
 					LL1_Token curTerm = TNTList.get(x);
+					//if Xi is a nonterminal, add all First(Xi+1) to First(Xn) to Follow(Xi)
 					if(curTerm instanceof NonTerminal){
 						for(int i = x + 1; i < TNTList.size(); i++){
 							LL1_Token xTerm = TNTList.get(i);
