@@ -1,33 +1,33 @@
-
 %% Tokens
 begin end ID = replace with in ; recursivereplace >! print ( ) , # find diff union inters maxfreqstring
 
 %% Start
-<MiniREprogram>
+<MiniRE-program>
 
-%% Rules  
-<MiniREprogram>		begin <statementlist> end
-<statementlist>		<statement> <statementlisttail>
-<statementlisttail>	<statement> <statementlisttail> 
-<statementlisttail>	EPSILON
-<statement>			ID = <exp> ;
-<statement>			ID = # <exp> ;
-<statement> 		ID = maxfreqstring ( ID ) ;
-<statement>			replace REGEX with ASCII-STR in  <filenames> ;
-<statement>			recursivereplace REGEX with ASCII-STR in  <filenames> ;
-<filenames>			<sourcefile>  >!  <destinationfile>
-<sourcefile>		ASCII-STR
-<destinationfile>	ASCII-STR
-<statement>			print ( <explist> ) ;
-<explist>			<exp> <explisttail>
-<explisttail>		, <exp> <explisttail>
-<exp>				<term> <exptail>
-<exp>				ID
-<exp>				( <exp> )
-<exptail>			<binop> <term> <exptail>
-<exptail>			EPSILON
-<term>				find REGEX in  <filename>
-<filename>			ASCII-STR
-<binop>				diff
-<binop>				union
-<binop>				inters
+%% Rules  /* This section specifies the rules – non terminals are enclosed in < > - BNF notation is used */
+
+<MiniRE-program>		begin <statement-list> end
+<statement-list>		<statement><statement-list-tail> 
+<statement-list-tail>	<statement><statement-list-tail>
+<statement-list-tail>	EPSILON
+<statement>				ID = <exp> ;
+<statement>				ID = # <exp> ; 
+<statement>				ID = maxfreqstring (ID);
+<statement>				replace REGEX with ASCII-STR in  <file-names> ;
+<statement>				recursivereplace REGEX with ASCII-STR in  <file-names> ;
+<file-names>			<source-file>  >!  <destination-file>
+<source-file>			ASCII-STR  
+<destination-file>		ASCII-STR
+<statement>				print ( <exp-list> ) ;
+<exp-list>				<exp> <exp-list-tail>
+<exp-list-tail>			, <exp> <exp-list-tail>
+<exp>					ID 
+<exp>					( <exp> ) 
+<exp>					<term> <exp-tail>
+<exp-tail>				<bin-op> <term> <exp-tail> 
+<exp-tail>				EPSILON
+<term>					find REGEX in  <file-name>  
+<file-name>				ASCII-STR
+<bin-op>				diff
+<bin-op>				union
+<bin-op>				inters
