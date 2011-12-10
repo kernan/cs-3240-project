@@ -184,16 +184,16 @@ public class LL1 {
 			lex.getNextToken();
 			System.out.println("Next while test = " + lex.peekNextToken().getValue());
 		}
-		System.out.println("Start Symbol: " + startSymbol.getToken().getValue());
+		System.out.println("\nStart Symbol: " + startSymbol.getToken().getValue());
 		//System.out.println("TermList: ");
 		/*for(int i = 0; i < termList.size(); i++){
 			System.out.println(termList.get(i).getToken().getValue());
 		}*/
-		System.out.println("NonTermList: ");
+		System.out.println("\nNonTermList: ");
 		for(int i = 0; i < nonTermList.size(); i++){
 			System.out.println(nonTermList.get(i).getToken().getValue());
 		}
-		System.out.println("Rules: ");
+		System.out.println("\nRules: ");
 		for(int i = 0; i < ruleList.size(); i++){
 			System.out.println(ruleList.get(i).toString());
 		}
