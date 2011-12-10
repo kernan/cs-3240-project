@@ -13,6 +13,7 @@ import global.Token;
 public class Grammar_Lexer extends Lexer<Token<LL1_TokenType>> {
 	
 	private InputBuffer input_stream;
+	private boolean done;
 	
 	/**
 	 * initialize a grammar lexer for a given file
@@ -20,6 +21,7 @@ public class Grammar_Lexer extends Lexer<Token<LL1_TokenType>> {
 	 */
 	public Grammar_Lexer(String filename) throws FileNotFoundException {
 		super();
+		this.done = done;
 		try {
 			this.input_stream = new InputBuffer(filename);
 		}
@@ -38,6 +40,15 @@ public class Grammar_Lexer extends Lexer<Token<LL1_TokenType>> {
 		
 		char t = this.input_stream.getNext();
 		
+		if(this.done) {
+			return new Token<LL1_TokenType>(LL1_TokenType.EOF, "EOF");
+		}
+		
+		if(!this.input_stream.hasNext() && t == '\n') {
+			this.done = true;
+			//return new Token<LL1_TokenType>(LL1_TokenType.EOF, "EOF");
+		}
+		
 		switch(t) {
 			//TODO handle special token types
 			//ignore spaces
@@ -47,10 +58,7 @@ public class Grammar_Lexer extends Lexer<Token<LL1_TokenType>> {
 			//move buffer on new lines
 			case '\n':
 				result = new Token<LL1_TokenType>(LL1_TokenType.EOL, "EOL");
-				boolean done = this.input_stream.gotoNextLine();
-				if(done) {
-					result = new Token<LL1_TokenType>(LL1_TokenType.EOF, "EOF");
-				}
+				this.input_stream.gotoNextLine();
 				break;
 			//generate headers
 			case '%':
@@ -94,7 +102,7 @@ public class Grammar_Lexer extends Lexer<Token<LL1_TokenType>> {
 				}
 				result = new Token<LL1_TokenType>(LL1_TokenType.TERMINAL, terminal);
 		}
-		
+		System.out.println("generated: type = " + result.getType() + ", val = " + result.getValue());
 		return result;
 	}
 

@@ -97,4 +97,8 @@ public class InputBuffer {
 			return false;
 		}
 	}
+	
+	public boolean hasNext() {
+		return this.input.hasNextLine();
+	}
 }
