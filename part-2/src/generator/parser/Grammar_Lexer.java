@@ -36,12 +36,6 @@ public class Grammar_Lexer extends Lexer<Token<LL1_TokenType>> {
 	protected Token<LL1_TokenType> makeNewToken() {
 		Token<LL1_TokenType> result = null;
 		
-		//check if there is any input left
-		if(!this.input_stream.hasNext() && !this.peek) {
-			//if not, return end of file
-			return new Token<LL1_TokenType>(LL1_TokenType.EOF, "brap");
-		}
-		
 		char t = this.input_stream.getNext();
 		
 		switch(t) {
@@ -53,7 +47,10 @@ public class Grammar_Lexer extends Lexer<Token<LL1_TokenType>> {
 			//move buffer on new lines
 			case '\n':
 				result = new Token<LL1_TokenType>(LL1_TokenType.EOL, "EOL");
-				input_stream.gotoNextLine();
+				boolean done = this.input_stream.gotoNextLine();
+				if(done) {
+					result = new Token<LL1_TokenType>(LL1_TokenType.EOF, "EOF");
+				}
 				break;
 			//generate headers
 			case '%':
