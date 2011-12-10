@@ -1,6 +1,8 @@
 package interpreter;
 
 import generator.parser.LL1;
+import generator.parser.LL1_Token;
+import generator.parser.LL1_TokenType;
 import generator.regex.DFA;
 import generator.regex.NFA_Identifier;
 import generator.regex.RecursiveDescent;
@@ -14,6 +16,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Stack;
 
 
 /**
@@ -43,9 +46,84 @@ public class Interpreter {
 	
 	/**
 	 * run the script
+	 * @throws ParseException 
+	 * @throws FileNotFoundException 
 	 */
-	public void run() {
+	public void run(String filename) throws ParseException, FileNotFoundException {
+		/*
+		 * push eof
+		 * push StartSymbol
+		 * token = nextToken()
+		 * x = stack.peek()
+		 * do
+		 *   if x is TERMINAL
+		 *     if x == token
+		 *       stack.pop() //remove x from stack
+		 *       !!RUN CODE
+		 *       token = nextToken()
+		 *     else
+		 *       ERROR
+		 *   else //x is NON-TERMINAL
+		 *     if ParseTable[x, token] = x
+		 *       stack.pop() //remove x from stack
+		 *       for symbol : ParseTable.row(x)
+		 *         push symbol
+		 *       else
+		 *         ERROR
+		 *   x = stack.peek()
+		 * while(x != EOF)
+		 */
 		
+		//initialize code stack
+		Stack<LL1_Token> code = new Stack<LL1_Token>();
+		//initialize code lexer
+		Script_Lexer lexer;
+		try {
+			lexer = new Script_Lexer(filename);
+		}
+		catch(FileNotFoundException fnfe) {
+			//TODO proper error handling
+			throw fnfe;
+		}
+		
+		//TODO push start symbol
+		LL1_Token token = lexer.getNextToken();//get next token in script
+		LL1_Token x = code.peek();//peek at top token (start symbol in this case)
+		do {
+			//x == TERMINAL
+			if(x.getToken().getType() == LL1_TokenType.TERMINAL) {
+				//TODO fix comparison
+				if(x.getToken().equals(token)) {
+					code.pop();//pop x
+					//TODO run code???
+					token = null;//TODO get next token in the script
+				}
+				else {
+					//TODO proper error handling
+					throw new ParseException("", 0);
+				}
+			}
+			//x == NON-TERMINAL
+			else {
+				//look ahead and get first of x
+				//TODO fix comparison
+				if(x == token) {//TODO follow the path to a set of terminals
+					code.pop();//pop x
+					//TODO push all terminals in x (for current path)
+				}
+				else {
+					//TODO proper error handling
+					throw new ParseException("", 0);
+				}
+			}
+			x = code.peek();//peek at next token
+		} while(x.getToken().getType() != LL1_TokenType.EOF);//while(x != EOF)
+		
+		//the current token should be EOF
+		if(token.getToken().getType() != LL1_TokenType.EOF) {
+			//TODO proper error handling
+			throw new ParseException("", 0);
+		}
 	}
 	
 	/*
