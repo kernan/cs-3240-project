@@ -13,6 +13,7 @@ public class LL1 {
 
 	private ArrayList<LL1_Rule> ruleList;
 	private ArrayList<Terminal> termList;
+	private ArrayList<NonTerminal> nonTermList;
 	private boolean changeFlag;
 	private NonTerminal startSymbol;
 	private Grammar_Lexer lex;
@@ -21,6 +22,7 @@ public class LL1 {
 	public LL1(String file) throws FileNotFoundException{
 		this.ruleList = new ArrayList<LL1_Rule>();
 		this.termList = new ArrayList<Terminal>();
+		this.nonTermList = new ArrayList<NonTerminal>();
 		this.changeFlag = true;
 		this.EPSILON = new Terminal(new Token<LL1_TokenType>(LL1_TokenType.EPSILON, "EPSILON"));
 		lex = new Grammar_Lexer(file);
@@ -125,8 +127,11 @@ public class LL1 {
 
 		//turn all non-terminals into a rule and add their tokens to the rule
 		while(lex.peekNextToken().getType() != LL1_TokenType.EOF){	
-
-			LL1_Rule currRule = new LL1_Rule(new NonTerminal(lex.getNextToken()));
+			NonTerminal first = new NonTerminal(lex.getNextToken());
+			if(!nonTermList.contains(first)){
+				nonTermList.add(first);
+			}
+			LL1_Rule currRule = new LL1_Rule(first);
 			ruleList.add(currRule);
 			while(lex.peekNextToken().getType() != LL1_TokenType.EOL && 
 					lex.peekNextToken().getType() != LL1_TokenType.EOF){
