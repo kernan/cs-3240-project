@@ -65,6 +65,7 @@ public class Grammar_Lexer extends Lexer<Token<LL1_TokenType>> {
 					char temp = this.input_stream.peekNext();
 					while(temp != '\n' || temp != ' ' || temp != '\t') {
 						header += this.input_stream.getNext();
+						this.input_stream.getNext();//consume that token
 						temp = this.input_stream.peekNext();
 					}
 					this.input_stream.gotoNextLine();
