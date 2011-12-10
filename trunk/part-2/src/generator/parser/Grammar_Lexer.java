@@ -37,7 +37,7 @@ public class Grammar_Lexer extends Lexer<Token<LL1_TokenType>> {
 		Token<LL1_TokenType> result = null;
 		
 		//check if there is any input left
-		if(!this.input_stream.hasNext()) {
+		if(!this.input_stream.hasNext() && !this.peek) {
 			//if not, return end of file
 			return new Token<LL1_TokenType>(LL1_TokenType.EOF, null);
 		}
