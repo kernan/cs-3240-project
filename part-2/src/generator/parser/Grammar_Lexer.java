@@ -57,7 +57,8 @@ public class Grammar_Lexer extends Lexer<Token<LL1_TokenType>> {
 				break;
 			//generate headers
 			case '%':
-				if(input_stream.peekNext() == '%') {
+				if(this.input_stream.peekNext() == '%') {
+					this.input_stream.getNext();
 					while(this.isWhitespace(this.input_stream.peekNext())) {
 						this.input_stream.getNext();
 					}
