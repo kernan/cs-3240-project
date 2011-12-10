@@ -19,6 +19,19 @@ public class LL1 {
 	private Grammar_Lexer lex;
 	private final Terminal EPSILON;
 	
+	public static void main(String[] args) throws FileNotFoundException{
+		LL1 LL1parser = new LL1("minire-specification.txt");
+		System.out.println("Starting Parsing.");
+		LL1parser.Parse();
+		System.out.println("Completed Parsing.");
+		System.out.println("Starting First.");
+		LL1parser.first();
+		System.out.println("Completed First.");
+		System.out.println("Starting Follow.");
+		LL1parser.follow();
+		System.out.println("Completed Follow.");
+	}
+	
 	public LL1(String file) throws FileNotFoundException{
 		this.ruleList = new ArrayList<LL1_Rule>();
 		this.termList = new ArrayList<Terminal>();
@@ -30,15 +43,20 @@ public class LL1 {
 
 	public void Parse() throws FileNotFoundException{
 
+		System.out.println("Parsing...");
 		//Skip to first Header
 		while(lex.peekNextToken().getType() != LL1_TokenType.HEADER){
+			System.out.println("Searching for header...");
 			lex.getNextToken();
 		}
 
+		System.out.println("Found a header");
+		System.out.println("Header:" + lex.peekNextToken().getValue());
 		//Check for Headers
 
 		if(lex.peekNextToken().getValue().equals("Tokens")){
 			//Skip to next line to get list of tokens	
+			System.out.println("Found Token Header");
 			while(lex.peekNextToken().getType() != LL1_TokenType.TERMINAL){
 				lex.getNextToken();
 			}
@@ -47,6 +65,7 @@ public class LL1 {
 			while(lex.peekNextToken().getType() != LL1_TokenType.EOL){
 				termList.add(new Terminal(lex.getNextToken()));
 			}
+			System.out.println("Added Terminals");
 
 			//skip to next header
 			while(lex.peekNextToken().getType() != LL1_TokenType.HEADER){
@@ -55,6 +74,7 @@ public class LL1 {
 
 			//make sure next header is Start
 			if(lex.peekNextToken().getValue().equals("Start")) {
+				System.out.println("Found Start Header");
 				//skip to start symbol
 				while(lex.peekNextToken().getType() != LL1_TokenType.NON_TERMINAL){
 					lex.getNextToken();
