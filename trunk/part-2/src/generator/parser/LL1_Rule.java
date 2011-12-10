@@ -16,6 +16,7 @@ public class LL1_Rule {
 	 */
 	public LL1_Rule(NonTerminal nonTerm){
 		this.nonTerm = nonTerm;
+		TNTList = new ArrayList<LL1_Token>();
 	}
 	/**
 	 * 
