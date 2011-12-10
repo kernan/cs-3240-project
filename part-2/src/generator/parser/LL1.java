@@ -27,7 +27,7 @@ public class LL1 {
 	 * @throws ParseException thrown by lexer
 	 */
 	public static void main(String[] args) throws FileNotFoundException, ParseException{
-		LL1 LL1parser = new LL1("minire-specification.txt");
+		LL1 LL1parser = new LL1("book_grammar.txt");
 		System.out.println("Starting Parsing.");
 		LL1parser.Parse();
 		System.out.println("Completed Parsing.");
@@ -248,6 +248,14 @@ public class LL1 {
 					ArrayList<Terminal> kFirstList = kToken.getFirstSet();
 					ArrayList<Terminal> curFirst = curTerm.getFirstSet();
 					
+					
+					System.out.println(curTerm.toString());
+					
+					System.out.println("\ncurFirst 1: ");
+					for(int y = 0; y < curFirst.size(); y++){
+						System.out.println(curFirst.get(y).toString() + "\n");
+					}
+					
 					int checkSize = curFirst.size();
 					for(int j = 0; j < kFirstList.size(); j++){
 						//System.out.println("kFirstList(j): " + kFirstList.get(j).toString());
@@ -255,6 +263,11 @@ public class LL1 {
 						//	System.out.println("kFirstList(j) ADD: " + kFirstList.get(j).toString());
 							curFirst.add(kFirstList.get(j));
 						}
+					}
+					
+					System.out.println("\ncurFirst 2: ");
+					for(int y = 0; y < curFirst.size(); y++){
+						System.out.println(curFirst.get(y).toString() + "\n");
 					}
 					
 					//System.out.println("checkSize: " + checkSize + "   curFirst size: " + curFirst.size());
@@ -266,6 +279,11 @@ public class LL1 {
 						changeFlag = true;
 					}*/
 					curTerm.setFirstSet(curFirst);
+					
+			/*		System.out.println("\ncurTerm: ");
+					for(int y = 0; y < curFirst.size(); y++){
+						System.out.println(curFirst.get(y).toString() + "\n");
+					}*/
 					
 					if(!kFirstList.contains(EPSILON)){
 						Continue = false;
@@ -281,7 +299,21 @@ public class LL1 {
 		}
 		changeFlag = true;
 		
-		
+		for(int i = 0; i < nonTermList.size(); i++){
+			System.out.println("\nNonTerminal:   " + nonTermList.get(i).toString());
+			String firsts = "First set:   ";
+			for(int j = 0; j < nonTermList.get(i).getFirstSet().size(); j++){
+				firsts += nonTermList.get(i).getFirstSet().get(j).toString() + " ";
+			}
+			System.out.println(firsts);
+			
+		/*	String follows = "Follow set:   ";
+			for(int j = 0; j < nonTermList.get(i).getFollowSet().size(); j++){
+				follows += nonTermList.get(i).getFollowSet().get(j).toString() + " ";
+			}
+			System.out.println(follows);*/
+			
+		}
 		
 	}
 

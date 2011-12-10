@@ -1,3 +1,10 @@
+%% Tokens
++ -  * ( ) number REGEX ASCII-STR EPSILON
+
+%% Start
+<exp>
+
+%% Rules
 <exp>		<exp> <addop> <term>
 <exp>		<term>
 <addop>		+
