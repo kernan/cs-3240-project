@@ -9,5 +9,6 @@ public enum LL1_TokenType {
 	TERMINAL,
 	NON_TERMINAL,
 	EOL,
-	EOF
+	EOF, 
+	EPSILON
 }
