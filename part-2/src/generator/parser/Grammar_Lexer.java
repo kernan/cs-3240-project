@@ -1,6 +1,7 @@
 package generator.parser;
 
 import java.io.FileNotFoundException;
+import java.text.ParseException;
 
 import global.InputBuffer;
 import global.Lexer;
@@ -21,36 +22,31 @@ public class Grammar_Lexer extends Lexer<Token<LL1_TokenType>> {
 	 */
 	public Grammar_Lexer(String filename) throws FileNotFoundException {
 		super();
-		this.done = done;
-		try {
-			this.input_stream = new InputBuffer(filename);
-		}
-		catch(FileNotFoundException fnfe) {
-			//TODO proper error handling
-			throw fnfe;
-		}
+		this.done = false;
+		this.input_stream = new InputBuffer(filename);
 	}
 	
 	/**
 	 * generate the next token in the file
 	 * @return next token
+	 * @throws ParseException thrown on lexer errors
 	 */
-	protected Token<LL1_TokenType> makeNewToken() {
+	protected Token<LL1_TokenType> makeNewToken() throws ParseException {
 		Token<LL1_TokenType> result = null;
 		
 		char t = this.input_stream.getNext();
 		
+		//check for end of file
 		if(this.done) {
 			return new Token<LL1_TokenType>(LL1_TokenType.EOF, "EOF");
 		}
 		
+		//check to see if we've FINISHED the final line of the spec 
 		if(!this.input_stream.hasNext() && t == '\n') {
 			this.done = true;
-			//return new Token<LL1_TokenType>(LL1_TokenType.EOF, "EOF");
 		}
 		
 		switch(t) {
-			//TODO handle special token types
 			//ignore spaces
 			case ' ':
 			case '\t':
@@ -78,6 +74,8 @@ public class Grammar_Lexer extends Lexer<Token<LL1_TokenType>> {
 				}
 				else {
 					//TODO is '%' a valid character for anything else?
+					throw new ParseException("Specification Lexical ERROR: symbol: \'" + t + "\' can only appear at beginning of HEADER token, line: " +
+							this.getLine() + ", pos: " + this.getPosition(), this.getPosition());
 				}
 				break;
 			//generate non-terminals
@@ -85,7 +83,8 @@ public class Grammar_Lexer extends Lexer<Token<LL1_TokenType>> {
 				String non_term = new String();
 				while(this.input_stream.peekNext() != '>') {
 					if(this.input_stream.peekNext() == '\n') {
-						//TODO handle error situation
+						throw new ParseException("Specification Lexical ERROR: newline found before end of non-terminal: \'" +
+								non_term + "\', line: " +this.getLine() + ", pos: " + this.getPosition(), this.getPosition());
 					}
 					non_term += this.input_stream.getNext();
 				}
@@ -94,7 +93,6 @@ public class Grammar_Lexer extends Lexer<Token<LL1_TokenType>> {
 				break;
 			//generate terminals
 			default:
-				//TODO handle cases where there might not be spaces?
 				String terminal = new String();
 				terminal += t;
 				while(!this.isWhitespace(this.input_stream.peekNext()) && this.input_stream.peekNext() != '\n') {

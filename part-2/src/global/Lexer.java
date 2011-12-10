@@ -1,5 +1,7 @@
 package global;
 
+import java.text.ParseException;
+
 /**
  * Lexer.java
  * abstract lexer with functionality to get positions and generate tokens
@@ -29,14 +31,16 @@ public abstract class Lexer<E> {
 	/**
 	 * generate next token from the stream
 	 * @return new token from the stream
+	 * @throws ParseException thrown on lexer errors
 	 */
-	protected abstract E makeNewToken();
+	protected abstract E makeNewToken() throws ParseException;
 	
 	/**
 	 * consume the next token in the stream
 	 * @return next token in the stream
+	 * @throws ParseException thrown by makeNewToken
 	 */
-	public E getNextToken() {
+	public E getNextToken() throws ParseException {
 		if(peek) {
 			peek = false;
 			return current;
@@ -50,8 +54,9 @@ public abstract class Lexer<E> {
 	/**
 	 * peek at the next token in the stream
 	 * @return next token in the stream
+	 * @throws ParseException thrown by makeNewToken
 	 */
-	public E peekNextToken() {
+	public E peekNextToken() throws ParseException {
 		if(peek) {
 			return current;
 		}

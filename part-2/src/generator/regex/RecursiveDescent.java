@@ -200,8 +200,9 @@ public class RecursiveDescent {
 	
 	/**
 	 * <rexp2Tail> -> * | + |  E
+	 * @throws ParseException thrown by lexer
 	 */
-	private void rexp2Tail() {
+	private void rexp2Tail() throws ParseException {
 		Regex_TokenType type = lexer.peekNextToken().getType();
 		if(type == Regex_TokenType.KLEENE){
 			
