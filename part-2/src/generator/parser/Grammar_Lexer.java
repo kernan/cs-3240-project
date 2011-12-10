@@ -84,6 +84,7 @@ public class Grammar_Lexer extends Lexer<Token<LL1_TokenType>> {
 					}
 					non_term += this.input_stream.getNext();
 				}
+				this.input_stream.getNext();
 				result = new Token<LL1_TokenType>(LL1_TokenType.NON_TERMINAL, non_term);
 				break;
 			//generate terminals
@@ -91,7 +92,7 @@ public class Grammar_Lexer extends Lexer<Token<LL1_TokenType>> {
 				//TODO handle cases where there might not be spaces?
 				String terminal = new String();
 				terminal += t;
-				while(this.input_stream.peekNext() != ' ') {
+				while(!this.isWhitespace(this.input_stream.peekNext()) && this.input_stream.peekNext() != '\n') {
 					terminal += this.input_stream.getNext();
 				}
 				result = new Token<LL1_TokenType>(LL1_TokenType.TERMINAL, terminal);
