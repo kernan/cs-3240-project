@@ -250,11 +250,14 @@ public class LL1 {
 					
 					int checkSize = curFirst.size();
 					for(int j = 0; j < kFirstList.size(); j++){
-						if(!kFirstList.get(j).equals(EPSILON)){
+						//System.out.println("kFirstList(j): " + kFirstList.get(j).toString());
+						if(!kFirstList.get(j).equals(EPSILON) && !curFirst.contains(kFirstList.get(k))){
+						//	System.out.println("kFirstList(j) ADD: " + kFirstList.get(j).toString());
 							curFirst.add(kFirstList.get(j));
 						}
 					}
 					
+					//System.out.println("checkSize: " + checkSize + "   curFirst size: " + curFirst.size());
 					if(curFirst.size() != checkSize){
 						changeFlag = true;
 					}
@@ -277,6 +280,9 @@ public class LL1 {
 			}
 		}
 		changeFlag = true;
+		
+		
+		
 	}
 
 	/*
@@ -334,5 +340,41 @@ public class LL1 {
 		}
 		changeFlag = true;
 	}
+
+	public ArrayList<LL1_Rule> getRuleList() {
+		return ruleList;
+	}
+
+	public void setRuleList(ArrayList<LL1_Rule> ruleList) {
+		this.ruleList = ruleList;
+	}
+
+	public ArrayList<Terminal> getTermList() {
+		return termList;
+	}
+
+	public void setTermList(ArrayList<Terminal> termList) {
+		this.termList = termList;
+	}
+
+	public ArrayList<NonTerminal> getNonTermList() {
+		return nonTermList;
+	}
+
+	public void setNonTermList(ArrayList<NonTerminal> nonTermList) {
+		this.nonTermList = nonTermList;
+	}
+
+	public NonTerminal getStartSymbol() {
+		return startSymbol;
+	}
+
+	public void setStartSymbol(NonTerminal startSymbol) {
+		this.startSymbol = startSymbol;
+	}
+	
+	
+	
+	
 }
 
