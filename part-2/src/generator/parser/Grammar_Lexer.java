@@ -33,7 +33,7 @@ public class Grammar_Lexer extends Lexer<Token<LL1_TokenType>> {
 	 * generate the next token in the file
 	 * @return next token
 	 */
-	public Token<LL1_TokenType> makeNewToken() {
+	protected Token<LL1_TokenType> makeNewToken() {
 		Token<LL1_TokenType> result = null;
 		
 		//check if there is any input left
