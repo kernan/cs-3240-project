@@ -11,13 +11,16 @@ import java.util.ArrayList;
  */
 public class LL1 {
 	
-	private static ArrayList<LL1_Rule> ruleList = new ArrayList<LL1_Rule>();
-	private static ArrayList<Terminal> termList = new ArrayList<Terminal>();
-	private static boolean changeFlag = true;
-	private static NonTerminal startSymbol;
-	private static Grammar_Lexer lex;
+	private ArrayList<LL1_Rule> ruleList;
+	private ArrayList<Terminal> termList;
+	private boolean changeFlag;
+	private NonTerminal startSymbol;
+	private Grammar_Lexer lex;
 	
 	public LL1(String file) throws FileNotFoundException{
+		this.ruleList = new ArrayList<LL1_Rule>();
+		this.termList = new ArrayList<Terminal>();
+		this.changeFlag = true;
 		lex = new Grammar_Lexer(file);
 	}
 	
@@ -167,7 +170,7 @@ public class LL1 {
 		     IF Continue = true THEN add epsilon to First(A) ;
 
 	 */
-	private static void First(){
+	private void first(){
 		LL1_Rule curRule = ruleList.get(0);
 		NonTerminal curTerm = curRule.getNonTerm();
 		  while(changeFlag = true){
@@ -209,7 +212,7 @@ public class LL1 {
 			   IF epsilon is in First(Xi+1Xi+2...Xn) THEN
 			     add Follow(A) to Follow(Xi
 	 */
-	public void follow(){
+	private void follow(){
 		Terminal endOfFile = new Terminal(new Token<LL1_TokenType>(LL1_TokenType.EOF, null));
 		startSymbol.addToFollowSet(endOfFile);
 		
