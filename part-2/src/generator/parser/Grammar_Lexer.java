@@ -39,7 +39,7 @@ public class Grammar_Lexer extends Lexer<Token<LL1_TokenType>> {
 		//check if there is any input left
 		if(!this.input_stream.hasNext() && !this.peek) {
 			//if not, return end of file
-			return new Token<LL1_TokenType>(LL1_TokenType.EOF, null);
+			return new Token<LL1_TokenType>(LL1_TokenType.EOF, "end of brap");
 		}
 		
 		char t = this.input_stream.getNext();
@@ -85,7 +85,7 @@ public class Grammar_Lexer extends Lexer<Token<LL1_TokenType>> {
 					non_term += this.input_stream.getNext();
 				}
 				this.input_stream.getNext();
-				result = new Token<LL1_TokenType>(LL1_TokenType.NON_TERMINAL, non_term);
+				result = new Token<LL1_TokenType>(LL1_TokenType.NON_TERMINAL, "brap of line");
 				break;
 			//generate terminals
 			default:
