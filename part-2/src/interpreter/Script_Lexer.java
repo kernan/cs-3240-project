@@ -1,6 +1,10 @@
 package interpreter;
 
+import java.io.FileNotFoundException;
+import java.text.ParseException;
+
 import generator.parser.LL1_Token;
+import global.InputBuffer;
 import global.Lexer;
 
 /**
@@ -8,52 +12,42 @@ import global.Lexer;
  */
 public class Script_Lexer extends Lexer<LL1_Token> {
 	
-	public Script_Lexer() {
+	private InputBuffer input;
+	
+	/**
+	 * 
+	 * @param filename
+	 * @throws FileNotFoundException thrown by InputBuffer
+	 */
+	public Script_Lexer(String filename) throws FileNotFoundException {
 		super();
+		this.input = new InputBuffer(filename);
 	}
 	
+	/**
+	 * 
+	 * @return
+	 */
 	@Override
 	public int getPosition() {
-		// TODO 
-		return 0;
+		return this.input.getPosition();
 	}
 	
+	/**
+	 * 
+	 * @return
+	 */
+	public int getLine() {
+		return this.input.getLine();
+	}
+	
+	/**
+	 * 
+	 * @return
+	 */
 	@Override
-	protected LL1_Token makeNewToken() {
-		// TODO Auto-generated method stub
-		/*
-		 * while peekNextChar() == ' '
-		 *   getNextChar()
-		 *   
-		 * continue = false
-		 * token = new String()
-		 * type = null
-		 * do {
-		 *   t = peekNextChar()
-		 *   for dfa : dfa_list
-		 *     dfa.gotoNext(t)
-		 *   continue = false;
-		 *   for dfa : dfa_list
-		 *     if !dfa.inDead()
-		 *       continue = false
-		 *   if continue
-		 *     value += getNextChar()
-		 *   else
-		 *     for dfa : dfa_list
-		 *       if dfa.inFinal()
-		 *         type = dfa.getType()
-		 *         break
-		 * while(continue)
-		 * 
-		 * if type == null
-		 *   Parse ERROR, unrecognized token
-		 * 
-		 * else
-		 *   return new Token(value, type)
-		 */
+	protected LL1_Token makeNewToken() throws ParseException {
+		
 		return null;
 	}
-	//TODO
-	
-	
 }
