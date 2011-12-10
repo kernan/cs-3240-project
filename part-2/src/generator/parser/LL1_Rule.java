@@ -18,6 +18,7 @@ public class LL1_Rule {
 		this.nonTerm = nonTerm;
 		TNTList = new ArrayList<LL1_Token>();
 	}
+
 	/**
 	 * 
 	 * @param tok
@@ -43,6 +44,18 @@ public class LL1_Rule {
 
 	public void setTNTList(ArrayList<LL1_Token> tNTList) {
 		TNTList = tNTList;
+	}
+	
+	
+	@Override
+	public String toString() {
+		String retString = "" + nonTerm + "\t";
+		for(int i = 0; i < TNTList.size(); i++){
+			retString += TNTList.get(i);
+			retString += " ";
+		}
+		
+		return retString;
 	}
 	
 	
