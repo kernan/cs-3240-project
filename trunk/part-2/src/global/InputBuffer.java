@@ -97,12 +97,4 @@ public class InputBuffer {
 			return false;
 		}
 	}
-	
-	/**
-	 * determine if the scanner is at the bottom of the file
-	 * @return true: not at end of file, false: it is
-	 */
-	public boolean hasNext() {
-		return input.hasNext();
-	}
 }
