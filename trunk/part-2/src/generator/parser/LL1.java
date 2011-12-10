@@ -15,9 +15,13 @@ public class LL1 {
 	private static ArrayList<Terminal> termList = new ArrayList<Terminal>();
 	private static boolean changeFlag = true;
 	private static NonTerminal startSymbol;
+	private static Grammar_Lexer lex;
 	
-	public static void main(String[] args) throws FileNotFoundException{
-		Grammar_Lexer lex = new Grammar_Lexer("minire-specification.txt");
+	public LL1(String file) throws FileNotFoundException{
+		lex = new Grammar_Lexer(file);
+	}
+	
+	public void Parse() throws FileNotFoundException{
 		
 		//Skip to first Header
 		while(lex.peekNextToken().getType() != LL1_TokenType.HEADER){
