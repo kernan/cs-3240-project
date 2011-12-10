@@ -34,6 +34,15 @@ public class LL1 {
 		System.out.println("Starting First.");
 		LL1parser.first();
 		System.out.println("Completed First.");
+		System.out.println("First Lists: ");
+		for(int i = 0; i < LL1parser.nonTermList.size(); i++){
+			NonTerminal nonTerm = LL1parser.nonTermList.get(i);
+			ArrayList<Terminal> fList = nonTerm.getFirstSet();
+			System.out.println("First List for: " + nonTerm.getToken().getValue());
+			for(int j = 0; j < fList.size(); j++){
+				System.out.println(fList.get(j).getToken().getValue());
+			}
+		}
 		/*System.out.println("Starting Follow.");
 		LL1parser.follow();
 		System.out.println("Completed Follow.");*/
@@ -88,6 +97,7 @@ public class LL1 {
 
 			//skip to next header
 			while(lex.peekNextToken().getType() != LL1_TokenType.HEADER){
+				System.out.println("Chucking token: " + lex.peekNextToken().getValue());
 				lex.getNextToken();
 			}
 
@@ -240,11 +250,13 @@ public class LL1 {
 				boolean Continue = true;
 				curRule = ruleList.get(i);
 				curTerm = curRule.getNonTerm();
+				System.out.println("Rule Header: " + curTerm.getToken().getValue());
 				int n = curRule.getTNTList().size();
 
 				while( Continue && k < n){
 					ArrayList<LL1_Token> tokenList = curRule.getTNTList();
 					LL1_Token kToken = tokenList.get(k);
+					System.out.println("Checking: " + kToken.getToken().getValue());
 					ArrayList<Terminal> kFirstList = kToken.getFirstSet();
 					ArrayList<Terminal> curFirst = curTerm.getFirstSet();
 					
@@ -258,9 +270,9 @@ public class LL1 {
 					
 					int checkSize = curFirst.size();
 					for(int j = 0; j < kFirstList.size(); j++){
-						//System.out.println("kFirstList(j): " + kFirstList.get(j).toString());
+						//System.out.println("Looping thru first list: " + kFirstList.get(j).toString());
 						if(!kFirstList.get(j).equals(EPSILON) && !curFirst.contains(kFirstList.get(k))){
-						//	System.out.println("kFirstList(j) ADD: " + kFirstList.get(j).toString());
+						//  System.out.println("ADDING: " + kFirstList.get(j).toString());
 							curFirst.add(kFirstList.get(j));
 						}
 					}
