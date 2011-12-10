@@ -26,7 +26,7 @@ public class LL1 {
 		
 		//Check for Headers
 		
-		if(lex.peekNextToken().getValue() == "Tokens"){
+		if(lex.peekNextToken().getValue().equals("Tokens")){
 		    //Skip to next line to get list of tokens	
 			while(lex.peekNextToken().getType() != LL1_TokenType.TERMINAL){
 				lex.getNextToken();
@@ -43,7 +43,7 @@ public class LL1 {
 			}
 			
 			//make sure next header is Start
-			if(lex.peekNextToken().getValue() == "Start"){
+			if(lex.peekNextToken().getValue().equals("Start")) {
 				//skip to start symbol
 				while(lex.peekNextToken().getType() != LL1_TokenType.NON_TERMINAL){
 					lex.getNextToken();
@@ -56,7 +56,7 @@ public class LL1 {
 				System.out.println("Start symbol must come after tokens");
 			}
 		}
-		else if(lex.peekNextToken().getValue() == "Start"){
+		else if(lex.peekNextToken().getValue().equals("Start")){
 				//skip to start symbol
 				while(lex.peekNextToken().getType() != LL1_TokenType.NON_TERMINAL){
 					lex.getNextToken();
@@ -72,7 +72,7 @@ public class LL1 {
 					lex.getNextToken();
 				}
 				
-				if(lex.peekNextToken().getValue() == "Tokens"){
+				if(lex.peekNextToken().getValue().equals("Tokens")){
 					
 					//skip to tokens
 					while(lex.peekNextToken().getType() != LL1_TokenType.TERMINAL){
@@ -99,7 +99,7 @@ public class LL1 {
 			lex.getNextToken();
 		}
 		
-		if(lex.peekNextToken().getValue() == "Rules"){
+		if(lex.peekNextToken().getValue().equals("Rules")) {
 			lex.getNextToken();
 		}
 		else{
