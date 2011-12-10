@@ -180,6 +180,7 @@ public class LL1 {
 				}
 			}
 			//consume EOL token
+			System.out.println("THIS SHOULD BE AN EOL OR EOF: " + lex.peekNextToken().getValue());
 			lex.getNextToken();
 			System.out.println("Next while test = " + lex.peekNextToken().getValue());
 		}
