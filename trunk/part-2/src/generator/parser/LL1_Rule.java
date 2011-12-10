@@ -27,26 +27,42 @@ public class LL1_Rule {
 		TNTList.add(tok);	
 	}
 	
-/* Accessors and Mutators
- */
-
+	/**
+	 * 
+	 * @return
+	 */
 	public NonTerminal getNonTerm() {
 		return nonTerm;
 	}
 
+	/**
+	 * 
+	 * @param nonTerm
+	 */
 	public void setNonTerm(NonTerminal nonTerm) {
 		this.nonTerm = nonTerm;
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public ArrayList<LL1_Token> getTNTList() {
 		return TNTList;
 	}
 
+	/**
+	 * 
+	 * @param tNTList
+	 */
 	public void setTNTList(ArrayList<LL1_Token> tNTList) {
 		TNTList = tNTList;
 	}
 	
-	
+	/**
+	 * 
+	 * @return
+	 */
 	@Override
 	public String toString() {
 		String retString = "" + nonTerm.getToken().getValue() + "\t";
@@ -54,7 +70,6 @@ public class LL1_Rule {
 			retString += TNTList.get(i).getToken().getValue();
 			retString += " ";
 		}
-		
 		return retString;
 	}
 	

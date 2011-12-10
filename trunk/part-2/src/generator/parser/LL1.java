@@ -3,6 +3,7 @@ package generator.parser;
 import global.Token;
 
 import java.io.FileNotFoundException;
+import java.text.ParseException;
 import java.util.ArrayList;
 
 /**
@@ -19,19 +20,30 @@ public class LL1 {
 	private Grammar_Lexer lex;
 	private final Terminal EPSILON;
 	
-	public static void main(String[] args) throws FileNotFoundException{
+	/**
+	 * 
+	 * @param args
+	 * @throws FileNotFoundException
+	 * @throws ParseException thrown by lexer
+	 */
+	public static void main(String[] args) throws FileNotFoundException, ParseException{
 		LL1 LL1parser = new LL1("minire-specification.txt");
 		System.out.println("Starting Parsing.");
 		LL1parser.Parse();
 		System.out.println("Completed Parsing.");
 		/*System.out.println("Starting First.");
-		//LL1parser.first();
+		LL1parser.first();
 		System.out.println("Completed First.");
 		System.out.println("Starting Follow.");
-		//LL1parser.follow();
+		LL1parser.follow();
 		System.out.println("Completed Follow.");*/
 	}
 	
+	/**
+	 * 
+	 * @param file
+	 * @throws FileNotFoundException
+	 */
 	public LL1(String file) throws FileNotFoundException{
 		this.ruleList = new ArrayList<LL1_Rule>();
 		this.termList = new ArrayList<Terminal>();
@@ -41,7 +53,12 @@ public class LL1 {
 		lex = new Grammar_Lexer(file);
 	}
 
-	public void Parse() throws FileNotFoundException{
+	/**
+	 * 
+	 * @throws FileNotFoundException
+	 * @throws ParseException thrown by lexer
+	 */
+	public void Parse() throws FileNotFoundException, ParseException{
 
 		System.out.println("Parsing...");
 		//Skip to first Header
@@ -198,7 +215,8 @@ public class LL1 {
 			System.out.println(ruleList.get(i).toString());
 		}
 	}
-	/**
+	
+	/*
 	 * FOR all nonterminals A DO First(A) := {};                      
        WHILE there are changes to any First(A) do                     
 	       FOR each production choice A --> X1X2...Xn DO              
@@ -208,6 +226,9 @@ public class LL1 {
 			   IF epsilon is not in First(Xk) THEN Continue := false ;
 			   k := k + 1 ;
 		     IF Continue = true THEN add epsilon to First(A) ;
+	 */
+	/**
+	 * 
 	 */
 	private void first(){
 		LL1_Rule curRule = ruleList.get(0);
@@ -246,7 +267,7 @@ public class LL1 {
 		changeFlag = true;
 	}
 
-	/**
+	/*
 	 * Follow(start-symbol) := {$} ;
        FOR all nonterminals A != start-symbol DO Follow(A) := {} ;
        WHILE there are changes to any Follow sets DO
@@ -256,6 +277,9 @@ public class LL1 {
 			   (* Note: if i=n, then Xi+1 Xi+2...Xn = epsilon *)
 			   IF epsilon is in First(Xi+1 Xi+2...Xn) THEN
 			     add Follow(A) to Follow(Xi)
+	 */
+	/**
+	 * 
 	 */
 	private void follow(){
 		Terminal endOfFile = new Terminal(new Token<LL1_TokenType>(LL1_TokenType.EOF, null));

@@ -24,29 +24,42 @@ public class LL1_Token {
 	public void addToFirstSet(Terminal tok){
 		FirstSet.add(tok);	
 	}
-
 	
-	
-/* Accessors and Mutators	
- */
-	
+	/**
+	 * 
+	 * @return
+	 */
 	public Token<LL1_TokenType> getToken() {
 		return token;
 	}
-
+	
+	/**
+	 * 
+	 * @param token
+	 */
 	public void setToken(Token<LL1_TokenType> token) {
 		this.token = token;
 	}
-
+	
+	/**
+	 * 
+	 * @return
+	 */
 	public ArrayList<Terminal> getFirstSet() {
 		return FirstSet;
 	}
 
+	/**
+	 * 
+	 * @param firstSet
+	 */
 	public void setFirstSet(ArrayList<Terminal> firstSet) {
 		FirstSet = firstSet;
 	}
 
-
+	/**
+	 * 
+	 */
 	@Override
 	public boolean equals(Object obj) {
 		if (obj == null)
