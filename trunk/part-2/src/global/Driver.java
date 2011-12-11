@@ -3,10 +3,10 @@ package global;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.text.ParseException;
+import java.util.Scanner;
 
 import interpreter.Interpreter;
 import generator.parser.LL1;
-import generator.parser.Script_Lexer;
 
 /**
  * 
@@ -19,36 +19,71 @@ public class Driver {
 	 * @throws ParseException 
 	 * @throws IOException 
 	 */
-	public static void main(String[] args) throws ParseException, IOException {
+	public static void main(String[] args) {
+		
+		Scanner scan = new Scanner(System.in);
 		
 		String spec_file = "minire-specification-NEW.txt";
 		
 		System.out.println("Generating Scanner/Parser...\n");
 		LL1 parser = null;
 		try {
-			//TODO generate LL1 for the grammar
 			parser = new LL1(spec_file);
+			System.out.println("==========\nPARSE TABLE\n==========");
 			System.out.println(parser.getPt());
 		}
-		catch(Exception e) {
+		catch(ParseException pe) {
 			System.out.println("Error in Scanner/Parser Generation...");
-			System.out.println(e.getMessage());
+			System.out.println(pe);
+			System.exit(1);
 		}
+		catch(IOException ioe) {
+			System.out.println("Error in Scanner/Parser Generation...");
+			System.out.println(ioe);
+			System.exit(1);
+		}
+		
 		System.out.println("Scanner/Parser Generation DONE!\n");
 		System.out.println("Running Interpreter...\n");
-		//try {
+		try {
 			Interpreter interpreter = new Interpreter(parser);
-			interpreter.run("test/oneline/find.txt");
-		//}
-		/*catch(Exception e) {
+			
+			String next_file = new String();
+			do {
+				System.out.print(">>");
+				next_file = scan.next();
+				//terminating condition
+				if(next_file.equals("quit")) {
+					System.out.print("really quit? (y/n) ");
+					if(scan.next().equals("y")) {
+						break;
+					}
+				}
+				else {
+					try {
+						interpreter.run(next_file);
+					}
+					catch(FileNotFoundException fnfe) {
+						System.out.println("file: \"" + next_file + "\" does not exist...");
+					}
+				}
+			}
+			while(true);
+			
+			//interpreter.run("test/oneline/find.txt");
+		}
+		catch(ParseException pe) {
 			System.out.println("Error running Interpreter...\n");
-			System.out.println(e.getMessage());
-		}*/
-		System.out.println("Interpreter DONE!\n");
+			System.out.println(pe);
+			System.exit(1);
+		}
+		catch(IOException ioe) {
+			System.out.println("Error in Scanner/Parser Generation...");
+			System.out.println(ioe);
+			System.exit(1);
+		}
 		
-		/*Script_Lexer lextest = new Script_Lexer("example/minire_test_script.txt", parser.getPt().getTerminals());
-		while(!lextest.peekNextToken().getType().equals("EOF")) {
-			System.out.println(lextest.getNextToken());
-		}*/
+		System.out.println("\nInterpreter DONE!\n");
+		System.exit(0);
 	}
 }
