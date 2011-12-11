@@ -50,6 +50,7 @@ public class Driver {
 			
 			String next_file = new String();
 			do {
+				System.out.println("input name of script file... (\"quit\" to exit)");
 				System.out.print(">>");
 				next_file = scan.next();
 				//terminating condition
