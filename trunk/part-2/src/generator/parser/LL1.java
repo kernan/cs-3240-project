@@ -18,7 +18,7 @@ public class LL1 {
 	private boolean changeFlag;
 	private NonTerminal startSymbol;
 	private Grammar_Lexer lex;
-	ParseTable pt;
+	private ParseTable pt;
 	
 	/**
 	 * 
