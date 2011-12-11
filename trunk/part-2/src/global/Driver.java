@@ -23,7 +23,7 @@ public class Driver {
 		
 		Scanner scan = new Scanner(System.in);
 		
-		String spec_file = "minire-specification-NEW.txt";
+		String spec_file = "specification/minire-specification-NEW.txt";
 		
 		System.out.println("Generating Scanner/Parser...\n");
 		LL1 parser = null;
