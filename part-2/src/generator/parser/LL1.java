@@ -12,72 +12,30 @@ import java.util.ArrayList;
  */
 public class LL1 {
 
-	private static ArrayList<LL1_Rule> ruleList;
-	private static ArrayList<Terminal> termList;
-	private static ArrayList<NonTerminal> nonTermList;
+	private ArrayList<LL1_Rule> ruleList;
+	private ArrayList<Terminal> termList;
+	private ArrayList<NonTerminal> nonTermList;
 	private boolean changeFlag;
 	private NonTerminal startSymbol;
 	private Grammar_Lexer lex;
-	/**
-	 * 
-	 * @param args
-	 * @throws FileNotFoundException
-	 * @throws ParseException thrown by lexer
-	 */
-	public static void main(String[] args) throws FileNotFoundException, ParseException{
-		LL1 LL1parser = new LL1("minire-specification-NEW.txt");
-		System.out.println("Starting Parsing.");
-		LL1parser.Parse();
-		System.out.println("Completed Parsing.");
-		System.out.println("\nStarting First.");
-		LL1parser.first();
-		System.out.println("Completed First.");
-		System.out.println("First Lists: ");
-		for(int i = 0; i < LL1parser.nonTermList.size(); i++){
-			NonTerminal nonTerm = LL1parser.nonTermList.get(i);
-			ArrayList<Terminal> fList = nonTerm.getFirstSet();
-			System.out.println("\nFirst List for: " + nonTerm.getToken().getValue());
-			for(int j = 0; j < fList.size(); j++){
-				System.out.println(fList.get(j).getToken().getValue());
-			}
-		}
-		System.out.println("\nStarting Follow.");
-		LL1parser.follow();
-		System.out.println("Completed Follow.");
-		System.out.println("Follow Lists: ");
-		for(int i = 0; i < LL1parser.nonTermList.size(); i++){
-			NonTerminal nonTerm = LL1parser.nonTermList.get(i);
-			ArrayList<Terminal> fList = nonTerm.getFollowSet();
-			System.out.println("\nFollow List for: " + nonTerm.getToken().getValue());
-			for(int j = 0; j < fList.size(); j++){
-				System.out.println(fList.get(j).getToken().getValue());
-			}
-		}
-		System.out.println("\n\n\n\n-------Starting to Build Parse Table-------\n");
-		ParseTable pt = new ParseTable(ruleList, termList, nonTermList);
-		System.out.println(pt.toString());
-		
-		System.out.println("\nFinished making and printing parse table");
-		
-		
-		for(int i = 0; i < ruleList.size(); i++){
-			System.out.println(ruleList.get(i).getFirstSet().toString());
-		}
-		
-		
-	}
-
+	ParseTable pt;
+	
 	/**
 	 * 
 	 * @param file
 	 * @throws FileNotFoundException
+	 * @throws ParseException 
 	 */
-	public LL1(String file) throws FileNotFoundException{
+	public LL1(String file) throws FileNotFoundException, ParseException{
 		this.ruleList = new ArrayList<LL1_Rule>();
 		this.termList = new ArrayList<Terminal>();
 		this.nonTermList = new ArrayList<NonTerminal>();
 		this.changeFlag = true;
 		lex = new Grammar_Lexer(file);
+		this.Parse();
+		this.first();
+		this.follow();
+		pt = new ParseTable(ruleList, termList, nonTermList);
 	}
 
 	/**
@@ -468,36 +426,84 @@ public class LL1 {
 		changeFlag = true;
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public ArrayList<LL1_Rule> getRuleList() {
 		return ruleList;
 	}
 
+	/**
+	 * 
+	 * @param ruleList
+	 */
 	public void setRuleList(ArrayList<LL1_Rule> ruleList) {
 		this.ruleList = ruleList;
 	}
-
+	
+	/**
+	 * 
+	 * @return
+	 */
 	public ArrayList<Terminal> getTermList() {
 		return termList;
 	}
-
+	
+	/**
+	 * 
+	 * @param termList
+	 */
 	public void setTermList(ArrayList<Terminal> termList) {
 		this.termList = termList;
 	}
-
+	
+	/**
+	 * 
+	 * @return
+	 */
 	public ArrayList<NonTerminal> getNonTermList() {
 		return nonTermList;
 	}
-
+	
+	/**
+	 * 
+	 * @param nonTermList
+	 */
 	public void setNonTermList(ArrayList<NonTerminal> nonTermList) {
 		this.nonTermList = nonTermList;
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public NonTerminal getStartSymbol() {
 		return startSymbol;
 	}
 
+	/**
+	 * 
+	 * @param startSymbol
+	 */
 	public void setStartSymbol(NonTerminal startSymbol) {
 		this.startSymbol = startSymbol;
+	}
+
+	/**
+	 * 
+	 * @return
+	 */
+	public ParseTable getPt() {
+		return pt;
+	}
+
+	/**
+	 * 
+	 * @param pt
+	 */
+	public void setPt(ParseTable pt) {
+		this.pt = pt;
 	}
 
 
