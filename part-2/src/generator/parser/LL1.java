@@ -12,9 +12,9 @@ import java.util.ArrayList;
  */
 public class LL1 {
 
-	private ArrayList<LL1_Rule> ruleList;
-	private ArrayList<Terminal> termList;
-	private ArrayList<NonTerminal> nonTermList;
+	private static ArrayList<LL1_Rule> ruleList;
+	private static ArrayList<Terminal> termList;
+	private static ArrayList<NonTerminal> nonTermList;
 	private boolean changeFlag;
 	private NonTerminal startSymbol;
 	private Grammar_Lexer lex;
@@ -52,6 +52,14 @@ public class LL1 {
 				System.out.println(fList.get(j).getToken().getValue());
 			}
 		}
+		System.out.println("\n\n\n\n-------Starting to Build Parse Table-------\n");
+		ParseTable pt = new ParseTable(ruleList, termList, nonTermList);
+		pt.toString();
+		
+		System.out.println("\nFinished making and printing parse table");
+		
+		
+		
 	}
 
 	/**
