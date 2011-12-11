@@ -45,41 +45,32 @@ public class LL1 {
 	 */
 	public void Parse() throws FileNotFoundException, ParseException{
 
-		//System.out.println("Parsing...");
 		//Skip to first Header
 		while(lex.peekNextToken().getType() != LL1_TokenType.HEADER){
 			//System.out.println("Searching for header...");
 			lex.getNextToken();
 		}
 
-		//System.out.println("Found a header");
-		//System.out.println("Header:" + lex.peekNextToken().getValue());
+	
 		//Check for Headers
-
 		if(lex.peekNextToken().getValue().equals("Tokens")){
 			//Skip to next line to get list of tokens	
-			//System.out.println("Found Token Header");
 			while(lex.peekNextToken().getType() != LL1_TokenType.TERMINAL){
-				//System.out.println("Consuming: " + lex.peekNextToken().getValue());
 				lex.getNextToken();
 			}
 
 			//add all terminals to termList
 			while(lex.peekNextToken().getType() != LL1_TokenType.EOL){
-				//System.out.println("Adding terminal: " + lex.peekNextToken().getValue());
 				termList.add(new Terminal(lex.getNextToken()));
 			}
-			//System.out.println("Added Terminals");
 
 			//skip to next header
 			while(lex.peekNextToken().getType() != LL1_TokenType.HEADER){
-				//System.out.println("Chucking token: " + lex.peekNextToken().getValue());
 				lex.getNextToken();
 			}
 
 			//make sure next header is Start
 			if(lex.peekNextToken().getValue().equals("Start")) {
-				//System.out.println("Found Start Header");
 				//skip to start symbol
 				while(lex.peekNextToken().getType() != LL1_TokenType.NON_TERMINAL){
 					lex.getNextToken();
@@ -89,8 +80,8 @@ public class LL1 {
 				nonTermList.add(startSymbol);
 			}
 			else{
-				//TODO error
-				//System.out.println("Start symbol must come after tokens");
+				throw new ParseException("LL(1) Parse ERROR:  Start symbol must come after tokens  line: " +
+						lex.getLine() + ", pos: " + lex.getPosition(), lex.getPosition());
 			}
 		}
 		else if(lex.peekNextToken().getValue().equals("Start")){
@@ -104,7 +95,8 @@ public class LL1 {
 			//skip to next header
 			while(lex.peekNextToken().getType() != LL1_TokenType.HEADER){
 				if(lex.peekNextToken().getType() == LL1_TokenType.EOF){
-					//TODO error
+					throw new ParseException("LL(1) Parse ERROR:  Reached EOF early, expecting tokens header  line: " +
+							lex.getLine() + ", pos: " + lex.getPosition(), lex.getPosition());
 				}
 				lex.getNextToken();
 			}
@@ -122,13 +114,13 @@ public class LL1 {
 				}
 			}
 			else{
-				//TODO error
-				//System.out.println("Tokens must come after start symbol");
+				throw new ParseException("LL(1) Parse ERROR:  Tokens must come after start symbol  line: " +
+						lex.getLine() + ", pos: " + lex.getPosition(), lex.getPosition());
 			}	
 		}
 		else{
-			//TODO error catching
-			//System.out.println("Tokens and start symbol must be listed before rules");
+			throw new ParseException("LL(1) Parse ERROR:  Tokens and start symbol must be listed before rules  line: " +
+					lex.getLine() + ", pos: " + lex.getPosition(), lex.getPosition());
 		}
 
 		//skip to rules header
@@ -140,13 +132,15 @@ public class LL1 {
 			lex.getNextToken();
 		}
 		else{
-			//TODO error
+			throw new ParseException("LL(1) Parse ERROR:  \'Rules\' must be the next header  line: " +
+					lex.getLine() + ", pos: " + lex.getPosition(), lex.getPosition());
 		}
 
 		//skip to the rules lists
 		while(lex.peekNextToken().getType() != LL1_TokenType.NON_TERMINAL){
 			if(lex.peekNextToken().getType() == LL1_TokenType.EOF){
-				//TODO error
+				throw new ParseException("LL(1) Parse ERROR:  Reached EOF early, must list production rules  line: " +
+						lex.getLine() + ", pos: " + lex.getPosition(), lex.getPosition());
 			}
 			lex.getNextToken();
 		}
