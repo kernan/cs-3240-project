@@ -32,12 +32,6 @@ public class ParseTable {
 		this.terminals = terminals;
 		this.non_terminals = non_terminals;
 		this.table = new LL1_Rule[this.non_terminals.size()][this.terminals.size()];
-		
-		for(int i = 0 ; i < rule_list.size(); i++) {
-			System.out.println(rule_list.get(i).toString());
-		}
-		System.out.println("\n");
-		
 		this.build_table();
 	}
 	
@@ -107,7 +101,7 @@ public class ParseTable {
 	public String toString() {
 		String result = new String();
 		for(int i = 0; i < this.table.length; i++) {
-			result += "term: " + this.non_terminals.get(i).toString() + "\n";
+			result += "non-terminal: " + this.non_terminals.get(i).toString() + "\n";
 			for(int j = 0; j < this.table[i].length; j++) {
 				if(this.table[i][j] == null) {
 					//do nothing
