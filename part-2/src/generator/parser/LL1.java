@@ -25,7 +25,7 @@ public class LL1 {
 	 * @throws ParseException thrown by lexer
 	 */
 	public static void main(String[] args) throws FileNotFoundException, ParseException{
-		LL1 LL1parser = new LL1("book_grammar3.txt");
+		LL1 LL1parser = new LL1("minire-specification-NEW.txt");
 		System.out.println("Starting Parsing.");
 		LL1parser.Parse();
 		System.out.println("Completed Parsing.");
