@@ -40,17 +40,30 @@ public class Interpreter {
 		this.identifiers = new ArrayList<Identifier>();
 	}
 	
+	//token types
 	public static final String EOL = ";";
 	public static final String BEGIN = "begin";
 	public static final String END = "end";
 	public static final String ID = "ID";
+	public static final String PRINT = "print";
+	public static final String FIND = "find";
+	public static final String MAXFREQSTR = "maxfreqstr";
+	public static final String REPLACE = "replace";
+	public static final String RECURSIVEREPLACE = "recursivereplace";
+	public static final String DIFF = "diff";
+	public static final String INTERS = "inters";
+	public static final String UNION = "union";
+	public static final String REGEX = "REGEX";
+	public static final String ASCII_STR = "ASCII-STR";
+	public static final String LENGTH = "#";
 	
 	/**
 	 * run the script
 	 * @throws ParseException 
-	 * @throws FileNotFoundException 
+	 * @throws IOException 
 	 */
-	public void run(String filename) throws ParseException, FileNotFoundException {
+	@SuppressWarnings("unchecked")
+	public void run(String filename) throws ParseException, IOException {
 		//make script file lexer
 		Script_Lexer lexer = new Script_Lexer(filename, parser.getTermList());
 		//create token stack
@@ -65,17 +78,35 @@ public class Interpreter {
 		Token<String> token = lexer.getNextToken();
 		//loop until finish or error
 		
+		boolean length = false;
+		boolean print = false;
+		boolean find = false;
+		boolean maxfreqstr = false;
+		boolean replace = false;
+		boolean recursivereplace = false;
 		boolean assignment = false;
+		boolean diff = false;
+		boolean inters = false;
+		boolean union = false;
 		boolean new_line = true;
 		
-		Identifier curr_id;
+		boolean at_replacement = false;
+		boolean at_file_in = false;
+		boolean at_file_out = false;
+		
+		DFA curr_regex = null;
+		String file_in = null;
+		String file_out = null;
+		String replacement = null;
+		
+		Stack<Identifier> temp_stk = new Stack<Identifier>();
 		
 		do {
 			//if current is a terminal
 			if(current.getToken().getType() == LL1_TokenType.TERMINAL) {
-				System.out.println("   TOKEN: type='" + token.getType() + "', val=" + token.getValue());
-				System.out.println("TERMINAL:  val='" + current.getToken().getValue() + "'");
-				System.out.println();
+				//System.out.println("   TOKEN: type='" + token.getType() + "', val=" + token.getValue());
+				//System.out.println("TERMINAL:  val='" + current.getToken().getValue() + "'");
+				//System.out.println();
 				
 				if(current.getToken().getValue().equals("EPSILON")) {
 					code_stack.pop();
@@ -88,42 +119,214 @@ public class Interpreter {
 					//TODO some code
 					//assignment statement
 					if(token.getValue().equals(EOL)) {
+						//System.out.print("EOL reached");
+						if(assignment) {
+							//System.out.print(", assigning value");
+							Identifier t2 = temp_stk.pop();
+							Identifier t1 = temp_stk.pop();
+							t1.setValue(t2.getValue());
+							assignment = false;
+						}
+						else if(print) {
+							//System.out.print(", printing value");
+							System.out.println(temp_stk.pop());
+							print = false;
+						}
+						//System.out.print("\n");
 						//reset all flags
-						assignment = false;
 						new_line = true;
 					}
 					else if(!token.getType().equals(BEGIN) && !token.getType().equals(END)) {
-						//id at beginning of line, assignment
-						if(token.getType().equals(ID) && new_line) {
-							System.out.println("entering assignment state");
-							
-							assignment = true;
+						//id found
+						if(token.getType().equals(ID)) {
+							//System.out.println("found an assignment");
+							if(new_line) {
+								assignment = true;
+							}
+							Identifier temp = new Identifier(token.getValue());
 							boolean found = false;
 							//find id in id list
 							for(int i = 0; i < this.identifiers.size(); i++) {
 								if(this.identifiers.get(i).getName().equals(token.getValue())) {
 									found = true;
-									curr_id = this.identifiers.get(i);
+									temp = this.identifiers.get(i);
+									break;
 								}
 							}
 							//add if doesn't exist
-							if(!found) {
-								Identifier new_id = new Identifier(token.getValue());
-								this.identifiers.add(new_id);
-								curr_id = new_id;
+							if(!found && assignment) {
+								this.identifiers.add(temp);
+							}
+							//handle length operator
+							if(length) {
+								Identifier temp1 = temp;
+								temp = new Identifier("ans");
+								temp.setValue(((Collection<?>)temp1.getValue()).size());
+								length = false;
+							}
+							//System.out.println("pushing id to the stack");
+							
+							temp_stk.push(temp);
+							
+							if(diff || inters || union) {
+								ArrayList<InputString> l2 = (ArrayList<InputString>) temp_stk.pop().getValue();
+								ArrayList<InputString> l1 = (ArrayList<InputString>) temp_stk.pop().getValue();
+								ArrayList<InputString> result = null;
+								if(diff) {
+									result = this.diff(l1, l2);
+									diff = false;
+								}
+								else if(inters) {
+									result = this.inters(l1, l2);
+									inters = false;
+								}
+								else {
+									result = this.union(l1, l2);
+									union = false;
+								}
+								temp = new Identifier("ans");
+								temp.setValue(result);
+								temp_stk.push(temp);
 							}
 						}
-						if(token.getType().equals(ID) && assignment) {
-							
+						//operations
+						//length
+						else if(token.getType().equals(LENGTH)) {
+							//System.out.println("found length");
+							length = true;
+						}
+						//print
+						else if(token.getType().equals(PRINT)) {
+							//System.out.println("found print");
+							print = true;
+						}
+						//find
+						else if(token.getType().equals(FIND)) {
+							//System.out.println("unary op find");
+							find = true;
+						}
+						else if(token.getType().equals(MAXFREQSTR)) {
+							//System.out.println("maxfreqstr");
+							maxfreqstr = true;
+						}
+						//replace
+						else if(token.getType().equals(REPLACE)) {
+							//System.out.println("unary op replace");
+							replace = true;
+						}
+						//recursivereplace
+						else if(token.getType().equals(RECURSIVEREPLACE)) {
+							//System.out.println("unary op recursivereplace");
+							recursivereplace = true;
+						}
+						//difference
+						else if(token.getType().equals(DIFF)) {
+							//System.out.println("binary op diff");
+							diff = true;
+						}
+						//intersect
+						else if(token.getType().equals(INTERS)) {
+							//System.out.println("binary op inters");
+							inters = true;
+						}
+						//union
+						else if(token.getType().equals(UNION)) {
+							//System.out.println("binary op union");
+							union = true;
+						}
+						//currently in find
+						if(find) {
+							if(token.getType().equals(REGEX)) {
+								//System.out.println("find: building regex...");
+								curr_regex = this.generateDFA(token.getValue());
+								at_file_in = true;
+							}
+							else if(token.getType().equals(ASCII_STR) && at_file_in) {
+								at_file_in = false;
+								//System.out.println("find: found file, running find");
+								file_in = token.getValue();
+								Identifier new_id = new Identifier("ans");
+								new_id.setValue(this.find(curr_regex, file_in));
+								temp_stk.push(new_id);
+								
+								Identifier temp = null;
+								if(diff || inters || union) {
+									ArrayList<InputString> l2 = (ArrayList<InputString>) temp_stk.pop().getValue();
+									ArrayList<InputString> l1 = (ArrayList<InputString>) temp_stk.pop().getValue();
+									ArrayList<InputString> result = null;
+									if(diff) {
+										result = this.diff(l1, l2);
+										diff = false;
+									}
+									else if(inters) {
+										result = this.inters(l1, l2);
+										inters = false;
+									}
+									else {
+										result = this.union(l1, l2);
+										union = false;
+									}
+									temp = new Identifier("ans");
+									temp.setValue(result);
+									temp_stk.push(temp);
+								}
+								find = false;
+							}
+						}
+						if(replace || recursivereplace) {
+							//get regex
+							if(token.getType().equals(REGEX)) {
+								//System.out.println("replace: building regex...");
+								curr_regex = this.generateDFA(token.getValue());
+								at_replacement = true;
+							}
+							//get replacement string
+							else if(token.getType().equals(ASCII_STR)) {
+								if(at_replacement) {
+									replacement = token.getValue();
+									at_replacement = false;
+									at_file_in = true;
+								}
+								//get input file
+								else if(at_file_in) {
+									file_in = token.getValue();
+									at_file_in = false;
+									at_file_out = true;
+								}
+								//get output file + run function
+								else if(at_file_out) {
+									file_out = token.getValue();
+									at_file_out = false;
+									ArrayList<String> replaced = null;
+									ArrayList<InputString> find_vals = this.find(curr_regex, file_in);
+									if(replace) {
+										replaced = this.replace(curr_regex, replacement, find_vals);
+									}
+									else {//recursive replace
+										replaced = this.recursivereplace(curr_regex, replacement, find_vals);
+									}
+									this.writeFile(replaced, file_out);
+									replace = false;
+									recursivereplace = false;
+								}
+							}
+							if(maxfreqstr) {
+								if(token.getValue().equals(ID)) {
+									Identifier t = temp_stk.pop();
+									t.setValue(this.maxfreqstring(t));
+									maxfreqstr = false;
+								}
+							}
 						}
 						new_line = false;
 					}
 					//end some code
 					
+					
 					token = lexer.getNextToken();
 				}
 				else {
-					throw new ParseException("Script Parse ERROR: invalid terminal token: \'" + current.getToken().getType() +
+					throw new ParseException("Script Parse ERROR: invalid terminal token: \'" + current.getToken().getValue() +
 							"\', line: " + lexer.getLine() + ", pos: " + lexer.getPosition(), lexer.getPosition());
 				}
 			}
@@ -142,12 +345,12 @@ public class Interpreter {
 					}
 				}
 				else {
-					throw new ParseException("Script Parse ERROR: invalid non-terminal token: \'" + current.getToken().getType() +
+					throw new ParseException("Script Parse ERROR: invalid non-terminal token: \'" + current.getToken().getValue() +
 							"\', line: " + lexer.getLine() + ", pos: " + lexer.getPosition(), lexer.getPosition());
 				}
 			}
 			else {
-				throw new ParseException("Script Parse ERROR: unrecognized token type: \'" + current.getToken().getType() +
+				throw new ParseException("Script Parse ERROR: unrecognized token type: \'" + current.getToken().getValue() +
 						"\', line: " + lexer.getLine() + ", pos: " + lexer.getPosition(), lexer.getPosition());
 			}
 			current = code_stack.peek();
@@ -349,7 +552,7 @@ public class Interpreter {
 				for(int k = 0; k < result.size(); k++) {
 					//if there's already a match
 					if(result.get(k).equals(match)) {
-						System.out.println("duplicate");
+						//System.out.println("duplicate");
 						//update the metadata
 						result.get(k).addMetadata(match.getMetadata());
 						added = true;
@@ -391,8 +594,6 @@ public class Interpreter {
 		for(int i = 0; i < list1.size(); i++) {
 			result.add(list1.get(i).clone());
 		}
-		
-		System.out.println("size: " + result.size());
 		
 		for(int i = 0; i < list2.size(); i++) {
 			int pos = -1;

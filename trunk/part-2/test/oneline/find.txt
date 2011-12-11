@@ -1,0 +1,21 @@
+begin
+x = find '[a-z]' in "test/oneline/test1.txt";
+print(x);
+num_x = #x;
+print(num_x);
+print(x);
+y = find 'a*' in "test/oneline/test2.txt";
+print(y);
+inters_z = find '[a-z]' in "test/oneline/test2.txt" inters find '[a-z]' in "test/oneline/test1.txt";
+print(inters_z);
+n_inters_z = #inters_z;
+print(n_inters_z);
+diff_z = find '[a-z]' in "test/oneline/test2.txt" diff find '[a-z]' in "test/oneline/test1.txt";
+print(diff_z);
+n_diff_z = #diff_z;
+print(n_diff_z);
+union_z = find '[a-z]' in "test/oneline/test2.txt" union find '[a-z]' in "test/oneline/test1.txt";
+print(union_z);
+n_union_z = #union_z;
+print(n_union_z);
+end

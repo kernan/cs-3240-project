@@ -33,7 +33,7 @@ public class InputBuffer {
 	 * @return the current line position (1 indexed)
 	 */
 	public int getLine() {
-		return this.line + 1;
+		return this.line;
 	}
 	
 	/**
@@ -41,7 +41,7 @@ public class InputBuffer {
 	 * @return the char position in the line (1 indexed)
 	 */
 	public int getPosition() {
-		return this.currentpos + 1;
+		return this.currentpos;
 	}
 	
 	/**
