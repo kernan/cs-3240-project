@@ -59,6 +59,10 @@ public class LL1 {
 		System.out.println("\nFinished making and printing parse table");
 		
 		
+		for(int i = 0; i < ruleList.size(); i++){
+			System.out.println(ruleList.get(i).getFirstSet().toString());
+		}
+		
 		
 	}
 
@@ -289,14 +293,16 @@ public class LL1 {
 					//set initial size
 					int checkSize = curFirst.size();
 					//loops thru k's first list and adds anything that isn't epsilon or already existing
+					ArrayList<Terminal> derivation = curRule.getFirstSet();
 					for(int j = 0; j < kFirstList.size(); j++){
 						//System.out.println("Looping thru first list: " + kFirstList.get(j).toString());
 						if(!kFirstList.get(j).getToken().getValue().equals("EPSILON") && !curFirst.contains(kFirstList.get(j))){
 							//System.out.println("ADDING: " + kFirstList.get(j).toString());
 							curFirst.add(kFirstList.get(j));
-							//curRule.setFirstSet(firstSet);
+							derivation.add(kFirstList.get(j));
 						}
 					}
+					curRule.setFirstSet(derivation);
 
 					/*System.out.println("Updated first list: ");
 					for(int y = 0; y < curFirst.size(); y++){
@@ -340,6 +346,11 @@ public class LL1 {
 						//System.out.println("Adding EPSILON!");
 						curFirstList.add(termList.get(epLocation));
 						curTerm.setFirstSet(curFirstList);
+						
+						ArrayList<Terminal> derivation = curRule.getFirstSet();
+						derivation.add(termList.get(epLocation));
+						curRule.setFirstSet(derivation);
+						
 						changeFlag = true;
 					}
 				}
