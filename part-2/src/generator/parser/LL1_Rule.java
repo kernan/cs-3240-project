@@ -9,6 +9,7 @@ import java.util.ArrayList;
 public class LL1_Rule {
 	private NonTerminal nonTerm;
 	private ArrayList<LL1_Token> TNTList;
+	private ArrayList<Terminal> FirstSet;
 	
 	/**
 	 * 
@@ -16,6 +17,7 @@ public class LL1_Rule {
 	 */
 	public LL1_Rule(NonTerminal nonTerm){
 		this.nonTerm = nonTerm;
+		this.FirstSet = new ArrayList<Terminal>();
 		TNTList = new ArrayList<LL1_Token>();
 	}
 
@@ -71,6 +73,22 @@ public class LL1_Rule {
 			retString += " ";
 		}
 		return retString;
+	}
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public ArrayList<Terminal> getFirstSet() {
+		return FirstSet;
+	}
+	
+	/**
+	 * 
+	 * @param firstSet
+	 */
+	public void setFirstSet(ArrayList<Terminal> firstSet) {
+		FirstSet = firstSet;
 	}
 	
 	

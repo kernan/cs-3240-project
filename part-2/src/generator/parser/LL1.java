@@ -294,6 +294,7 @@ public class LL1 {
 						if(!kFirstList.get(j).getToken().getValue().equals("EPSILON") && !curFirst.contains(kFirstList.get(j))){
 							//System.out.println("ADDING: " + kFirstList.get(j).toString());
 							curFirst.add(kFirstList.get(j));
+							//curRule.setFirstSet(firstSet);
 						}
 					}
 
