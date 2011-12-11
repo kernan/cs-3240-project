@@ -83,7 +83,6 @@ public class ParseTable {
 							this.table[nt_pos][k] = this.rule_list.get(i);
 						}
 					}
-					
 				}
 			}
 		}
@@ -95,10 +94,15 @@ public class ParseTable {
 	 */
 	public String toString() {
 		String result = new String();
-		for(int i = 0; i < table.length; i++) {
-			for(int j = 0; j < table[i].length; j++) {
-				result += table[i][j].toString() + "\n";
+		for(int i = 0; i < this.table.length; i++) {
+			result += this.non_terminals.toString();
+			for(int j = 0; j < this.table[i].length; j++) {
+				result += "\t" + this.table[i][j].toString();
 			}
+			result += "\n";
+		}
+		for(int i = 0; i < this.terminals.size(); i++) {
+			result += this.terminals.get(i).toString() + "\t";
 		}
 		return result;
 	}
