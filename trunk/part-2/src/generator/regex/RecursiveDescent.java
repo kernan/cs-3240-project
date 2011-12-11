@@ -164,7 +164,7 @@ public class RecursiveDescent {
 		else if(type == Regex_TokenType.LITERAL) {
 			
 			if(Options.DEBUG) {
-				System.out.println("   [RDescent] LITERAL found... not in char class");
+				System.out.println("   [RDescent] LITERAL found: \"" + lexer.peekNextToken().getValue() + "\"... not in char class");
 			}
 			
 			char_class = false;
@@ -377,8 +377,8 @@ public class RecursiveDescent {
 			boolean valid = check_valid(lexer.peekNextToken(), CLS_CHAR);
 			//TODO
 			if(!valid) {
-				return range;
-				//throw new ParseException("blah", 1);
+				//return range;
+				throw new ParseException("blah", 1);
 			}
 			range = charSet(range);
 			return charSetList(range);
@@ -463,6 +463,7 @@ public class RecursiveDescent {
 	 * @throws ParseException thrown by charSet function
 	 */
 	private ArrayList<Character> excludeSet(ArrayList<Character> range) throws ParseException {
+		System.out.println("EXCLUDE SET");
 		lexer.getNextToken();//consume CARET
 		ArrayList<Character> exclude = charSet(new ArrayList<Character>());
 		lexer.getNextToken();//consume RBRACKET
@@ -588,7 +589,7 @@ public class RecursiveDescent {
 	 * set of valid characters for use in a character class (when defining a range)
 	 */
 	private static final String[] CLS_CHAR = {
-			" ", "!", "\"", "#", "$", "%", "&", "\'", "(", ")", "*", "+", ",", "\\-", ".", "/",
+			"\\ ", "!", "\"", "#", "$", "%", "&", "\'", "(", ")", "*", "+", ",", "\\-", ".", "/",
 			"0", "1", "2", "3", "4", "5", "6", "7", "8", "9", ":", ";", "<", "=", ">", "?", 
 			"@", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", 
 			"P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "\\[", "\\\\", "\\]", "\\^", "_", 
