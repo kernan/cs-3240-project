@@ -1,5 +1,7 @@
 package generator.parser;
 
+import global.Token;
+
 import java.text.ParseException;
 import java.util.ArrayList;
 
@@ -107,5 +109,58 @@ public class ParseTable {
 			}
 		}
 		return result;
+	}
+	
+	/**
+	 * 
+	 * @param non_terminal
+	 * @param terminal
+	 * @return
+	 */
+	public boolean hasProduction(LL1_Token non_terminal, Token<String> terminal) {
+		boolean exists = false;
+		//get row
+		int row;
+		for(row = 0; row < this.non_terminals.size(); row++) {
+			if(this.non_terminals.get(row).equals(non_terminal)) {
+				break;
+			}
+		}
+		//get column
+		int col;
+		for(col = 0; col < this.terminals.size(); col++) {
+			if(this.terminals.get(col).getToken().getValue().equals(terminal.getType())) {
+				break;
+			}
+		}
+		//check position
+		if(this.table[row][col] != null) {
+			exists = true;
+		}
+		return exists;
+	}
+	
+	/**
+	 * 
+	 * @param non_terminal
+	 * @param terminal
+	 * @return
+	 */
+	public LL1_Rule getProduction(LL1_Token non_terminal, Token<String> terminal) {
+		//get row
+		int row;
+		for(row = 0; row < this.non_terminals.size(); row++) {
+			if(this.non_terminals.get(row).equals(non_terminal)) {
+				break;
+			}
+		}
+		//get column
+		int col;
+		for(col = 0; col < this.terminals.size(); col++) {
+			if(this.terminals.get(col).getToken().getValue().equals(terminal.getType())) {
+				break;
+			}
+		}
+		return this.table[row][col];
 	}
 }

@@ -9,7 +9,6 @@ import generator.regex.NFA_Identifier;
 import generator.regex.RecursiveDescent;
 import global.InputBuffer;
 import global.Lexer;
-import global.Options;
 import global.Token;
 
 /** Script_Lexer.java
@@ -131,7 +130,6 @@ public class Script_Lexer extends Lexer<Token<String>> {
 			//this.input_stream.getNext();//consume whitespace
 			return this.makeNewToken();
 		}
-		
 		//match single character tokens
 		for(int i = 0; i < this.illegal_chars.size(); i++) {
 			if(this.illegal_chars.get(i).charAt(0) == t) {
@@ -158,7 +156,6 @@ public class Script_Lexer extends Lexer<Token<String>> {
 			}
 			return new Token<String>(ASCII_STR, value);
 		}
-		
 		//match keywords/identifiers
 		boolean illegal = false;
 		String value = new String();
@@ -174,7 +171,6 @@ public class Script_Lexer extends Lexer<Token<String>> {
 				}
 			}
 		}
-		
 		//check if valid keyword
 		for(int i = 0; i < this.keywords.size(); i++) {
 			if(this.keywords.get(i).equals(value)) {

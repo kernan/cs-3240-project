@@ -21,6 +21,7 @@ begin end ID = replace with in ; recursivereplace >! print ( ) , # find diff uni
 <destination-file>		ASCII-STR
 <exp-list>				<exp> <exp-list-tail>
 <exp-list-tail>			, <exp> <exp-list-tail>
+<exp-list-tail>			EPSILON
 <exp>					ID
 <exp>					( <exp> )
 <exp>					<term> <exp-tail>
