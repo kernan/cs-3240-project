@@ -1,0 +1,16 @@
+%% Tokens
+( ) int + * EPSILON
+
+
+%% Start
+<E>
+
+%% Rules
+<E>		<T> <E'>
+<E'>	+ <T> <E'> 
+<E'>    EPSILON
+<T>     <F> <T'>
+<T'>    * <F> <T'>
+<T'>    EPSILON
+<F>     ( <E> )
+<F>     int

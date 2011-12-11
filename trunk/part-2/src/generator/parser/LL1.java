@@ -25,7 +25,7 @@ public class LL1 {
 	 * @throws ParseException thrown by lexer
 	 */
 	public static void main(String[] args) throws FileNotFoundException, ParseException{
-		LL1 LL1parser = new LL1("minire-specification.txt");
+		LL1 LL1parser = new LL1("testGram1.txt");
 		System.out.println("Starting Parsing.");
 		LL1parser.Parse();
 		System.out.println("Completed Parsing.");
@@ -366,6 +366,7 @@ public class LL1 {
 		}
 		//make EOF and add it to start symbol
 		Terminal endOfFile = new Terminal(new Token<LL1_TokenType>(LL1_TokenType.EOF, "EOF"));
+		termList.add(endOfFile);
 		startSymbol.addToFollowSet(endOfFile);
 
 		while(changeFlag){
