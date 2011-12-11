@@ -1,12 +1,9 @@
-package interpreter;
+package generator.parser;
 
 import java.io.FileNotFoundException;
 import java.text.ParseException;
 import java.util.ArrayList;
 
-import generator.parser.LL1_Token;
-import generator.parser.LL1_TokenType;
-import generator.parser.Terminal;
 import generator.regex.DFA;
 import generator.regex.NFA_Identifier;
 import generator.regex.RecursiveDescent;
