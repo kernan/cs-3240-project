@@ -1,5 +1,5 @@
 %% Tokens
-+ -  * ( ) number REGEX ASCII-STR EPSILON
++ -  * ( ) number EPSILON
 
 %% Start
 <exp>

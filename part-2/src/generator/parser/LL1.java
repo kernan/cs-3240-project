@@ -25,7 +25,7 @@ public class LL1 {
 	 * @throws ParseException thrown by lexer
 	 */
 	public static void main(String[] args) throws FileNotFoundException, ParseException{
-		LL1 LL1parser = new LL1("minire-specification.txt");
+		LL1 LL1parser = new LL1("book_grammar.txt");
 		System.out.println("Starting Parsing.");
 		LL1parser.Parse();
 		System.out.println("Completed Parsing.");
@@ -33,17 +33,25 @@ public class LL1 {
 		LL1parser.first();
 		System.out.println("Completed First.");
 		System.out.println("First Lists: ");
-		for(int i = 0; i < LL1parser.nonTermList.size(); i++){
+		/*for(int i = 0; i < LL1parser.nonTermList.size(); i++){
 			NonTerminal nonTerm = LL1parser.nonTermList.get(i);
 			ArrayList<Terminal> fList = nonTerm.getFirstSet();
 			System.out.println("First List for: " + nonTerm.getToken().getValue());
 			for(int j = 0; j < fList.size(); j++){
 				System.out.println(fList.get(j).getToken().getValue());
 			}
-		}
-		/*System.out.println("Starting Follow.");
+		}*/
+		System.out.println("Starting Follow.");
 		LL1parser.follow();
-		System.out.println("Completed Follow.");*/
+		System.out.println("Completed Follow.");
+		for(int i = 0; i < LL1parser.nonTermList.size(); i++){
+			NonTerminal nonTerm = LL1parser.nonTermList.get(i);
+			ArrayList<Terminal> fList = nonTerm.getFollowSet();
+			System.out.println("Follow List for: " + nonTerm.getToken().getValue());
+			for(int j = 0; j < fList.size(); j++){
+				System.out.println(fList.get(j).getToken().getValue());
+				}
+		}
 	}
 
 	/**
@@ -255,39 +263,39 @@ public class LL1 {
 				boolean Continue = true;
 				curRule = ruleList.get(i);
 				curTerm = curRule.getNonTerm();
-				System.out.println("--------Rule Header: " + curTerm.getToken().getValue() + "--------");
+				//System.out.println("--------Rule Header: " + curTerm.getToken().getValue() + "--------");
 				int n = curRule.getTNTList().size();
 
 				while( Continue && k < n){
 					ArrayList<LL1_Token> tokenList = curRule.getTNTList();
 					LL1_Token kToken = tokenList.get(k);
-					System.out.println("Checking: " + kToken.getToken().getValue());
+					//System.out.println("Checking: " + kToken.getToken().getValue());
 					ArrayList<Terminal> kFirstList = kToken.getFirstSet();
 					ArrayList<Terminal> curFirst = curTerm.getFirstSet();
 
-					System.out.println("Already contains: ");
+					/*System.out.println("Already contains: ");
 					for(int y = 0; y < curFirst.size(); y++){
 						System.out.println(curFirst.get(y).toString());
-					}
+					}*/
 					//set initial size
 					int checkSize = curFirst.size();
 					//loops thru k's first list and adds anything that isn't epsilon or already existing
 					for(int j = 0; j < kFirstList.size(); j++){
-						System.out.println("Looping thru first list: " + kFirstList.get(j).toString());
+						//System.out.println("Looping thru first list: " + kFirstList.get(j).toString());
 						if(!kFirstList.get(j).getToken().getValue().equals("EPSILON") && !curFirst.contains(kFirstList.get(j))){
-							System.out.println("ADDING: " + kFirstList.get(j).toString());
+							//System.out.println("ADDING: " + kFirstList.get(j).toString());
 							curFirst.add(kFirstList.get(j));
 						}
 					}
 					
-					System.out.println("Updated first list: ");
+					/*System.out.println("Updated first list: ");
 					for(int y = 0; y < curFirst.size(); y++){
 						System.out.println(curFirst.get(y).toString());
-					}
+					}*/
 					
 					if(curFirst.size() != checkSize){
 						changeFlag = true;
-						System.out.println("Change detected!");
+						//System.out.println("Change detected!");
 					}
 
 
@@ -319,7 +327,7 @@ public class LL1 {
 					}
 					ArrayList<Terminal> curFirstList = curTerm.getFirstSet();
 					if(!curFirstList.contains(termList.get(epLocation))){
-						System.out.println("Adding EPSILON!");
+						//System.out.println("Adding EPSILON!");
 						curFirstList.add(termList.get(epLocation));
 						curTerm.setFirstSet(curFirstList);
 						changeFlag = true;
@@ -347,47 +355,69 @@ public class LL1 {
 	/**
 	 * 
 	 */
-	//private void follow(){
-	//	Terminal endOfFile = new Terminal(new Token<LL1_TokenType>(LL1_TokenType.EOF, "EOF"));
-	//	startSymbol.addToFollowSet(endOfFile);
-	//	while(changeFlag){
-	//		changeFlag = false;
-	//		//for each rule
-	//		for(int ruleNum = 0; ruleNum < ruleList.size(); ruleNum++){
-	//			LL1_Rule curRule = ruleList.get(ruleNum);
-	//			ArrayList<LL1_Token> TNTList = curRule.getTNTList();
-	//			//for each token in the rule 
-	//			for(int x = 0; x < TNTList.size(); x++){
-	//				LL1_Token curTerm = TNTList.get(x);
-	//				//if Xi is a nonterminal, add all First(Xi+1) to First(Xn) to Follow(Xi)
-	//				if(curTerm instanceof NonTerminal){
-	//					for(int i = x + 1; i < TNTList.size(); i++){
-	//						LL1_Token xTerm = TNTList.get(i);
-	//						ArrayList<Terminal> xFirst = xTerm.getFirstSet();
-	//
-	//						ArrayList<Terminal> followSet = ((NonTerminal) curTerm).getFollowSet();
-	//						if(followSet.addAll(xFirst)){
-	//							changeFlag = true;
-	//						}
-	//						((NonTerminal) curTerm).setFollowSet(followSet);
-	//						if(xTerm.getFirstSet().contains(EPSILON)){
-	//							NonTerminal ruleTerm = curRule.getNonTerm();
-	//							ArrayList<Terminal> ruleFollow = ruleTerm.getFollowSet();
-	//							if(xTerm instanceof NonTerminal){
-	//								ArrayList<Terminal> xFollow = ((NonTerminal) xTerm).getFollowSet();
-	//								if(xFollow.addAll(ruleFollow)){
-	//									changeFlag = true;
-	//								}
-	//								((NonTerminal) xTerm).setFollowSet(xFollow);
-	//							}
-	//						}
-	//					}
-	//				}
-	//			}
-	//		}
-	//	}
-	//	changeFlag = true;
-	//}
+	private void follow(){
+		//getting epsilon object out of the term list
+		Terminal epsilon = new Terminal(new Token<LL1_TokenType>(LL1_TokenType.EOF, "EOF"));
+		for(int q = 0; q < termList.size(); q++){
+			if(termList.get(q).getToken().getValue().equals("EPSILON")){
+				epsilon = termList.get(q);
+			}
+		}
+		
+		Terminal endOfFile = new Terminal(new Token<LL1_TokenType>(LL1_TokenType.EOF, "EOF"));
+		startSymbol.addToFollowSet(endOfFile);
+		while(changeFlag){
+			changeFlag = false;
+			//for each rule
+			for(int ruleNum = 0; ruleNum < ruleList.size(); ruleNum++){
+				LL1_Rule curRule = ruleList.get(ruleNum);
+				ArrayList<LL1_Token> TNTList = curRule.getTNTList();
+				//for each token in the rule 
+				for(int x = 0; x < TNTList.size(); x++){
+					LL1_Token curTerm = TNTList.get(x);
+					//if Xi is a nonterminal, add all First(Xi+1) to First(Xn) to Follow(Xi)
+					if(curTerm instanceof NonTerminal){
+						for(int i = x + 1; i < TNTList.size(); i++){
+							LL1_Token xTerm = TNTList.get(i);
+							ArrayList<Terminal> xFirst = xTerm.getFirstSet();
+	
+							ArrayList<Terminal> followSet = ((NonTerminal) curTerm).getFollowSet();
+							
+				
+							int checkSize = followSet.size();
+							for(int q = 0; q < xFirst.size(); q++){
+								if(!xFirst.get(q).getToken().getValue().equals("EPSILON") && !followSet.contains(xFirst.get(q))){
+									followSet.add(xFirst.get(q));
+								}
+							}
+							if(checkSize != followSet.size()){
+								changeFlag = true;
+							}
+							((NonTerminal) curTerm).setFollowSet(followSet);
+							if(xTerm.getFirstSet().contains(epsilon)){
+								NonTerminal ruleTerm = curRule.getNonTerm();
+								ArrayList<Terminal> ruleFollow = ruleTerm.getFollowSet();
+								if(xTerm instanceof NonTerminal){
+									ArrayList<Terminal> xFollow = ((NonTerminal) xTerm).getFollowSet();
+									int checkSize2 = xFollow.size();
+									for(int q = 0; q < ruleFollow.size(); q++){
+										if(!ruleFollow.get(q).getToken().getValue().equals("EPSILON") && !xFollow.contains(ruleFollow.get(q))){
+											xFollow.add(ruleFollow.get(q));
+										}
+									}
+									if(checkSize2 != xFollow.size()){
+										changeFlag = true;
+									}
+									((NonTerminal) xTerm).setFollowSet(xFollow);
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		changeFlag = true;
+	}
 
 	public ArrayList<LL1_Rule> getRuleList() {
 		return ruleList;
