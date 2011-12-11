@@ -82,6 +82,14 @@ public class ParseTable {
 	}
 	
 	/**
+	 * 
+	 * @return
+	 */
+	public ArrayList<Terminal> getTerminals() {
+		return this.terminals;
+	}
+	
+	/**
 	 * generates string representation of the parse table
 	 * @return string representation of the parse table
 	 */
