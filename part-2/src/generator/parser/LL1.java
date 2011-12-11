@@ -29,25 +29,26 @@ public class LL1 {
 		System.out.println("Starting Parsing.");
 		LL1parser.Parse();
 		System.out.println("Completed Parsing.");
-		System.out.println("Starting First.");
+		System.out.println("\nStarting First.");
 		LL1parser.first();
 		System.out.println("Completed First.");
 		System.out.println("First Lists: ");
 		for(int i = 0; i < LL1parser.nonTermList.size(); i++){
 			NonTerminal nonTerm = LL1parser.nonTermList.get(i);
 			ArrayList<Terminal> fList = nonTerm.getFirstSet();
-			System.out.println("First List for: " + nonTerm.getToken().getValue());
+			System.out.println("\nFirst List for: " + nonTerm.getToken().getValue());
 			for(int j = 0; j < fList.size(); j++){
 				System.out.println(fList.get(j).getToken().getValue());
 			}
 		}
-		System.out.println("Starting Follow.");
+		System.out.println("\nStarting Follow.");
 		LL1parser.follow();
 		System.out.println("Completed Follow.");
+		System.out.println("Follow Lists: ");
 		for(int i = 0; i < LL1parser.nonTermList.size(); i++){
 			NonTerminal nonTerm = LL1parser.nonTermList.get(i);
 			ArrayList<Terminal> fList = nonTerm.getFollowSet();
-			System.out.println("Follow List for: " + nonTerm.getToken().getValue());
+			System.out.println("\nFollow List for: " + nonTerm.getToken().getValue());
 			for(int j = 0; j < fList.size(); j++){
 				System.out.println(fList.get(j).getToken().getValue());
 			}
@@ -89,38 +90,38 @@ public class LL1 {
 		System.out.println("Parsing...");
 		//Skip to first Header
 		while(lex.peekNextToken().getType() != LL1_TokenType.HEADER){
-			System.out.println("Searching for header...");
+			//System.out.println("Searching for header...");
 			lex.getNextToken();
 		}
 
-		System.out.println("Found a header");
-		System.out.println("Header:" + lex.peekNextToken().getValue());
+		//System.out.println("Found a header");
+		//System.out.println("Header:" + lex.peekNextToken().getValue());
 		//Check for Headers
 
 		if(lex.peekNextToken().getValue().equals("Tokens")){
 			//Skip to next line to get list of tokens	
-			System.out.println("Found Token Header");
+			//System.out.println("Found Token Header");
 			while(lex.peekNextToken().getType() != LL1_TokenType.TERMINAL){
-				System.out.println("Consuming: " + lex.peekNextToken().getValue());
+				//System.out.println("Consuming: " + lex.peekNextToken().getValue());
 				lex.getNextToken();
 			}
 
 			//add all terminals to termList
 			while(lex.peekNextToken().getType() != LL1_TokenType.EOL){
-				System.out.println("Adding terminal: " + lex.peekNextToken().getValue());
+				//System.out.println("Adding terminal: " + lex.peekNextToken().getValue());
 				termList.add(new Terminal(lex.getNextToken()));
 			}
 			System.out.println("Added Terminals");
 
 			//skip to next header
 			while(lex.peekNextToken().getType() != LL1_TokenType.HEADER){
-				System.out.println("Chucking token: " + lex.peekNextToken().getValue());
+				//System.out.println("Chucking token: " + lex.peekNextToken().getValue());
 				lex.getNextToken();
 			}
 
 			//make sure next header is Start
 			if(lex.peekNextToken().getValue().equals("Start")) {
-				System.out.println("Found Start Header");
+				//System.out.println("Found Start Header");
 				//skip to start symbol
 				while(lex.peekNextToken().getType() != LL1_TokenType.NON_TERMINAL){
 					lex.getNextToken();
@@ -194,7 +195,7 @@ public class LL1 {
 
 		//turn all non-terminals into a rule and add their tokens to the rule
 		while(lex.peekNextToken().getType() != LL1_TokenType.EOF){
-			System.out.println("Current Token is: " + lex.peekNextToken().getValue());
+			//System.out.println("Current Token is: " + lex.peekNextToken().getValue());
 			NonTerminal first = new NonTerminal(lex.getNextToken());
 			LL1_Rule currRule;
 			if(!nonTermList.contains(first)){
@@ -207,15 +208,16 @@ public class LL1 {
 				first = nonTermList.get(firstLocation);
 				currRule = new LL1_Rule(first);
 				ruleList.add(currRule);
+				System.out.println("Making new rule with: " + first.getToken().getValue());
 			}
-			System.out.println("Making new rule with: " + first.getToken().getValue());
+			
 
 			while(lex.peekNextToken().getType() != LL1_TokenType.EOL && 
 					lex.peekNextToken().getType() != LL1_TokenType.EOF){
 				//if next token is a terminal, take the object out of termlist
 				//and add it to the current rule
 				if(lex.peekNextToken().getType() == LL1_TokenType.TERMINAL){
-					System.out.println("This should be a terminal: " + lex.peekNextToken().getValue());
+					//System.out.println("This should be a terminal: " + lex.peekNextToken().getValue());
 					Terminal testTerm = new Terminal(lex.getNextToken());
 					int termLocation = termList.indexOf(testTerm);
 					currRule.addToTNTList(termList.get(termLocation));
@@ -233,9 +235,9 @@ public class LL1 {
 				}
 			}
 			//consume EOL token
-			System.out.println("THIS SHOULD BE AN EOL OR EOF: " + lex.peekNextToken().getValue());
+			//System.out.println("THIS SHOULD BE AN EOL OR EOF: " + lex.peekNextToken().getValue());
 			lex.getNextToken();
-			System.out.println("Next while test = " + lex.peekNextToken().getValue());
+			//System.out.println("Next while test = " + lex.peekNextToken().getValue());
 		}
 		System.out.println("\nStart Symbol: " + startSymbol.getToken().getValue());
 		//System.out.println("TermList: ");
