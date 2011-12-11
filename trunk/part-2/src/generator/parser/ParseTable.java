@@ -32,13 +32,6 @@ public class ParseTable {
 		this.non_terminals = non_terminals;
 		this.table = new LL1_Rule[this.non_terminals.size()][this.terminals.size()];
 		this.build_table();
-		
-		for(int i = 0; i < this.terminals.size(); i++) {
-			System.out.println(this.terminals.get(i));
-		}
-		for(int i = 0; i < this.non_terminals.size(); i++) {
-			System.out.println(this.non_terminals.get(i));
-		}
 	}
 	
 	/**
@@ -56,11 +49,17 @@ public class ParseTable {
 				}
 			}
 			//find row position
+			System.out.println("<" + non_term.getToken().getValue() + ">");
 			ArrayList<Terminal> first = non_term.getFirstSet();
+			for(int j = 0; j < first.size(); j++) {
+				System.out.println(first.get(j));
+			}
 			//for all first in non_term
 			for(int j = 0; j < first.size(); j++) {
 				//if EPSILON
+				//System.out.println(first.get(j).getToken().getValue());
 				if(first.get(j).getToken().getValue().equals("EPSILON")) {
+					//System.out.println("equals EPSILON, doing nothing");
 					ArrayList<Terminal> follow = non_term.getFollowSet();
 					//for all follow in non term
 					for(int k = 0; k < follow.size(); k++) {
@@ -69,6 +68,7 @@ public class ParseTable {
 							//find the column position
 							if(this.terminals.get(l).equals(follow.get(k))) {
 								//add it
+								//System.out.println("adding rule: " + this.rule_list.get(i).toString() + " on EOF");
 								this.table[nt_pos][l] = this.rule_list.get(i);
 							}
 						}
@@ -80,11 +80,13 @@ public class ParseTable {
 						//find column position
 						if(this.terminals.get(k).equals(first.get(j))) {
 							//add it
+							//System.out.println("adding rule: " + this.rule_list.get(i).toString());
 							this.table[nt_pos][k] = this.rule_list.get(i);
 						}
 					}
 				}
 			}
+			System.out.println();
 		}
 	}
 	
