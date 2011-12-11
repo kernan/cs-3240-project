@@ -5,7 +5,6 @@ import generator.parser.LL1_Rule;
 import generator.parser.LL1_Token;
 import generator.parser.LL1_TokenType;
 import generator.parser.Script_Lexer;
-import generator.parser.Terminal;
 import generator.regex.DFA;
 import generator.regex.NFA_Identifier;
 import generator.regex.RecursiveDescent;
@@ -16,7 +15,6 @@ import java.text.ParseException;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.BufferedWriter;
-import java.io.File;
 import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -42,35 +40,17 @@ public class Interpreter {
 		this.identifiers = new ArrayList<Identifier>();
 	}
 	
+	public static final String EOL = ";";
+	public static final String BEGIN = "begin";
+	public static final String END = "end";
+	public static final String ID = "ID";
+	
 	/**
 	 * run the script
 	 * @throws ParseException 
 	 * @throws FileNotFoundException 
 	 */
 	public void run(String filename) throws ParseException, FileNotFoundException {
-		/*
-		 * push eof
-		 * push StartSymbol
-		 * token = nextToken()
-		 * x = stack.peek()
-		 * do
-		 *   if x is TERMINAL
-		 *     if x == token
-		 *       stack.pop() //remove x from stack
-		 *       !!RUN CODE
-		 *       token = nextToken()
-		 *     else
-		 *       ERROR
-		 *   else //x is NON-TERMINAL
-		 *     if ParseTable[x, token] == x
-		 *       stack.pop() //remove x from stack
-		 *       for symbol : ParseTable.row(x)
-		 *         push symbol
-		 *       else
-		 *         ERROR
-		 *   x = stack.peek()
-		 * while(x != EOF)
-		 */
 		//make script file lexer
 		Script_Lexer lexer = new Script_Lexer(filename, parser.getTermList());
 		//create token stack
@@ -84,11 +64,18 @@ public class Interpreter {
 		//get next token in script
 		Token<String> token = lexer.getNextToken();
 		//loop until finish or error
+		
+		boolean assignment = false;
+		boolean new_line = true;
+		
+		Identifier curr_id;
+		
 		do {
 			//if current is a terminal
 			if(current.getToken().getType() == LL1_TokenType.TERMINAL) {
-				System.out.println("TOKEN: val=" + token.getValue() + ", type=" + token.getType());
-				System.out.println("TERMINAL: val=" + current.getToken().getValue() + ", type=" + current.getToken().getType());
+				System.out.println("   TOKEN: type='" + token.getType() + "', val=" + token.getValue());
+				System.out.println("TERMINAL:  val='" + current.getToken().getValue() + "'");
+				System.out.println();
 				
 				if(current.getToken().getValue().equals("EPSILON")) {
 					code_stack.pop();
@@ -97,12 +84,47 @@ public class Interpreter {
 				else if(current.getToken().getValue().equals(token.getType())) {
 					//pop current off the stack
 					code_stack.pop();
-					//TODO run some code
+					
+					//TODO some code
+					//assignment statement
+					if(token.getValue().equals(EOL)) {
+						//reset all flags
+						assignment = false;
+						new_line = true;
+					}
+					else if(!token.getType().equals(BEGIN) && !token.getType().equals(END)) {
+						//id at beginning of line, assignment
+						if(token.getType().equals(ID) && new_line) {
+							System.out.println("entering assignment state");
+							
+							assignment = true;
+							boolean found = false;
+							//find id in id list
+							for(int i = 0; i < this.identifiers.size(); i++) {
+								if(this.identifiers.get(i).getName().equals(token.getValue())) {
+									found = true;
+									curr_id = this.identifiers.get(i);
+								}
+							}
+							//add if doesn't exist
+							if(!found) {
+								Identifier new_id = new Identifier(token.getValue());
+								this.identifiers.add(new_id);
+								curr_id = new_id;
+							}
+						}
+						if(token.getType().equals(ID) && assignment) {
+							
+						}
+						new_line = false;
+					}
+					//end some code
+					
 					token = lexer.getNextToken();
 				}
 				else {
-					//TODO add position
-					throw new ParseException("Script Parse ERROR: invalid token: \'" + current.getToken().getType() + "\'", 0);
+					throw new ParseException("Script Parse ERROR: invalid terminal token: \'" + current.getToken().getType() +
+							"\', line: " + lexer.getLine() + ", pos: " + lexer.getPosition(), lexer.getPosition());
 				}
 			}
 			else if(current.getToken().getType() == LL1_TokenType.NON_TERMINAL) {
@@ -120,17 +142,15 @@ public class Interpreter {
 					}
 				}
 				else {
-					//TODO add position
-					throw new ParseException("Script Parse ERROR: invalid token: \'" + current.getToken().getType() + "\'", 0);
+					throw new ParseException("Script Parse ERROR: invalid non-terminal token: \'" + current.getToken().getType() +
+							"\', line: " + lexer.getLine() + ", pos: " + lexer.getPosition(), lexer.getPosition());
 				}
 			}
 			else {
-				//TODO add position
-				throw new ParseException("Script Parse ERROR: unrecognized token type: \'" + current.getToken().getType() + "\'", 0);
+				throw new ParseException("Script Parse ERROR: unrecognized token type: \'" + current.getToken().getType() +
+						"\', line: " + lexer.getLine() + ", pos: " + lexer.getPosition(), lexer.getPosition());
 			}
 			current = code_stack.peek();
-			
-			//System.out.println(current.getToken().getType() + ", " + current.getToken().getValue());
 		} while(current.getToken().getType() != LL1_TokenType.EOF);
 		
 	}
@@ -191,8 +211,7 @@ public class Interpreter {
 			return result;
 		}
 		else {
-			//TODO add position and line number to error
-			throw new ParseException("Script ERROR: id \'" + id.getName() + "\' is not of type List;", 0);
+			throw new ParseException("Script ERROR: id \'" + id.getName() + "\' is not of type List", 0);
 		}
 	}
 	
