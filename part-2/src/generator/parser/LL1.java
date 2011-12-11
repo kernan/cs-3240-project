@@ -54,7 +54,7 @@ public class LL1 {
 		}
 		System.out.println("\n\n\n\n-------Starting to Build Parse Table-------\n");
 		ParseTable pt = new ParseTable(ruleList, termList, nonTermList);
-		pt.toString();
+		System.out.println(pt.toString());
 		
 		System.out.println("\nFinished making and printing parse table");
 		
