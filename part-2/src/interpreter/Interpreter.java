@@ -456,12 +456,23 @@ public class Interpreter {
 	 * @param regex pattern to match
 	 * @param replacement word to replace matches with
 	 * @param input file to read and match with
-	 * @return list of replaced strings
-	 * @throws FileNotFoundException 
+	 * @return replaced file string
+	 * @throws FileNotFoundException thrown if input file not found
 	 */
 	private String recursivereplace(DFA regex, String replacement, String input_file) throws FileNotFoundException {
 		Scanner in = new Scanner(new File(input_file));
 		String input = in.nextLine();
+		return this.recursivereplace_help(regex,  replacement, input);
+	}
+	
+	/**
+	 * helper for recursive replace
+	 * @param regex pattern to match
+	 * @param replacement word to replace matches with
+	 * @param input file to read and match with
+	 * @return replaced file
+	 */
+	private String recursivereplace_help(DFA regex, String replacement, String input) {
 		for(int i = 0; i < input.length(); i++) {
 			regex.reset();
 			int match_start = i;
@@ -490,7 +501,7 @@ public class Interpreter {
 					new_input += input.charAt(k);
 				}
 				input = new_input;
-				i = 0;//go back to beginning
+				return this.recursivereplace_help(regex, replacement, input);
 			}
 		}
 		return input;
