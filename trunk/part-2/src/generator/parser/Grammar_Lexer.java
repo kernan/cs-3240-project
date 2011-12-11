@@ -100,7 +100,6 @@ public class Grammar_Lexer extends Lexer<Token<LL1_TokenType>> {
 				}
 				result = new Token<LL1_TokenType>(LL1_TokenType.TERMINAL, terminal);
 		}
-		System.out.println("generated: type = " + result.getType() + ", val = " + result.getValue());
 		return result;
 	}
 
