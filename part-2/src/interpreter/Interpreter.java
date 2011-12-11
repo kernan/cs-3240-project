@@ -411,10 +411,16 @@ public class Interpreter {
 	 * @param replacement word to replace matches with
 	 * @param input file to read and match with
 	 * @return list of replaced strings
-	 * @throws FileNotFoundException 
+	 * @throws ParseException 
 	 */
-	private String replace(DFA regex, String replacement,String input_file) throws FileNotFoundException {
-		Scanner in = new Scanner(new File(input_file));
+	private String replace(DFA regex, String replacement,String input_file) throws ParseException {
+		Scanner in = null;
+		try {
+			in = new Scanner(new File(input_file));
+		}
+		catch(FileNotFoundException fnfe) {
+			throw new ParseException("Script ERROR: file \"" + input_file + "\" does not exist", 0);
+		}
 		String input = in.nextLine();
 		for(int i = 0; i < input.length(); i++) {
 			regex.reset();
@@ -459,8 +465,14 @@ public class Interpreter {
 	 * @return replaced file string
 	 * @throws FileNotFoundException thrown if input file not found
 	 */
-	private String recursivereplace(DFA regex, String replacement, String input_file) throws FileNotFoundException {
-		Scanner in = new Scanner(new File(input_file));
+	private String recursivereplace(DFA regex, String replacement, String input_file) throws ParseException {
+		Scanner in = null;
+		try {
+			in = new Scanner(new File(input_file));
+		}
+		catch(FileNotFoundException fnfe) {
+			throw new ParseException("Script ERROR: file \"" + input_file + "\" does not exist", 0);
+		}
 		String input = in.nextLine();
 		return this.recursivereplace_help(regex,  replacement, input);
 	}
@@ -513,9 +525,15 @@ public class Interpreter {
 	 * @param file input to check for matched
 	 * @return the list of all matching words
 	 */
-	private ArrayList<InputString> find(DFA regex, String file) throws FileNotFoundException {
+	private ArrayList<InputString> find(DFA regex, String file) throws ParseException {
 		ArrayList<InputString> result = new ArrayList<InputString>();
-		InputBuffer file_reader = new InputBuffer(file);
+		InputBuffer file_reader = null;
+		try {
+			file_reader = new InputBuffer(file);
+		}
+		catch(FileNotFoundException fnfe) {
+			throw new ParseException("Script ERROR: file \"" + file + "\" does not exist", 0);
+		}
 		//convert the file to a string
 		String file_buffer = new String();
 		while(file_reader.peekNext() != '\n') {
