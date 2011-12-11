@@ -1,8 +1,10 @@
 package interpreter;
 
 import generator.parser.LL1;
+import generator.parser.LL1_Rule;
 import generator.parser.LL1_Token;
 import generator.parser.LL1_TokenType;
+import generator.parser.Script_Lexer;
 import generator.parser.Terminal;
 import generator.regex.DFA;
 import generator.regex.NFA_Identifier;
@@ -29,20 +31,14 @@ import java.util.Stack;
 public class Interpreter {
 	
 	private ArrayList<Identifier> identifiers;
-	private ArrayList<DFA> terminals;
 	private LL1 parser;
-	private File script;
 	
 	/**
 	 * setup interpreter with given scanner and given parser
-	 * @param scanner dfa for lexical analysis of given script
 	 * @param parser ll1 parser for syntactic analysis of given script
-	 * @param script the script for this interpreter instance to run
 	 */
-	public Interpreter(ArrayList<DFA> terminals, LL1 parser, File script) {
-		this.terminals = terminals;
+	public Interpreter(LL1 parser) {
 		this.parser = parser;
-		this.script = script;
 		this.identifiers = new ArrayList<Identifier>();
 	}
 	
@@ -75,6 +71,68 @@ public class Interpreter {
 		 *   x = stack.peek()
 		 * while(x != EOF)
 		 */
+		//make script file lexer
+		Script_Lexer lexer = new Script_Lexer(filename, parser.getTermList());
+		//create token stack
+		Stack<LL1_Token> code_stack = new Stack<LL1_Token>();
+		//push end of file
+		code_stack.push(new LL1_Token(new Token<LL1_TokenType>(LL1_TokenType.EOF, "EOF")));
+		//push start symbol on stack
+		code_stack.push(parser.getStartSymbol());
+		//get token at top of stack
+		LL1_Token current = code_stack.peek();
+		//get next token in script
+		Token<String> token = lexer.getNextToken();
+		//loop until finish or error
+		do {
+			//if current is a terminal
+			if(current.getToken().getType() == LL1_TokenType.TERMINAL) {
+				System.out.println("TOKEN: val=" + token.getValue() + ", type=" + token.getType());
+				System.out.println("TERMINAL: val=" + current.getToken().getValue() + ", type=" + current.getToken().getType());
+				
+				if(current.getToken().getValue().equals("EPSILON")) {
+					code_stack.pop();
+				}
+				//if current == token
+				else if(current.getToken().getValue().equals(token.getType())) {
+					//pop current off the stack
+					code_stack.pop();
+					//TODO run some code
+					token = lexer.getNextToken();
+				}
+				else {
+					//TODO add position
+					throw new ParseException("Script Parse ERROR: invalid token: \'" + current.getToken().getType() + "\'", 0);
+				}
+			}
+			else if(current.getToken().getType() == LL1_TokenType.NON_TERMINAL) {
+				//System.out.println("NON_TERMINAL: val=" + current.getToken().getValue() + ", type=" + current.getToken().getType());
+				//make sure production exists
+				if(this.parser.getPt().hasProduction(current, token)) {
+					//get production rule
+					LL1_Rule rule = this.parser.getPt().getProduction(current, token);
+					//remove current from stack
+					code_stack.pop();
+					//push on the stack (in reverse order)
+					ArrayList<LL1_Token> rule_list = rule.getTNTList();
+					for(int i = rule_list.size(); i > 0; i--) {
+						code_stack.push(rule_list.get(i-1));
+					}
+				}
+				else {
+					//TODO add position
+					throw new ParseException("Script Parse ERROR: invalid token: \'" + current.getToken().getType() + "\'", 0);
+				}
+			}
+			else {
+				//TODO add position
+				throw new ParseException("Script Parse ERROR: unrecognized token type: \'" + current.getToken().getType() + "\'", 0);
+			}
+			current = code_stack.peek();
+			
+			//System.out.println(current.getToken().getType() + ", " + current.getToken().getValue());
+		} while(current.getToken().getType() != LL1_TokenType.EOF);
+		
 	}
 	
 	/*
@@ -446,7 +504,7 @@ public class Interpreter {
 		}
 		
 		//generate empty Interpreter
-		Interpreter interpreter = new Interpreter(null, null, null);
+		Interpreter interpreter = new Interpreter(null);
 		
 		//test UNION
 		System.out.println("\nunion test: ");

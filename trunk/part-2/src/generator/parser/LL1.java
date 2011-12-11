@@ -505,9 +505,5 @@ public class LL1 {
 	public void setPt(ParseTable pt) {
 		this.pt = pt;
 	}
-
-
-
-
 }
 

@@ -3,6 +3,7 @@ package global;
 import java.io.FileNotFoundException;
 import java.text.ParseException;
 
+import interpreter.Interpreter;
 import generator.parser.LL1;
 import generator.parser.Script_Lexer;
 
@@ -34,19 +35,19 @@ public class Driver {
 		}
 		System.out.println("Scanner/Parser Generation DONE!\n");
 		System.out.println("Running Interpreter...\n");
-		try {
-			//TODO make an interpreter using LL1 and DFA scanner
-			//TODO run the interpreter on the given script
-		}
-		catch(Exception e) {
+		//try {
+			Interpreter interpreter = new Interpreter(parser);
+			interpreter.run("example/minire_test_script.txt");
+		//}
+		/*catch(Exception e) {
 			System.out.println("Error running Interpreter...\n");
 			System.out.println(e.getMessage());
-		}
+		}*/
 		System.out.println("Interpreter DONE!\n");
 		
-		Script_Lexer lextest = new Script_Lexer("example/minire_test_script.txt", parser.getPt().getTerminals());
+		/*Script_Lexer lextest = new Script_Lexer("example/minire_test_script.txt", parser.getPt().getTerminals());
 		while(!lextest.peekNextToken().getType().equals("EOF")) {
 			System.out.println(lextest.getNextToken());
-		}
+		}*/
 	}
 }
