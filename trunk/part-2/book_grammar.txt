@@ -5,12 +5,14 @@
 <exp>
 
 %% Rules
-<exp>		<exp> <addop> <term>
-<exp>		<term>
+<exp>		<term> <exp'>
+<exp'>		<addop> <term> <exp'>
+<exp'>		EPSILON
 <addop>		+
 <addop>		-
-<term>		<term> <mulop> <factor>
-<term>		<factor>
+<term>		<factor> <term'>
+<term'>		<mulop> <factor> <term'>
+<term'>		EPSILON
 <mulop>		*
 <factor>	( <exp> )
 <factor>	number
