@@ -45,20 +45,6 @@ public class InputBuffer {
 	}
 	
 	/**
-	 * move current postion to another location
-	 * @param position 
-	 */
-	public void setPosition(int position) {
-		if(position >= this.buffer.length()) {
-			this.currentpos = this.buffer.length()-1;
-		}
-		else {
-			this.currentpos = position;
-			this.peek = false;
-		}
-	}
-	
-	/**
 	 * get the next character in the buffer
 	 * @return the next character in the buffer
 	 */

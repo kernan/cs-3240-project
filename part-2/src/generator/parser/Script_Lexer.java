@@ -16,17 +16,24 @@ import global.Token;
  *	provides capabilities to scan script files using a set of
  *	DFAs that containing token specifications
  */
-public class Script_Lexer extends Lexer<Token> {
+public class Script_Lexer extends Lexer<Token<String>> {
 	
-	//preset token values
-	public static final String REGEX = "\\\' ([^'] IN [\\ -~])+ \\\'";
-	public static final String ASCII_STR = "\\\" ([^\"] IN [\\ -~])+ \\\"";
-	public static final String ID = "([A-Za-z])([A-Za-z0-9_])*";
-	public static final String EPSILON = "EPSILON";
+	private static final String REGEX = "REGEX";
+	private static final String ASCII_STR = "ASCII-STR";
+	private static final String ID = "ID";
+	private static final String EOF = "EOF";
+	private static final int ID_MAX_SIZE = 10;
 	
-	private InputBuffer input;
-	private ArrayList<Token<DFA>> tokens;
+	private InputBuffer input_stream;
+	private ArrayList<String> keywords;
+	private ArrayList<String> illegal_chars;
 	private boolean done;
+	private boolean regex;
+	private boolean ascii_str;
+	private boolean id;
+	
+	private static final String ID_MATCH = "([A-Za-z])([A-Za-z0-9_])*";
+	private DFA id_match;
 	
 	/**
 	 * setup lexer with given filename and build DFAs from given terminal list
@@ -36,42 +43,39 @@ public class Script_Lexer extends Lexer<Token> {
 	 * @throws ParseException thrown by recursive descent dfa builder
 	 */
 	public Script_Lexer(String filename, ArrayList<Terminal> tokens) throws FileNotFoundException, ParseException {
-		super();
+		this.input_stream = new InputBuffer(filename);
+		this.keywords = new ArrayList<String>();
+		this.illegal_chars = new ArrayList<String>();
 		this.done = false;
-		this.newFile(filename);
-		//make DFAs
-		this.tokens = new ArrayList<Token<DFA>>();
-		boolean id = false;
+		this.regex = false;
+		this.ascii_str = false;
+		this.id = false;
+		//add keywords to the list
 		for(int i = 0; i < tokens.size(); i++) {
-			Token<LL1_TokenType> current = tokens.get(i).getToken();
-			//need to add ascii-str preset
-			if(current.getValue().equals("ASCII-STR")) {
-				RecursiveDescent t = new RecursiveDescent(ASCII_STR, null);
-				NFA_Identifier t_id = t.descend();
-				this.tokens.add(new Token<DFA>(new DFA(t_id.getNFA()), "ASCII-STR"));
+			if(tokens.get(i).getToken().getValue().equals(REGEX)) {
+				this.regex = true;
 			}
-			//need to add regex preset
-			else if(current.getValue().equals("REGEX")) {
-				RecursiveDescent t = new RecursiveDescent(REGEX, null);
-				NFA_Identifier t_id = t.descend();
-				this.tokens.add(new Token<DFA>(new DFA(t_id.getNFA()), "REGEX"));
+			else if(tokens.get(i).getToken().getValue().equals(ASCII_STR)) {
+				this.ascii_str = true;
 			}
-			//need to ass id preset
-			else if(current.getValue().equals("ID")) {
-				id = true;
+			else if(tokens.get(i).getToken().getValue().equals(ID)) {
+				this.id = true;
 			}
-			//make the dfa and add it to the dfa list
-			else if(!current.getValue().equals("EPSILON")){
-				RecursiveDescent t = new RecursiveDescent(current.getValue(), null);
-				NFA_Identifier t_id = t.descend();
-				this.tokens.add(new Token<DFA>(new DFA(t_id.getNFA()), current.getValue()));
+			else if(tokens.get(i).getToken().getValue().length() == 1){
+				this.illegal_chars.add(tokens.get(i).getToken().getValue());
+			}
+			else {
+				this.keywords.add(tokens.get(i).getToken().getValue());
 			}
 		}
-		if(id) {
-			//create id DFA (needs to be at bottom)
-			RecursiveDescent t = new RecursiveDescent(ID, null);
-			NFA_Identifier t_id = t.descend();
-			this.tokens.add(new Token<DFA>(new DFA(t_id.getNFA()), "ID"));
+		//make id match dfa
+		if(this.id) {
+			RecursiveDescent rd = new RecursiveDescent(ID_MATCH, null);
+			NFA_Identifier id_nfa = rd.descend();
+			this.id_match = new DFA(id_nfa.getNFA());
+		}
+		else {
+			this.id_match = null;
 		}
 	}
 	
@@ -81,7 +85,7 @@ public class Script_Lexer extends Lexer<Token> {
 	 * @throws FileNotFoundException thrown  if the file doesn't exist
 	 */
 	public void newFile(String filename) throws FileNotFoundException {
-		this.input = new InputBuffer(filename);
+		this.input_stream = new InputBuffer(filename);
 	}
 	
 	/**
@@ -90,7 +94,7 @@ public class Script_Lexer extends Lexer<Token> {
 	 */
 	@Override
 	public int getPosition() {
-		return this.input.getPosition();
+		return this.input_stream.getPosition();
 	}
 	
 	/**
@@ -98,7 +102,7 @@ public class Script_Lexer extends Lexer<Token> {
 	 * @return current line in the script
 	 */
 	public int getLine() {
-		return this.input.getLine();
+		return this.input_stream.getLine();
 	}
 	
 	/**
@@ -107,21 +111,91 @@ public class Script_Lexer extends Lexer<Token> {
 	 */
 	@Override
 	protected Token<String> makeNewToken() throws ParseException {
-		/*
-		 * find longest matching regex expression
-		 * 
-		 * look for end of file
-		 * skip newlines
-		 * start_pos = input.getPosition
-		 * for dfa : tokens
-		 *   dfa.reset
-		 *   while(!dfa.inDead())
-		 *     dfa.gotoNext(input.getNext())
-		 *     if dfa
-		 */
+		char t = this.input_stream.getNext();
 		
-		int start_position = this.input.getPosition();
+		//check for end of file
+		if(this.done) {
+			return new Token<String>(EOF, EOF);
+		}
+		//check to see if finished with last line
+		if(!this.input_stream.hasNext() && t == '\n') {
+			this.done = true;
+		}
+		//if current char is newline
+		if(t == '\n') {
+			this.input_stream.gotoNextLine();//move to next line
+			return this.makeNewToken();
+		}
+		//if current char is whitespace
+		else if(t == '\t' || t == ' ') {
+			//this.input_stream.getNext();//consume whitespace
+			return this.makeNewToken();
+		}
 		
-		return null;
+		//match single character tokens
+		for(int i = 0; i < this.illegal_chars.size(); i++) {
+			if(this.illegal_chars.get(i).charAt(0) == t) {
+				return new Token<String>(this.illegal_chars.get(i), new String() + t);
+			}
+		}
+		//match regex
+		if(t == '\'' && this.regex) {
+			String value = new String();
+			t = this.input_stream.getNext();
+			while(t != '\'') {
+				value += t;
+				t = this.input_stream.getNext();
+			}
+			return new Token<String>(REGEX, value);
+		}
+		//match ascii-str
+		if(t == '"' && this.ascii_str) {
+			String value = new String();
+			t = this.input_stream.getNext();
+			while(t != '"') {
+				value += t;
+				t = this.input_stream.getNext();
+			}
+			return new Token<String>(ASCII_STR, value);
+		}
+		
+		//match keywords/identifiers
+		boolean illegal = false;
+		String value = new String();
+		value += t;
+		t = this.input_stream.peekNext();
+		while(t != ' ' && t != '\t' && t != '\n' && !illegal) {
+			t = this.input_stream.getNext();
+			value += t;
+			t = this.input_stream.peekNext();
+			for(int i = 0; i < this.illegal_chars.size(); i++) {
+				if(this.illegal_chars.get(i).charAt(0) == t) {
+					illegal = true;
+				}
+			}
+		}
+		
+		//check if valid keyword
+		for(int i = 0; i < this.keywords.size(); i++) {
+			if(this.keywords.get(i).equals(value)) {
+				return new Token<String>(this.keywords.get(i), value);
+			}
+		}
+		//check if id
+		if(this.id) {
+			//match id rules: ([A-Za-z])([A-Za-z0-9_])*
+			if(value.length() <= ID_MAX_SIZE) {
+				this.id_match.reset();
+				for(int i = 0; i < value.length(); i++) {
+					this.id_match.gotoNext(value.charAt(i));
+				}
+				if(this.id_match.atFinal()) {
+					return new Token<String>(ID, value);
+				}
+			}
+		}
+		
+		throw new ParseException("Script ERROR: invalid token \"" + value + "\" at line: " +
+				this.getLine() + ", pos: " + this.getPosition(), this.getPosition());
 	}
 }
