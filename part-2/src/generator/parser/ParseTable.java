@@ -97,7 +97,12 @@ public class ParseTable {
 		for(int i = 0; i < this.table.length; i++) {
 			result += this.non_terminals.toString();
 			for(int j = 0; j < this.table[i].length; j++) {
-				result += "\t" + this.table[i][j].toString();
+				if(this.table[i][j] == null) {
+					result += "\t\t";
+				}
+				else {
+					result += "\t" + this.table[i][j].toString();
+				}
 			}
 			result += "\n";
 		}
