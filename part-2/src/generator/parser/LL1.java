@@ -47,7 +47,11 @@ public class LL1 {
 
 		//Skip to first Header
 		while(lex.peekNextToken().getType() != LL1_TokenType.HEADER){
-			//System.out.println("Searching for header...");
+			//make sure EOF is not reached early
+			if(lex.peekNextToken().getType() == LL1_TokenType.EOF){
+				throw new ParseException("LL(1) Parse ERROR:  Reached EOF early, must list headers  line: " +
+						lex.getLine() + ", pos: " + lex.getPosition(), lex.getPosition());
+			}
 			lex.getNextToken();
 		}
 
@@ -56,6 +60,10 @@ public class LL1 {
 		if(lex.peekNextToken().getValue().equals("Tokens")){
 			//Skip to next line to get list of tokens	
 			while(lex.peekNextToken().getType() != LL1_TokenType.TERMINAL){
+				if(lex.peekNextToken().getType() == LL1_TokenType.EOF){
+					throw new ParseException("LL(1) Parse ERROR:  Reached EOF early, must list tokens " +
+							lex.getLine() + ", pos: " + lex.getPosition(), lex.getPosition());
+				}
 				lex.getNextToken();
 			}
 
@@ -66,6 +74,10 @@ public class LL1 {
 
 			//skip to next header
 			while(lex.peekNextToken().getType() != LL1_TokenType.HEADER){
+				if(lex.peekNextToken().getType() == LL1_TokenType.EOF){
+					throw new ParseException("LL(1) Parse ERROR:  Reached EOF early, must list start header  line: " +
+							lex.getLine() + ", pos: " + lex.getPosition(), lex.getPosition());
+				}
 				lex.getNextToken();
 			}
 
@@ -125,6 +137,10 @@ public class LL1 {
 
 		//skip to rules header
 		while(lex.peekNextToken().getType() != LL1_TokenType.HEADER){
+			if(lex.peekNextToken().getType() == LL1_TokenType.EOF){
+				throw new ParseException("LL(1) Parse ERROR:  Reached EOF early, must list rules header  line: " +
+						lex.getLine() + ", pos: " + lex.getPosition(), lex.getPosition());
+			}
 			lex.getNextToken();
 		}
 
