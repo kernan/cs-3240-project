@@ -47,7 +47,7 @@ public class Interpreter {
 	public static final String ID = "ID";
 	public static final String PRINT = "print";
 	public static final String FIND = "find";
-	public static final String MAXFREQSTR = "maxfreqstr";
+	public static final String MAXFREQSTR = "maxfreqstring";
 	public static final String REPLACE = "replace";
 	public static final String RECURSIVEREPLACE = "recursivereplace";
 	public static final String DIFF = "diff";
@@ -206,7 +206,7 @@ public class Interpreter {
 							find = true;
 						}
 						else if(token.getType().equals(MAXFREQSTR)) {
-							//System.out.println("maxfreqstr");
+							//System.out.println("maxfreqstr = true");
 							maxfreqstr = true;
 						}
 						//replace
@@ -305,17 +305,19 @@ public class Interpreter {
 									else {//recursive replace
 										replaced = this.recursivereplace(curr_regex, replacement, find_vals);
 									}
+									System.out.println("replaced " + replaced);
 									this.writeFile(replaced, file_out);
 									replace = false;
 									recursivereplace = false;
 								}
 							}
-							if(maxfreqstr) {
-								if(token.getValue().equals(ID)) {
-									Identifier t = temp_stk.pop();
-									t.setValue(this.maxfreqstring(t));
-									maxfreqstr = false;
-								}
+						}
+						if(maxfreqstr) {
+							if(token.getType().equals(ID)) {
+								Identifier t = temp_stk.pop();
+								t.setValue(this.maxfreqstring(t));
+								temp_stk.push(t);
+								maxfreqstr = false;
 							}
 						}
 						new_line = false;

@@ -1,21 +1,26 @@
 begin
 x = find '[a-z]' in "test/oneline/test1.txt";
 print(x);
-num_x = #x;
-print(num_x);
 print(x);
-y = find 'a*' in "test/oneline/test2.txt";
+y = find '[a-z]' in "test/oneline/test2.txt";
 print(y);
-inters_z = find '[a-z]' in "test/oneline/test2.txt" inters find '[a-z]' in "test/oneline/test1.txt";
+inters_z = find '[a-z]' in "test/oneline/test1.txt" inters find '[a-z]' in "test/oneline/test2.txt";
 print(inters_z);
 n_inters_z = #inters_z;
 print(n_inters_z);
-diff_z = find '[a-z]' in "test/oneline/test2.txt" diff find '[a-z]' in "test/oneline/test1.txt";
+diff_z = find '[a-z]' in "test/oneline/test1.txt" diff find '[a-z]' in "test/oneline/test2.txt";
 print(diff_z);
 n_diff_z = #diff_z;
 print(n_diff_z);
-union_z = find '[a-z]' in "test/oneline/test2.txt" union find '[a-z]' in "test/oneline/test1.txt";
+union_z = find '[a-z]' in "test/oneline/test1.txt" union find '[a-z]' in "test/oneline/test2.txt";
 print(union_z);
 n_union_z = #union_z;
 print(n_union_z);
+union_z1 = find '[a-z]' in "test/oneline/test1.txt" union find '[a-z]' in "test/oneline/test2.txt" union find '[a-z]' in "test/oneline/test3.txt";
+print(union_z1);
+n_union_z1 = #union_z1;
+print(n_union_z1);
+replace '(a)|(b)|(c)' with "" in "test/oneline/test2.txt" >! "test/oneline/change.txt";
+max = maxfreqstring(union_z1);
+print(max);
 end
