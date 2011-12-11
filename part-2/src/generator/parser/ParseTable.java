@@ -31,6 +31,12 @@ public class ParseTable {
 		this.terminals = terminals;
 		this.non_terminals = non_terminals;
 		this.table = new LL1_Rule[this.non_terminals.size()][this.terminals.size()];
+		
+		for(int i = 0 ; i < rule_list.size(); i++) {
+			System.out.println(rule_list.get(i).toString());
+		}
+		System.out.println("\n");
+		
 		this.build_table();
 	}
 	
@@ -66,7 +72,7 @@ public class ParseTable {
 						//add rule to table position
 						for(int l = 0; l < this.terminals.size(); l++) {
 							//find the column position
-							if(this.terminals.get(l).equals(follow.get(k))) {
+							if(this.terminals.get(l).equals(follow.get(k)) && table[nt_pos][l] == null) {
 								//add it
 								//System.out.println("adding rule: " + this.rule_list.get(i).toString() + " on EOF");
 								this.table[nt_pos][l] = this.rule_list.get(i);
@@ -78,7 +84,7 @@ public class ParseTable {
 					//add rule to table position
 					for(int k = 0; k < this.terminals.size(); k++) {
 						//find column position
-						if(this.terminals.get(k).equals(first.get(j))) {
+						if(this.terminals.get(k).equals(first.get(j)) && table[nt_pos][k] == null) {
 							//add it
 							//System.out.println("adding rule: " + this.rule_list.get(i).toString());
 							this.table[nt_pos][k] = this.rule_list.get(i);
@@ -97,19 +103,15 @@ public class ParseTable {
 	public String toString() {
 		String result = new String();
 		for(int i = 0; i < this.table.length; i++) {
-			result += this.non_terminals.toString();
+			result += "term: " + this.non_terminals.get(i).toString() + "\n";
 			for(int j = 0; j < this.table[i].length; j++) {
 				if(this.table[i][j] == null) {
-					result += "\t\t";
+					//do nothing
 				}
 				else {
-					result += "\t" + this.table[i][j].toString();
+					result += "\trule: " + this.table[i][j].toString() + ", on: " + this.terminals.get(j).toString() + "\n";
 				}
 			}
-			result += "\n";
-		}
-		for(int i = 0; i < this.terminals.size(); i++) {
-			result += this.terminals.get(i).toString() + "\t";
 		}
 		return result;
 	}
