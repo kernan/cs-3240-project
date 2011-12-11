@@ -45,7 +45,7 @@ public class LL1 {
 	 */
 	public void Parse() throws FileNotFoundException, ParseException{
 
-		System.out.println("Parsing...");
+		//System.out.println("Parsing...");
 		//Skip to first Header
 		while(lex.peekNextToken().getType() != LL1_TokenType.HEADER){
 			//System.out.println("Searching for header...");
@@ -69,7 +69,7 @@ public class LL1 {
 				//System.out.println("Adding terminal: " + lex.peekNextToken().getValue());
 				termList.add(new Terminal(lex.getNextToken()));
 			}
-			System.out.println("Added Terminals");
+			//System.out.println("Added Terminals");
 
 			//skip to next header
 			while(lex.peekNextToken().getType() != LL1_TokenType.HEADER){
@@ -90,7 +90,7 @@ public class LL1 {
 			}
 			else{
 				//TODO error
-				System.out.println("Start symbol must come after tokens");
+				//System.out.println("Start symbol must come after tokens");
 			}
 		}
 		else if(lex.peekNextToken().getValue().equals("Start")){
@@ -123,12 +123,12 @@ public class LL1 {
 			}
 			else{
 				//TODO error
-				System.out.println("Tokens must come after start symbol");
+				//System.out.println("Tokens must come after start symbol");
 			}	
 		}
 		else{
 			//TODO error catching
-			System.out.println("Tokens and start symbol must be listed before rules");
+			//System.out.println("Tokens and start symbol must be listed before rules");
 		}
 
 		//skip to rules header
@@ -166,7 +166,7 @@ public class LL1 {
 				first = nonTermList.get(firstLocation);
 				currRule = new LL1_Rule(first);
 				ruleList.add(currRule);
-				System.out.println("Making new rule with: " + first.getToken().getValue());
+				//System.out.println("Making new rule with: " + first.getToken().getValue());
 			}
 			
 
@@ -197,19 +197,19 @@ public class LL1 {
 			lex.getNextToken();
 			//System.out.println("Next while test = " + lex.peekNextToken().getValue());
 		}
-		System.out.println("\nStart Symbol: " + startSymbol.getToken().getValue());
+		//System.out.println("\nStart Symbol: " + startSymbol.getToken().getValue());
 		//System.out.println("TermList: ");
 		/*for(int i = 0; i < termList.size(); i++){
 			System.out.println(termList.get(i).getToken().getValue());
 		}*/
-		System.out.println("\nNonTermList: ");
+		/*System.out.println("\nNonTermList: ");
 		for(int i = 0; i < nonTermList.size(); i++){
 			System.out.println(nonTermList.get(i).getToken().getValue());
 		}
 		System.out.println("\nRules: ");
 		for(int i = 0; i < ruleList.size(); i++){
 			System.out.println(ruleList.get(i).toString());
-		}
+		}*/
 	}
 
 	/*

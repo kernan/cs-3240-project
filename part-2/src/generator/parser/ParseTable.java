@@ -43,11 +43,7 @@ public class ParseTable {
 				}
 			}
 			//find row position
-			System.out.println("<" + non_term.getToken().getValue() + ">");
 			ArrayList<Terminal> first = this.rule_list.get(i).getFirstSet();
-			for(int j = 0; j < first.size(); j++) {
-				System.out.println(first.get(j));
-			}
 			//for all first in non_term
 			for(int j = 0; j < first.size(); j++) {
 				//if EPSILON
@@ -82,7 +78,6 @@ public class ParseTable {
 					}
 				}
 			}
-			System.out.println();
 		}
 	}
 	
