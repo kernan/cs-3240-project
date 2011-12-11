@@ -147,7 +147,15 @@ public class LL1 {
 
 		//turn all non-terminals into a rule and add their tokens to the rule
 		while(lex.peekNextToken().getType() != LL1_TokenType.EOF){
-			//System.out.println("Current Token is: " + lex.peekNextToken().getValue());
+			
+			while(lex.peekNextToken().getType() != LL1_TokenType.NON_TERMINAL){
+				if(lex.peekNextToken().getType() == LL1_TokenType.EOF){
+					throw new ParseException("LL(1) Parse ERROR:  Reached EOF early, must list production rules  line: " +
+							lex.getLine() + ", pos: " + lex.getPosition(), lex.getPosition());
+				}
+				lex.getNextToken();
+			}
+			
 			NonTerminal first = new NonTerminal(lex.getNextToken());
 			LL1_Rule currRule;
 			if(!nonTermList.contains(first)){
@@ -160,7 +168,6 @@ public class LL1 {
 				first = nonTermList.get(firstLocation);
 				currRule = new LL1_Rule(first);
 				ruleList.add(currRule);
-				//System.out.println("Making new rule with: " + first.getToken().getValue());
 			}
 			
 

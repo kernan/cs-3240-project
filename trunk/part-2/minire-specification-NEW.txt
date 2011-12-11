@@ -5,15 +5,23 @@ begin end ID = replace with in ; recursivereplace >! print ( ) , # find diff uni
 <MiniRE-program>
 
 %% Rules
+
 <MiniRE-program>		begin <statement-list> end
+
 <statement-list>		<statement> <statement-list-tail>
+
 <statement-list-tail>	<statement> <statement-list-tail>
 <statement-list-tail>	EPSILON
+
+
+
 <statement>				ID = <assignment> ;
 <statement>				replace REGEX with ASCII-STR in <file-names> ;
 <statement>				recursivereplace REGEX with ASCII-STR in <file-names> ;
 <statement>				print ( <exp-list> ) ;
 <assignment>			<exp>
+
+
 <assignment>			# <exp>
 <assignment>			maxfreqstring ( ID )
 <file-names>			<source-file> >! <destination-file>
@@ -31,4 +39,5 @@ begin end ID = replace with in ; recursivereplace >! print ( ) , # find diff uni
 <file-name>				ASCII-STR
 <bin-op>				diff
 <bin-op>				union
+
 <bin-op>				inters
