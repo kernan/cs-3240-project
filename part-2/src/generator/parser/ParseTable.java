@@ -3,18 +3,10 @@ package generator.parser;
 import java.text.ParseException;
 import java.util.ArrayList;
 
+/** PaseTable.java
+ * 
+ */
 public class ParseTable {
-	/*		T	E	R	M
-	 * N
-	 * O
-	 * N
-	 * -
-	 * T
-	 * E
-	 * R
-	 * M
-	 * S
-	 */
 	
 	private ArrayList<LL1_Rule> rule_list;
 	private ArrayList<Terminal> terminals;
@@ -22,10 +14,10 @@ public class ParseTable {
 	private LL1_Rule[][] table;
 	
 	/**
-	 * System.out.println("\n\nSHITS FUCKED!!!!!!!!\n\n");
-	 * @param rule_list
-	 * @param terminals
-	 * @param non_terminals
+	 * creates the parse table, column id, and row id, then generates the parse table
+	 * @param rule_list list of rules to generate the table from
+	 * @param terminals identifiers for the row of the table
+	 * @param non_terminals identifiers for the column of the table
 	 */
 	public ParseTable(ArrayList<LL1_Rule> rule_list, ArrayList<Terminal> terminals, ArrayList<NonTerminal> non_terminals) throws ParseException {
 		this.rule_list = rule_list;
@@ -36,8 +28,8 @@ public class ParseTable {
 	}
 	
 	/**
-	 * @throws ParseException 
-	 * 
+	 * builds the parse table
+	 * @throws ParseException if parse table generation fails (i.e. language isn't LL(1)) 
 	 */
 	public void build_table() throws ParseException {
 		for(int i = 0; i < this.rule_list.size(); i++) {
@@ -95,8 +87,8 @@ public class ParseTable {
 	}
 	
 	/**
-	 * 
-	 * @return
+	 * generates string representation of the parse table
+	 * @return string representation of the parse table
 	 */
 	public String toString() {
 		String result = new String();
