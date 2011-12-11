@@ -1,6 +1,7 @@
 package global;
 
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.text.ParseException;
 
 import interpreter.Interpreter;
@@ -16,9 +17,9 @@ public class Driver {
 	 * 
 	 * @param args
 	 * @throws ParseException 
-	 * @throws FileNotFoundException 
+	 * @throws IOException 
 	 */
-	public static void main(String[] args) throws FileNotFoundException, ParseException {
+	public static void main(String[] args) throws ParseException, IOException {
 		
 		String spec_file = "minire-specification-NEW.txt";
 		
@@ -37,7 +38,7 @@ public class Driver {
 		System.out.println("Running Interpreter...\n");
 		//try {
 			Interpreter interpreter = new Interpreter(parser);
-			interpreter.run("example/minire_test_script.txt");
+			interpreter.run("test/oneline/find.txt");
 		//}
 		/*catch(Exception e) {
 			System.out.println("Error running Interpreter...\n");

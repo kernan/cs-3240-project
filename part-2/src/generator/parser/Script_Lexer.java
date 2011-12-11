@@ -161,6 +161,11 @@ public class Script_Lexer extends Lexer<Token<String>> {
 		String value = new String();
 		value += t;
 		t = this.input_stream.peekNext();
+		for(int i = 0; i < this.illegal_chars.size(); i++) {
+			if(this.illegal_chars.get(i).charAt(0) == t) {
+				illegal = true;
+			}
+		}
 		while(t != ' ' && t != '\t' && t != '\n' && !illegal) {
 			t = this.input_stream.getNext();
 			value += t;
