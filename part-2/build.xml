@@ -8,13 +8,13 @@ author: Robert Kernan
     <target name="-init" description="set up all build variables">
     	<echo message="Setting up required build variables..."/>
     	<!--    project name    -->
-    	<property name="jar.name" value="MiniRE_Interpreter"/>
+    	<property name="jar.name" value="MiniRE"/>
     	<!--    locations   -->
         <property name="src.dir" location="./src/"/>
     	<property name="build.dir" location="./bin"/>
     	<!--    manifest variables    -->
     	<property name="jar.include" value="${build.dir}/**/*.class"/>
-    	<property name="jar.mainclass" value="scanner_generator/Parser"/>
+    	<property name="jar.mainclass" value="global/Driver"/>
 		<!--    command line args    -->
 		<property name="args.use" value="true"/><!--true/false-->
 		<property name="args.message" value="args format: &quot;&lt;specification file&gt; &lt;code files&gt;&quot;"/>
