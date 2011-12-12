@@ -58,6 +58,7 @@ public class Interpreter {
 	public static final String REGEX = "REGEX";
 	public static final String ASCII_STR = "ASCII-STR";
 	public static final String LENGTH = "#";
+	public static final String COMMA = ",";
 	
 	/**
 	 * run the script
@@ -127,11 +128,6 @@ public class Interpreter {
 							t1.setValue(t2.getValue());
 							assignment = false;
 						}
-						else if(print) {
-							//System.out.print(", printing value");
-							System.out.println(temp_stk.pop());
-							print = false;
-						}
 						//System.out.print("\n");
 						//reset all flags
 						new_line = true;
@@ -188,6 +184,11 @@ public class Interpreter {
 								temp.setValue(result);
 								temp_stk.push(temp);
 							}
+							if(print) {
+								//System.out.print(", printing value");
+								System.out.println(temp_stk.pop());
+								print = false;
+							}
 						}
 						//operations
 						//length
@@ -196,7 +197,7 @@ public class Interpreter {
 							length = true;
 						}
 						//print
-						else if(token.getType().equals(PRINT)) {
+						else if(token.getType().equals(PRINT) || token.getType().equals(COMMA)) {
 							//System.out.println("found print");
 							print = true;
 						}
