@@ -6,8 +6,10 @@ print(y);
 num_x = #x;
 num_y = #y;
 print(num_x, num_y);
-z_inters = find '([a-z0-9])*' in "tests/resource_files/test1-1.txt" inters find '([a-z0-9])*' in "tests/resource_files/test1-2.txt";
-print(z_inters);
+z_empty = find '([a-z0-9])*' in "tests/resource_files/test1-1.txt" inters find '([a-z0-9])*' in "tests/resource_files/test1-2.txt" diff find '([a-z0-9])*' in "tests/resource_files/test1-2.txt";
+print(z_empty);
+z_union = find '([a-z0-9])*' in "tests/resource_files/test1-1.txt" union find '([a-z0-9])*' in "tests/resource_files/test1-2.txt";
+print(z_union);
 replace '\ ([a-z])' with " " in "tests/resource_files/test1-3.txt" >! "tests/resource_files/test1-replace.txt";
 recursivereplace '\ ([a-z])' with " " in "tests/resource_files/test1-3.txt" >! "tests/resource_files/test1-rreplace.txt";
 end
